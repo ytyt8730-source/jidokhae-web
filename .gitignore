@@ -1,0 +1,26 @@
+# 지독해 프로젝트 전체용 .gitignore
+
+# ===== Claude Code 로컬 설정 =====
+.claude/
+
+# ===== OS 파일 =====
+.DS_Store
+Thumbs.db
+
+# ===== IDE =====
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ===== 로그 =====
+*.log
+
+# ===== 민감정보 (절대 커밋 금지) =====
+*.pem
+.env
+.env.local
+.env.*.local
+
+# ===== jidokhae 폴더는 자체 .gitignore 사용 =====
+# jidokhae/.gitignore 참조

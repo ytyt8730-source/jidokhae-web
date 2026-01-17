@@ -1,0 +1,190 @@
+import { Variants } from 'framer-motion'
+
+/**
+ * 공통 애니메이션 variants
+ * PRD 디자인 시스템 사양에 따른 애니메이션 정의
+ */
+
+// 페이드인 + 슬라이드업
+export const fadeInUp: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 20,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.3,
+      ease: 'easeOut',
+    },
+  },
+}
+
+// 단순 페이드인
+export const fadeIn: Variants = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+    transition: {
+      duration: 0.3,
+      ease: 'easeOut',
+    },
+  },
+}
+
+// 카드 리스트 Stagger 컨테이너 (100ms 간격)
+export const staggerContainer: Variants = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.1,
+    },
+  },
+}
+
+// Stagger 자식 아이템 (아래→위 등장)
+export const staggerItem: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 20,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.3,
+      ease: 'easeOut',
+    },
+  },
+}
+
+// 카드 호버/탭 애니메이션 (Y축 -4px, scale 0.98)
+export const cardHoverTap = {
+  hover: {
+    y: -4,
+    transition: {
+      duration: 0.2,
+      ease: 'easeOut' as const,
+    },
+  },
+  tap: {
+    scale: 0.98,
+    transition: {
+      duration: 0.1,
+    },
+  },
+}
+
+// 마감 임박 뱃지 Pulse 애니메이션 (opacity 0.7~1, 1.5초 주기)
+export const pulseAnimation: Variants = {
+  pulse: {
+    opacity: [1, 0.7, 1],
+    transition: {
+      duration: 1.5,
+      ease: 'easeInOut',
+      repeat: Infinity,
+    },
+  },
+}
+
+// 모달 배경
+export const overlayAnimation: Variants = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+    transition: {
+      duration: 0.2,
+    },
+  },
+  exit: {
+    opacity: 0,
+    transition: {
+      duration: 0.15,
+    },
+  },
+}
+
+// 모달 콘텐츠 (Spring 기반)
+export const modalAnimation: Variants = {
+  hidden: {
+    opacity: 0,
+    scale: 0.95,
+    y: 10,
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      type: 'spring',
+      damping: 25,
+      stiffness: 300,
+    },
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.95,
+    y: 10,
+    transition: {
+      duration: 0.15,
+    },
+  },
+}
+
+// 버튼 호버/탭
+export const buttonHoverTap = {
+  hover: {
+    scale: 1.02,
+    transition: {
+      duration: 0.2,
+    },
+  },
+  tap: {
+    scale: 0.98,
+    transition: {
+      duration: 0.1,
+    },
+  },
+}
+
+// 프로그레스 바 채워짐
+export const progressFill: Variants = {
+  hidden: {
+    width: '0%',
+  },
+  visible: (percent: number) => ({
+    width: `${percent}%`,
+    transition: {
+      duration: 0.8,
+      ease: 'easeOut',
+    },
+  }),
+}
+
+// 배지 획득 효과
+export const badgeEarned: Variants = {
+  hidden: {
+    opacity: 0,
+    scale: 0.5,
+    rotateY: -90,
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    rotateY: 0,
+    transition: {
+      type: 'spring',
+      damping: 15,
+      stiffness: 200,
+    },
+  },
+}
