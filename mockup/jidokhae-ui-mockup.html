@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=360, initial-scale=1.0">
+  <title>지독해 - UI 목업</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== CSS Variables ===== */
+    :root {
+      /* Warm Neutrals */
+      --warm-50: #fdfcfa;
+      --warm-100: #f8f5f0;
+      --warm-200: #f0ebe3;
+      --warm-300: #e4ddd2;
+      --warm-400: #c9bfb0;
+      --warm-500: #a69a8c;
+      --warm-600: #847668;
+      --warm-700: #6b5f52;
+      --warm-800: #4a4138;
+      --warm-900: #2d261f;
+
+      /* Brand Terracotta */
+      --brand-300: #e8a88a;
+      --brand-400: #d98f6c;
+      --brand-500: #c77654;
+      --brand-600: #b55f3e;
+      --brand-700: #974c33;
+
+      /* Functional */
+      --success: #4a7c59;
+      --warning: #c9943c;
+      --info: #5a7a9a;
+
+      /* Typography */
+      --font-serif: 'Noto Serif KR', Georgia, serif;
+      --font-sans: 'Pretendard', -apple-system, sans-serif;
+
+      /* Spacing (8px grid) */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-7: 28px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+      --space-16: 64px;
+
+      /* Shadows */
+      --shadow-sm: 0 1px 2px rgba(45, 38, 31, 0.04);
+      --shadow-md: 0 4px 12px rgba(45, 38, 31, 0.06);
+      --shadow-lg: 0 8px 24px rgba(45, 38, 31, 0.08);
+      --shadow-paper: 0 1px 3px rgba(45, 38, 31, 0.05), 0 4px 16px rgba(45, 38, 31, 0.04);
+    }
+
+    /* ===== Reset & Base ===== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--warm-100);
+      color: var(--warm-900);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ===== Mockup Container ===== */
+    .mockup-container {
+      display: flex;
+      gap: var(--space-10);
+      padding: var(--space-10);
+      overflow-x: auto;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 20% 20%, rgba(199, 118, 84, 0.03) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(199, 118, 84, 0.02) 0%, transparent 50%),
+        linear-gradient(180deg, var(--warm-50) 0%, var(--warm-100) 100%);
+    }
+
+    .screen-label {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--warm-500);
+      margin-bottom: var(--space-3);
+    }
+
+    /* ===== Phone Frame ===== */
+    .phone-frame {
+      flex-shrink: 0;
+      width: 360px;
+      height: 780px;
+      background: var(--warm-50);
+      border-radius: 40px;
+      box-shadow:
+        0 0 0 12px var(--warm-800),
+        0 20px 60px rgba(45, 38, 31, 0.2),
+        0 40px 80px rgba(45, 38, 31, 0.1);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .phone-frame::before {
+      content: '';
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 28px;
+      background: var(--warm-800);
+      border-radius: 20px;
+      z-index: 100;
+    }
+
+    .phone-content {
+      height: 100%;
+      overflow-y: auto;
+      padding-top: 48px;
+      background: var(--warm-50);
+      position: relative;
+    }
+
+    .phone-content::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* ===== Paper Texture Overlay ===== */
+    .paper-texture {
+      position: relative;
+    }
+
+    .paper-texture::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      opacity: 0.015;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* ===== Typography ===== */
+    .text-serif {
+      font-family: var(--font-serif);
+    }
+
+    .text-sm { font-size: 13px; }
+    .text-base { font-size: 15px; }
+    .text-lg { font-size: 17px; }
+    .text-xl { font-size: 20px; }
+    .text-2xl { font-size: 24px; }
+    .text-3xl { font-size: 28px; }
+
+    /* ===== Common Components ===== */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: var(--space-1) var(--space-2);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .badge-brand {
+      background: linear-gradient(135deg, var(--brand-500), var(--brand-600));
+      color: white;
+    }
+
+    .badge-warning {
+      background: rgba(201, 148, 60, 0.12);
+      color: var(--warning);
+    }
+
+    .badge-success {
+      background: rgba(74, 124, 89, 0.12);
+      color: var(--success);
+    }
+
+    /* ===== HOME SCREEN ===== */
+    .home-header {
+      padding: var(--space-4) var(--space-4) var(--space-6);
+      background: linear-gradient(180deg, var(--warm-50) 0%, transparent 100%);
+      position: relative;
+      z-index: 10;
+    }
+
+    .home-greeting {
+      font-size: 13px;
+      color: var(--warm-500);
+      margin-bottom: var(--space-1);
+    }
+
+    .home-title {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      font-weight: 600;
+      color: var(--warm-900);
+      line-height: 1.3;
+    }
+
+    .home-title span {
+      color: var(--brand-500);
+    }
+
+    /* My Meetings Preview */
+    .my-meetings-preview {
+      margin: var(--space-4);
+      padding: var(--space-4);
+      background: linear-gradient(135deg, var(--brand-500) 0%, var(--brand-600) 100%);
+      border-radius: 16px;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .my-meetings-preview::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -30%;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    }
+
+    .my-meetings-preview::after {
+      content: '📚';
+      position: absolute;
+      right: 16px;
+      bottom: 12px;
+      font-size: 40px;
+      opacity: 0.3;
+    }
+
+    .my-meetings-label {
+      font-size: 11px;
+      opacity: 0.85;
+      margin-bottom: var(--space-2);
+      letter-spacing: 0.05em;
+    }
+
+    .my-meetings-info {
+      display: flex;
+      align-items: baseline;
+      gap: var(--space-2);
+    }
+
+    .my-meetings-dday {
+      font-family: var(--font-serif);
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .my-meetings-name {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    /* Section Header */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-6) var(--space-4) var(--space-3);
+    }
+
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--warm-800);
+    }
+
+    .section-more {
+      font-size: 13px;
+      color: var(--brand-500);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    /* Meeting Card */
+    .meeting-cards {
+      padding: 0 var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .meeting-card {
+      background: white;
+      border-radius: 16px;
+      padding: var(--space-4);
+      box-shadow: var(--shadow-paper);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+      border: 1px solid rgba(228, 221, 210, 0.5);
+    }
+
+    .meeting-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .meeting-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: var(--space-3);
+    }
+
+    .meeting-date {
+      font-size: 12px;
+      color: var(--warm-500);
+      font-weight: 500;
+    }
+
+    .meeting-title {
+      font-family: var(--font-serif);
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--warm-900);
+      margin-bottom: var(--space-2);
+      line-height: 1.4;
+    }
+
+    .meeting-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      font-size: 13px;
+      color: var(--warm-600);
+    }
+
+    .meeting-meta-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+
+    .meeting-participants {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin-top: var(--space-3);
+      padding-top: var(--space-3);
+      border-top: 1px solid var(--warm-200);
+    }
+
+    .participant-avatars {
+      display: flex;
+    }
+
+    .participant-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--warm-200);
+      border: 2px solid white;
+      margin-left: -8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--warm-600);
+    }
+
+    .participant-avatar:first-child {
+      margin-left: 0;
+    }
+
+    .participant-count {
+      font-size: 13px;
+      color: var(--warm-500);
+    }
+
+    /* Urgent Badge */
+    .badge-urgent {
+      background: rgba(199, 118, 84, 0.1);
+      color: var(--brand-600);
+      animation: pulse-soft 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-soft {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    /* ===== MY PAGE SCREEN ===== */
+    .mypage-header {
+      background: linear-gradient(180deg, var(--warm-100) 0%, var(--warm-50) 100%);
+      padding: var(--space-4) var(--space-4) var(--space-8);
+      position: relative;
+    }
+
+    .mypage-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 32px;
+      background: var(--warm-50);
+      border-radius: 24px 24px 0 0;
+    }
+
+    .profile-section {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      position: relative;
+      z-index: 1;
+    }
+
+    .profile-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--brand-400), var(--brand-600));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-weight: 600;
+      color: white;
+      box-shadow: 0 4px 16px rgba(199, 118, 84, 0.3);
+    }
+
+    .profile-info h2 {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--warm-900);
+      margin-bottom: var(--space-1);
+    }
+
+    .profile-days {
+      font-size: 13px;
+      color: var(--warm-500);
+    }
+
+    .profile-days strong {
+      color: var(--brand-500);
+      font-weight: 600;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-3);
+      padding: var(--space-4);
+      margin-top: -16px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 16px;
+      padding: var(--space-4);
+      box-shadow: var(--shadow-paper);
+      text-align: center;
+      border: 1px solid rgba(228, 221, 210, 0.5);
+      transition: transform 0.2s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .stat-icon {
+      font-size: 24px;
+      margin-bottom: var(--space-2);
+    }
+
+    .stat-value {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--warm-900);
+      line-height: 1;
+      margin-bottom: var(--space-1);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--warm-500);
+    }
+
+    /* Badges Section */
+    .badges-section {
+      padding: var(--space-4);
+    }
+
+    .badges-title {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-family: var(--font-serif);
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--warm-800);
+      margin-bottom: var(--space-4);
+    }
+
+    .badges-grid {
+      display: flex;
+      gap: var(--space-3);
+      overflow-x: auto;
+      padding-bottom: var(--space-2);
+      margin: 0 calc(-1 * var(--space-4));
+      padding-left: var(--space-4);
+      padding-right: var(--space-4);
+    }
+
+    .badges-grid::-webkit-scrollbar {
+      display: none;
+    }
+
+    .badge-item {
+      flex-shrink: 0;
+      width: 88px;
+      background: white;
+      border-radius: 16px;
+      padding: var(--space-4) var(--space-3);
+      text-align: center;
+      box-shadow: var(--shadow-paper);
+      border: 1px solid rgba(228, 221, 210, 0.5);
+      transition: transform 0.2s ease;
+    }
+
+    .badge-item:hover {
+      transform: scale(1.05);
+    }
+
+    .badge-item.locked {
+      opacity: 0.4;
+      filter: grayscale(1);
+    }
+
+    .badge-emoji {
+      font-size: 32px;
+      margin-bottom: var(--space-2);
+    }
+
+    .badge-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--warm-700);
+      line-height: 1.3;
+    }
+
+    /* Qualification Status */
+    .qualification-card {
+      margin: var(--space-4);
+      padding: var(--space-4);
+      background: linear-gradient(135deg, rgba(74, 124, 89, 0.08), rgba(74, 124, 89, 0.03));
+      border-radius: 16px;
+      border: 1px solid rgba(74, 124, 89, 0.15);
+    }
+
+    .qualification-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin-bottom: var(--space-2);
+    }
+
+    .qualification-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
+    .qualification-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--success);
+    }
+
+    .qualification-detail {
+      font-size: 13px;
+      color: var(--warm-600);
+    }
+
+    /* ===== PRAISE SCREEN ===== */
+    .praise-header {
+      padding: var(--space-6) var(--space-4) var(--space-8);
+      text-align: center;
+      background: linear-gradient(180deg, var(--warm-50) 0%, transparent 100%);
+    }
+
+    .praise-icon {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto var(--space-4);
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      box-shadow: 0 8px 24px rgba(253, 230, 138, 0.4);
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .praise-title {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--warm-900);
+      margin-bottom: var(--space-2);
+    }
+
+    .praise-subtitle {
+      font-size: 14px;
+      color: var(--warm-500);
+    }
+
+    /* Participant Selection */
+    .participant-section {
+      padding: var(--space-4);
+    }
+
+    .participant-section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--warm-600);
+      margin-bottom: var(--space-3);
+    }
+
+    .participant-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .participant-option {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      background: white;
+      border-radius: 12px;
+      border: 2px solid var(--warm-200);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .participant-option:hover {
+      border-color: var(--warm-300);
+      background: var(--warm-50);
+    }
+
+    .participant-option.selected {
+      border-color: var(--brand-500);
+      background: rgba(199, 118, 84, 0.05);
+    }
+
+    .participant-radio {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid var(--warm-300);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+    }
+
+    .participant-option.selected .participant-radio {
+      border-color: var(--brand-500);
+      background: var(--brand-500);
+    }
+
+    .participant-option.selected .participant-radio::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: white;
+    }
+
+    .participant-name {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--warm-800);
+    }
+
+    /* Phrase Selection */
+    .phrase-section {
+      padding: var(--space-4);
+      padding-top: var(--space-6);
+      border-top: 1px solid var(--warm-200);
+      margin-top: var(--space-4);
+    }
+
+    .phrase-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .phrase-option {
+      padding: var(--space-3) var(--space-4);
+      background: white;
+      border-radius: 12px;
+      border: 2px solid var(--warm-200);
+      font-size: 14px;
+      color: var(--warm-700);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+
+    .phrase-option:hover {
+      border-color: var(--brand-300);
+      background: var(--warm-50);
+    }
+
+    .phrase-option.selected {
+      border-color: var(--brand-500);
+      background: linear-gradient(135deg, rgba(199, 118, 84, 0.08), rgba(199, 118, 84, 0.03));
+      color: var(--warm-900);
+      font-weight: 500;
+    }
+
+    /* Submit Button */
+    .praise-submit {
+      margin: var(--space-6) var(--space-4);
+      padding: var(--space-4);
+      background: linear-gradient(135deg, var(--brand-500), var(--brand-600));
+      border: none;
+      border-radius: 14px;
+      color: white;
+      font-family: var(--font-sans);
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 16px rgba(199, 118, 84, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+    }
+
+    .praise-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(199, 118, 84, 0.4);
+    }
+
+    .praise-submit:active {
+      transform: translateY(0);
+    }
+
+    /* ===== Bottom Navigation ===== */
+    .bottom-nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 68px;
+      background: white;
+      border-top: 1px solid var(--warm-200);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0 var(--space-4);
+      padding-bottom: 8px;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-2);
+      color: var(--warm-400);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .nav-item.active {
+      color: var(--brand-500);
+    }
+
+    .nav-icon {
+      font-size: 22px;
+    }
+
+    .nav-label {
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    /* ===== Animations ===== */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-in {
+      animation: fadeInUp 0.4s ease-out;
+    }
+
+    .delay-1 { animation-delay: 0.1s; animation-fill-mode: backwards; }
+    .delay-2 { animation-delay: 0.2s; animation-fill-mode: backwards; }
+    .delay-3 { animation-delay: 0.3s; animation-fill-mode: backwards; }
+    .delay-4 { animation-delay: 0.4s; animation-fill-mode: backwards; }
+  </style>
+</head>
+<body>
+  <div class="mockup-container">
+
+    <!-- ===== HOME SCREEN ===== -->
+    <div>
+      <div class="screen-label">홈 화면</div>
+      <div class="phone-frame">
+        <div class="phone-content paper-texture">
+
+          <!-- Header -->
+          <div class="home-header animate-in">
+            <p class="home-greeting">안녕하세요, 김독서님 👋</p>
+            <h1 class="home-title">오늘도 <span>지독하게</span><br>함께 읽어요</h1>
+          </div>
+
+          <!-- My Next Meeting -->
+          <div class="my-meetings-preview animate-in delay-1">
+            <p class="my-meetings-label">다가오는 내 모임</p>
+            <div class="my-meetings-info">
+              <span class="my-meetings-dday">D-3</span>
+              <span class="my-meetings-name">경주 정기모임</span>
+            </div>
+          </div>
+
+          <!-- This Month's Meetings -->
+          <div class="section-header animate-in delay-2">
+            <h2 class="section-title">1월 모임</h2>
+            <a href="#" class="section-more">전체보기</a>
+          </div>
+
+          <div class="meeting-cards">
+            <!-- Meeting Card 1 -->
+            <div class="meeting-card animate-in delay-2">
+              <div class="meeting-card-header">
+                <span class="meeting-date">1월 18일 (토) 오후 2시</span>
+                <span class="badge badge-urgent">마감임박</span>
+              </div>
+              <h3 class="meeting-title">경주 정기모임</h3>
+              <div class="meeting-meta">
+                <span class="meeting-meta-item">📍 황리단길 북카페</span>
+                <span class="meeting-meta-item">💰 15,000콩</span>
+              </div>
+              <div class="meeting-participants">
+                <div class="participant-avatars">
+                  <div class="participant-avatar" style="background: #e8d4c4;">박</div>
+                  <div class="participant-avatar" style="background: #d4e8d9;">이</div>
+                  <div class="participant-avatar" style="background: #d4dde8;">최</div>
+                  <div class="participant-avatar" style="background: #e8e4d4;">+9</div>
+                </div>
+                <span class="participant-count">12명 참여</span>
+              </div>
+            </div>
+
+            <!-- Meeting Card 2 -->
+            <div class="meeting-card animate-in delay-3">
+              <div class="meeting-card-header">
+                <span class="meeting-date">1월 25일 (토) 오후 2시</span>
+                <span class="badge badge-success">모집중</span>
+              </div>
+              <h3 class="meeting-title">포항 정기모임</h3>
+              <div class="meeting-meta">
+                <span class="meeting-meta-item">📍 포항 공간서가</span>
+                <span class="meeting-meta-item">💰 15,000콩</span>
+              </div>
+              <div class="meeting-participants">
+                <div class="participant-avatars">
+                  <div class="participant-avatar" style="background: #e8d8d4;">정</div>
+                  <div class="participant-avatar" style="background: #d4e0e8;">한</div>
+                  <div class="participant-avatar" style="background: #e4d4e8;">+3</div>
+                </div>
+                <span class="participant-count">5명 참여</span>
+              </div>
+            </div>
+
+            <!-- Meeting Card 3 -->
+            <div class="meeting-card animate-in delay-4">
+              <div class="meeting-card-header">
+                <span class="meeting-date">2월 1일 (토) 오후 3시</span>
+                <span class="badge badge-brand">토론모임</span>
+              </div>
+              <h3 class="meeting-title">『아몬드』 깊이읽기</h3>
+              <div class="meeting-meta">
+                <span class="meeting-meta-item">📍 경주 책마실</span>
+                <span class="meeting-meta-item">💰 20,000콩</span>
+              </div>
+              <div class="meeting-participants">
+                <div class="participant-avatars">
+                  <div class="participant-avatar" style="background: #d4e8e4;">김</div>
+                  <div class="participant-avatar" style="background: #e8d4d8;">+1</div>
+                </div>
+                <span class="participant-count">2명 참여</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="height: 100px;"></div>
+
+          <!-- Bottom Navigation -->
+          <div class="bottom-nav">
+            <a href="#" class="nav-item active">
+              <span class="nav-icon">🏠</span>
+              <span class="nav-label">홈</span>
+            </a>
+            <a href="#" class="nav-item">
+              <span class="nav-icon">📅</span>
+              <span class="nav-label">일정</span>
+            </a>
+            <a href="#" class="nav-item">
+              <span class="nav-icon">👤</span>
+              <span class="nav-label">마이</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== MY PAGE SCREEN ===== -->
+    <div>
+      <div class="screen-label">마이페이지</div>
+      <div class="phone-frame">
+        <div class="phone-content paper-texture">
+
+          <!-- Profile Header -->
+          <div class="mypage-header animate-in">
+            <div class="profile-section">
+              <div class="profile-avatar">김</div>
+              <div class="profile-info">
+                <h2>김독서님</h2>
+                <p class="profile-days">지독해와 함께한 지 <strong>127일째</strong> 📚</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stats Grid -->
+          <div class="stats-grid">
+            <div class="stat-card animate-in delay-1">
+              <div class="stat-icon">📅</div>
+              <div class="stat-value">12</div>
+              <div class="stat-label">총 참여</div>
+            </div>
+            <div class="stat-card animate-in delay-1">
+              <div class="stat-icon">🔥</div>
+              <div class="stat-value">3</div>
+              <div class="stat-label">연속 참여 (주)</div>
+            </div>
+            <div class="stat-card animate-in delay-2">
+              <div class="stat-icon">💛</div>
+              <div class="stat-value">8</div>
+              <div class="stat-label">받은 칭찬</div>
+            </div>
+            <div class="stat-card animate-in delay-2">
+              <div class="stat-icon">📖</div>
+              <div class="stat-value">15</div>
+              <div class="stat-label">등록한 책</div>
+            </div>
+          </div>
+
+          <!-- Badges Section -->
+          <div class="badges-section animate-in delay-3">
+            <h3 class="badges-title">🏆 나의 배지</h3>
+            <div class="badges-grid">
+              <div class="badge-item">
+                <div class="badge-emoji">👣</div>
+                <div class="badge-name">첫 발자국</div>
+              </div>
+              <div class="badge-item">
+                <div class="badge-emoji">🎯</div>
+                <div class="badge-name">10회 참여</div>
+              </div>
+              <div class="badge-item">
+                <div class="badge-emoji">🔥</div>
+                <div class="badge-name">연속 4주</div>
+              </div>
+              <div class="badge-item locked">
+                <div class="badge-emoji">💛</div>
+                <div class="badge-name">칭찬 10개</div>
+              </div>
+              <div class="badge-item locked">
+                <div class="badge-emoji">🌟</div>
+                <div class="badge-name">칭찬 30개</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Qualification Status -->
+          <div class="qualification-card animate-in delay-4">
+            <div class="qualification-header">
+              <div class="qualification-dot"></div>
+              <span class="qualification-title">정기모임 자격 활성</span>
+            </div>
+            <p class="qualification-detail">마지막 참여: 2026년 1월 11일 · 5개월 남음</p>
+          </div>
+
+          <div style="height: 100px;"></div>
+
+          <!-- Bottom Navigation -->
+          <div class="bottom-nav">
+            <a href="#" class="nav-item">
+              <span class="nav-icon">🏠</span>
+              <span class="nav-label">홈</span>
+            </a>
+            <a href="#" class="nav-item">
+              <span class="nav-icon">📅</span>
+              <span class="nav-label">일정</span>
+            </a>
+            <a href="#" class="nav-item active">
+              <span class="nav-icon">👤</span>
+              <span class="nav-label">마이</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PRAISE SCREEN ===== -->
+    <div>
+      <div class="screen-label">칭찬하기</div>
+      <div class="phone-frame">
+        <div class="phone-content paper-texture">
+
+          <!-- Praise Header -->
+          <div class="praise-header animate-in">
+            <div class="praise-icon">💛</div>
+            <h1 class="praise-title">누구에게 칭찬을 전할까요?</h1>
+            <p class="praise-subtitle">익명으로 전달됩니다</p>
+          </div>
+
+          <!-- Participant Selection -->
+          <div class="participant-section animate-in delay-1">
+            <p class="participant-section-title">함께했던 분들</p>
+            <div class="participant-list">
+              <div class="participant-option">
+                <div class="participant-radio"></div>
+                <span class="participant-name">박책방</span>
+              </div>
+              <div class="participant-option selected">
+                <div class="participant-radio"></div>
+                <span class="participant-name">이모임</span>
+              </div>
+              <div class="participant-option">
+                <div class="participant-radio"></div>
+                <span class="participant-name">최카페</span>
+              </div>
+              <div class="participant-option">
+                <div class="participant-radio"></div>
+                <span class="participant-name">정서재</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phrase Selection -->
+          <div class="phrase-section animate-in delay-2">
+            <p class="participant-section-title">어떤 마음을 전할까요?</p>
+            <div class="phrase-list">
+              <button class="phrase-option">덕분에 좋은 시간이었어요</button>
+              <button class="phrase-option selected">따뜻한 분위기를 만들어주셨어요</button>
+              <button class="phrase-option">이야기가 인상 깊었어요</button>
+              <button class="phrase-option">새로운 관점을 얻었어요</button>
+              <button class="phrase-option">다음에도 함께하고 싶어요</button>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button class="praise-submit animate-in delay-3">
+            <span>💛</span>
+            <span>칭찬 보내기</span>
+          </button>
+
+          <div style="height: 40px;"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Interactive states for mockup
+    document.querySelectorAll('.participant-option').forEach(option => {
+      option.addEventListener('click', () => {
+        document.querySelectorAll('.participant-option').forEach(o => o.classList.remove('selected'));
+        option.classList.add('selected');
+      });
+    });
+
+    document.querySelectorAll('.phrase-option').forEach(option => {
+      option.addEventListener('click', () => {
+        document.querySelectorAll('.phrase-option').forEach(o => o.classList.remove('selected'));
+        option.classList.add('selected');
+      });
+    });
+
+    document.querySelector('.praise-submit')?.addEventListener('click', () => {
+      const btn = document.querySelector('.praise-submit');
+      btn.innerHTML = '<span>✨</span><span>따뜻한 마음이 전해졌어요!</span>';
+      btn.style.background = 'linear-gradient(135deg, #4a7c59, #3d6b4a)';
+    });
+  </script>
+</body>
+</html>

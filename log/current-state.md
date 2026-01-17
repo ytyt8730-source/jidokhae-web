@@ -1,7 +1,7 @@
 # 현재 작업 상태 (AI 에이전트용)
 
-> **마지막 업데이트**: 2026-01-17
-> **버전**: 1.2
+> **마지막 업데이트**: 2026-01-18
+> **버전**: 1.3
 
 ---
 
@@ -9,38 +9,42 @@
 
 | 항목 | 값 |
 |------|-----|
-| 완료된 WP | M1 기반구축, M2 핵심결제흐름, M3 알림시스템 |
-| 다음 WP | **M4 소속감** |
-| 블로커 | 솔라피 계정 설정 필요 (M3 실발송 전) |
+| 완료된 WP | M1 기반구축, M2 핵심결제흐름, M3 알림시스템, **M4 소속감** |
+| 다음 WP | **M5 운영자도구** |
+| 블로커 | 솔라피 카카오 채널 승인 대기 중 (M3 실발송 전) |
 
 ---
 
 ## ✅ 마지막 완료 작업
 
-### WP-M3 알림시스템 (2026-01-17 완료)
+### WP-M4 소속감 기능 (2026-01-18 검증 완료)
 
-**코드 구현**: 4개 Phase 전체 완료
-- Phase 1: 알림 서비스 추상화 (솔라피/Mock 어댑터)
-- Phase 2: 모임 리마인드 자동화 (3일/1일/당일)
-- Phase 3: 대기자 알림 (자리 발생, 기한 만료)
-- Phase 4: 세그먼트별/월말 알림 + 운영자 수동 발송
+**코드 구현**: 5개 Phase 전체 완료
+- Phase 1: 참여 완료 시스템 (feedback 화면, post-meeting cron)
+- Phase 2: 칭찬하기 & 후기 (익명 칭찬, 3개월 중복 방지, 후기 작성)
+- Phase 3: 배지 시스템 (6종 배지, 조건 체크 및 자동 부여)
+- Phase 4: 마이페이지 강화 (참여 통계, 배지 표시, 자격 상태)
+- Phase 5: 책장 (책 등록, 한 문장 기록)
 
 **주요 구현 내용**:
-- ✅ NotificationService 인터페이스 (추후 NHN Cloud 등 교체 용이)
-- ✅ Vercel Cron 4개 스케줄 설정
-- ✅ 관리자 알림 발송 UI
-- ✅ notification_logs 테이블 로깅
-- ✅ 중복 발송 방지 로직
+- ✅ `/meetings/[id]/feedback` - 참여 완료 선택 화면
+- ✅ `/meetings/[id]/praise` - 칭찬하기 (참가자 선택 + 문구 5개)
+- ✅ `/meetings/[id]/review` - 후기 작성 (공개 동의 옵션)
+- ✅ `/mypage` - 참여 통계, 배지 목록, 정기모임 자격 상태
+- ✅ `/mypage/bookshelf` - 내 책장 (책 등록, 한 문장 기록)
+- ✅ `/api/praises` - 칭찬 저장 + 중복 방지 + 배지 체크
+- ✅ `/api/reviews` - 후기 저장
+- ✅ `/api/cron/post-meeting` - 모임 종료 3일 후 알림
+- ✅ `/lib/badges.ts` - 배지 조건 체크 및 자동 부여
 
 **테스트 현황**:
 
 | 항목 | 상태 | 비고 |
 |------|:----:|------|
-| TypeScript 타입 체크 | ✅ | 오류 없음 |
-| 프로덕션 빌드 | ✅ | 성공 |
-| Cron API 호출 | ✅ | 4개 모두 200 OK |
-| 관리자 API 인증 | ✅ | 403 정상 반환 |
-| 실제 알림톡 발송 | ⬜ | 솔라피 설정 필요 |
+| TypeScript 타입 체크 | ✅ | `npx tsc --noEmit` 오류 없음 |
+| 프로덕션 빌드 | ✅ | `npm run build` 성공 (35 페이지) |
+| 칭찬 중복 방지 | ✅ | 모임당 1명, 3개월 동일인 |
+| 배지 6종 정의 | ✅ | 첫 발자국, 10회 참여, 연속 4주, 칭찬 10/30/50 |
 
 ---
 
@@ -48,27 +52,21 @@
 
 ### M3 실발송 전 필요 작업 (영탁 담당)
 
-1. **Supabase RPC 함수 배포**
-   ```sql
-   -- SQL Editor에서 실행 필요
-   -- get_dormant_risk_users
-   -- adjust_waitlist_positions
-   ```
-
-2. **솔라피 설정**
+1. **솔라피 설정**
    - [x] 솔라피 계정 생성
    - [x] API 키 발급 → `.env.local`에 추가 완료
    - [x] 충전 (1만원)
    - [x] 발신번호 등록 (180일 후 재인증)
-   - [ ] 카카오 비즈니스 채널 승인 대기 중 (1~2일)
+   - [ ] 카카오 비즈니스 채널 승인 대기 중
    - [ ] 알림톡 템플릿 등록 (채널 승인 후)
 
-### WP-M4 소속감 기능
+### WP-M5 운영자 도구
 
-**구현 예정**:
-- 칭찬하기 (모임 후 다른 멤버에게)
-- 배지 시스템 (참여 횟수, 연속 참석 등)
-- 내 책장 (읽은 책 기록)
+**구현 예정** (4개 Phase):
+- Phase 1: 대시보드 (참가 현황, 수입, 환불 내역, 재참여율)
+- Phase 2: 알림 템플릿 관리 (문구/시점 수정, on/off)
+- Phase 3: 권한 관리 (운영자별 권한 선택적 부여)
+- Phase 4: 요청함 & 배너 관리
 
 ---
 
@@ -94,28 +92,32 @@
 
 ## 📁 최근 수정 파일
 
-### M3 핵심 파일
-- `src/lib/notification/` - 알림 서비스 모듈 (types, solapi, index)
-- `src/lib/reminder.ts` - 모임 리마인드 로직
-- `src/lib/waitlist-notification.ts` - 대기자 알림 로직
-- `src/lib/segment-notification.ts` - 세그먼트별 알림 로직
-- `src/app/api/cron/` - Cron API 엔드포인트 4개
-- `src/app/api/admin/notifications/` - 관리자 알림 API
-- `src/app/admin/notifications/` - 관리자 알림 UI
-- `vercel.json` - Cron 스케줄 설정
-- `supabase/schema.sql` - RPC 함수 추가
+### M4 핵심 파일
+- `src/app/meetings/[id]/feedback/` - 참여 완료 선택 화면
+- `src/app/meetings/[id]/praise/` - 칭찬하기 화면
+- `src/app/meetings/[id]/review/` - 후기 작성 화면
+- `src/app/mypage/page.tsx` - 마이페이지 (통계, 배지, 자격 상태)
+- `src/app/mypage/bookshelf/` - 내 책장
+- `src/app/api/praises/route.ts` - 칭찬 API
+- `src/app/api/reviews/route.ts` - 후기 API
+- `src/app/api/cron/post-meeting/route.ts` - 모임 종료 후 알림 Cron
+- `src/lib/praise.ts` - 칭찬 문구 상수
+- `src/lib/badges.ts` - 배지 시스템 로직
 
-### 환경 설정 (필요)
-- `.env.local` - 솔라피 API 키 추가 예정
+### M3 핵심 파일
+- `src/lib/notification/` - 알림 서비스 모듈
+- `src/lib/reminder.ts` - 모임 리마인드 로직
+- `src/app/api/cron/` - Cron API 엔드포인트
+- `src/app/admin/notifications/` - 관리자 알림 UI
 
 ---
 
 ## 🔗 참조 문서
 
-- [WP-M3 완료 로그](/log/WP-M3-알림시스템-완료-로그.md)
+- [WP-M4 소속감](/roadmap/work-packages/WP-M4-소속감기능.md)
+- [WP-M5 운영자도구](/roadmap/work-packages/WP-M5-운영자도구.md)
 - [외부 서비스 설정](/docs/external-services.md)
 - [환경 변수](/docs/env-variables.md)
-- [WP-M4 소속감](/roadmap/work-packages/WP-M4-소속감.md)
 
 ---
 
@@ -123,7 +125,7 @@
 
 | 항목 | 값 |
 |------|-----|
-| Next.js | 14.2.x |
+| Next.js | 14.2.35 |
 | Supabase | njaavwosjwndtwnjovac |
 | 포트원 | V2 API |
 | 솔라피 | API 키 설정 완료, 카카오 채널 승인 대기 |
