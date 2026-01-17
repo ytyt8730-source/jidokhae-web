@@ -16,6 +16,14 @@
     {
       "path": "/api/cron/segment-reminder",
       "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/post-meeting",
+      "schedule": "0 1 * * *"
+    },
+    {
+      "path": "/api/cron/auto-complete",
+      "schedule": "0 3 * * *"
     }
   ]
 }

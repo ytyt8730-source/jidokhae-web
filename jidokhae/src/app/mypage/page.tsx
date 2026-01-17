@@ -1,11 +1,12 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { User, Calendar, Award, BookOpen, ArrowRight } from 'lucide-react'
+import { User, Calendar, Award, BookOpen, ArrowRight, Trophy } from 'lucide-react'
 import { differenceInDays } from 'date-fns'
 import Badge from '@/components/ui/Badge'
 import { formatMeetingDate, formatFee } from '@/lib/utils'
 import { getDday } from '@/lib/payment'
+import { getUserBadges, getBadgeInfo } from '@/lib/badges'
 import type { User as UserType, Meeting, Registration, Waitlist } from '@/types/database'
 
 export const metadata = {
@@ -46,6 +47,15 @@ export default async function MyPage() {
     .eq('user_id', authUser.id)
     .eq('status', 'waiting')
     .order('created_at', { ascending: false }) as { data: (Waitlist & { meetings: Meeting })[] | null }
+
+  // 배지 조회
+  const userBadges = await getUserBadges(authUser.id)
+
+  // 등록한 책 수 조회
+  const { count: bookCount } = await supabase
+    .from('bookshelf')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', authUser.id)
 
   // 확정 신청 (다가오는 모임만)
   const confirmedRegistrations = (registrations || []).filter(
@@ -135,12 +145,38 @@ export default async function MyPage() {
           <p className="text-2xl font-bold text-warm-900">{user.total_praises_received}</p>
           <p className="text-xs text-warm-500">받은 칭찬</p>
         </div>
-        <div className="card p-4 text-center">
+        <Link href="/mypage/bookshelf" className="card p-4 text-center hover:shadow-md transition-shadow">
           <BookOpen className="mx-auto text-warm-400 mb-2" size={24} />
-          <p className="text-2xl font-bold text-warm-900">0</p>
+          <p className="text-2xl font-bold text-warm-900">{bookCount || 0}</p>
           <p className="text-xs text-warm-500">등록한 책</p>
-        </div>
+        </Link>
       </div>
+
+      {/* 배지 섹션 */}
+      {userBadges.length > 0 && (
+        <div className="card p-6">
+          <h3 className="flex items-center gap-2 font-semibold text-warm-900 mb-4">
+            <Trophy size={20} className="text-yellow-500" />
+            나의 배지
+          </h3>
+          <div className="flex flex-wrap gap-3">
+            {userBadges.map((badge: { id: string; badge_type: string }) => {
+              const info = getBadgeInfo(badge.badge_type)
+              if (!info) return null
+              return (
+                <div
+                  key={badge.id}
+                  className="flex items-center gap-2 px-3 py-2 bg-warm-50 rounded-xl"
+                  title={info.description}
+                >
+                  <span className="text-xl">{info.icon}</span>
+                  <span className="text-sm font-medium text-warm-700">{info.name}</span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       {/* 정기모임 자격 상태 */}
       <div className="card p-6">

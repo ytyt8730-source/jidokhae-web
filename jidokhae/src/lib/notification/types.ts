@@ -70,6 +70,9 @@ export const NOTIFICATION_TEMPLATES = {
 
   // 운영자 수동 발송
   ADMIN_NOTICE: 'admin_notice',         // 공지사항
+
+  // M4 소속감 - 참여 완료
+  POST_MEETING: 'post_meeting',         // 모임 종료 후 "어떠셨어요?" 알림
 } as const
 
 export type TemplateCode = typeof NOTIFICATION_TEMPLATES[keyof typeof NOTIFICATION_TEMPLATES]
@@ -126,3 +129,20 @@ export interface AdminNotificationRequest {
   message: string
   templateCode?: string
 }
+
+// M4 참여 완료 알림 대상 정보
+export interface PostMeetingTarget {
+  registrationId: string
+  userId: string
+  userName: string
+  phone: string
+  meetingId: string
+  meetingTitle: string
+  meetingDatetime: Date
+}
+
+// 참여 완료 방법
+export type ParticipationMethod = 'praise' | 'review' | 'confirm' | 'auto' | 'admin'
+
+// 참여 상태
+export type ParticipationStatus = 'completed' | 'no_show'

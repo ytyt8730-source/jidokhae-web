@@ -71,6 +71,11 @@ export enum ErrorCode {
   PRAISE_DUPLICATE_PERSON = 4402,
   PRAISE_SELF_NOT_ALLOWED = 4403,
 
+  // 비즈니스 로직 - 참여 완료 (45xx)
+  PARTICIPATION_ALREADY_COMPLETED = 4501,
+  PARTICIPATION_NO_SHOW = 4502,
+  PARTICIPATION_INVALID_METHOD = 4503,
+
   // =============================================
   // 시스템 (5xxx)
   // =============================================
@@ -141,6 +146,11 @@ export const ERROR_MESSAGES: Record<ErrorCode, string> = {
   [ErrorCode.PRAISE_DUPLICATE_PERSON]: '같은 분에게 3개월 내 칭찬은 1번만 가능해요.',
   [ErrorCode.PRAISE_SELF_NOT_ALLOWED]: '본인은 칭찬할 수 없습니다.',
 
+  // 비즈니스 로직 - 참여 완료
+  [ErrorCode.PARTICIPATION_ALREADY_COMPLETED]: '이미 참여 완료된 모임입니다.',
+  [ErrorCode.PARTICIPATION_NO_SHOW]: '미참여 처리된 모임입니다.',
+  [ErrorCode.PARTICIPATION_INVALID_METHOD]: '올바르지 않은 참여 완료 방법입니다.',
+
   // 시스템
   [ErrorCode.INTERNAL_ERROR]: '서버 오류가 발생했습니다.',
   [ErrorCode.DATABASE_ERROR]: '데이터 처리 중 오류가 발생했습니다.',
@@ -204,6 +214,10 @@ export const ERROR_HTTP_STATUS: Record<ErrorCode, number> = {
   [ErrorCode.PRAISE_DUPLICATE_MEETING]: 409,
   [ErrorCode.PRAISE_DUPLICATE_PERSON]: 409,
   [ErrorCode.PRAISE_SELF_NOT_ALLOWED]: 400,
+
+  [ErrorCode.PARTICIPATION_ALREADY_COMPLETED]: 409,
+  [ErrorCode.PARTICIPATION_NO_SHOW]: 400,
+  [ErrorCode.PARTICIPATION_INVALID_METHOD]: 400,
 
   // 시스템 -> 500
   [ErrorCode.INTERNAL_ERROR]: 500,
