@@ -3,17 +3,20 @@
 /**
  * 결제 버튼 컴포넌트
  * WP-M2 Phase 2: 결제 연동 (포트원)
+ * WP-M5 Phase 1: 계좌이체 결제 지원 추가
  *
  * M2-007: 신청하기 버튼 활성화
  * M2-013: 결제 팝업 호출
  * M2-014~015: 결제 완료 처리
  * M2-017: 결제 완료 화면
  * M2-018~019: 결제 실패 처리
+ * M5-040: 결제 방식 선택 UI 표시
  */
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Button from '@/components/ui/Button'
+import PaymentMethodSelector from '@/components/PaymentMethodSelector'
 import { generateIdempotencyKey, PAYMENT_MESSAGES } from '@/lib/payment'
 import type { Meeting, User, PreparePaymentResponse } from '@/types/database'
 
@@ -65,8 +68,61 @@ export default function PaymentButton({
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showPaymentModal, setShowPaymentModal] = useState(false)
 
-  // 결제 처리
+  // 결제 버튼 클릭
+  const handlePaymentClick = async () => {
+    if (!user) {
+      router.push(`/auth/login?redirectTo=/meetings/${meeting.id}`)
+      return
+    }
+
+    // 무료 모임인 경우 바로 처리
+    if (meeting.fee === 0) {
+      await handleFreePayment()
+      return
+    }
+
+    // 유료 모임: 결제 방식 선택 모달 표시
+    setShowPaymentModal(true)
+  }
+
+  // 무료 모임 처리
+  const handleFreePayment = async () => {
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      const prepareRes = await fetch('/api/registrations/prepare', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ meetingId: meeting.id }),
+      })
+
+      const prepareData = await prepareRes.json()
+      const prepareResult = prepareData.data as PreparePaymentResponse
+
+      if (!prepareResult.success) {
+        setError(prepareResult.message)
+        setIsLoading(false)
+
+        if (prepareResult.message.includes('대기')) {
+          const confirmWait = window.confirm(prepareResult.message)
+          if (confirmWait) {
+            router.push(`/meetings/${meeting.id}/waitlist`)
+          }
+        }
+        return
+      }
+
+      await completePayment(prepareResult.registrationId!, 'FREE_' + Date.now(), 'free', 0)
+    } catch {
+      setError('처리 중 오류가 발생했습니다.')
+      setIsLoading(false)
+    }
+  }
+
+  // 기존 결제 처리 (기존 코드 유지 - 레거시 지원용)
   const handlePayment = async () => {
     if (!user) {
       router.push(`/auth/login?redirectTo=/meetings/${meeting.id}`)
@@ -168,6 +224,9 @@ export default function PaymentButton({
     }
   }
 
+  // handlePayment 사용하지 않는 경고 방지
+  void handlePayment
+
   // 결제 완료 처리
   const completePayment = async (
     registrationId: string,
@@ -222,7 +281,7 @@ export default function PaymentButton({
   return (
     <div className={className}>
       <Button
-        onClick={handlePayment}
+        onClick={handlePaymentClick}
         disabled={disabled || isLoading}
         isLoading={isLoading}
         className="w-full sm:w-auto"
@@ -231,6 +290,28 @@ export default function PaymentButton({
       </Button>
       {error && (
         <p className="text-sm text-red-500 mt-2">{error}</p>
+      )}
+
+      {/* 결제 방식 선택 모달 (M5-040) */}
+      {showPaymentModal && user && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setShowPaymentModal(false)}
+          />
+          <div className="relative bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto shadow-xl">
+            <div className="p-6">
+              <h2 className="text-lg font-semibold text-warm-900 mb-4">
+                {meeting.title} 신청
+              </h2>
+              <PaymentMethodSelector
+                meeting={meeting}
+                user={user}
+                onClose={() => setShowPaymentModal(false)}
+              />
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )

@@ -22,10 +22,21 @@ export type MeetingType = 'regular' | 'discussion' | 'other'
 export type MeetingStatus = 'open' | 'closed' | 'cancelled'
 
 // 신청 상태
-export type RegistrationStatus = 'pending' | 'confirmed' | 'cancelled'
+export type RegistrationStatus = 'pending' | 'pending_transfer' | 'confirmed' | 'cancelled'
 
 // 결제 상태
-export type PaymentStatus = 'pending' | 'paid' | 'refunded' | 'partial_refunded'
+export type PaymentStatus = 'pending' | 'paid' | 'refunded' | 'partial_refunded' | 'refund_pending'
+
+// 결제 방식
+export type PaymentMethod = 'card' | 'transfer'
+
+// 환불 계좌 정보 (JSONB)
+export interface RefundAccountInfo {
+  bank: string
+  account: string
+  holder: string
+  requested_at?: string
+}
 
 // 참여 상태
 export type ParticipationStatus = 'completed' | 'no_show' | null
@@ -143,12 +154,17 @@ export interface Database {
           meeting_id: string
           status: RegistrationStatus
           payment_status: PaymentStatus | null
+          payment_method: PaymentMethod | null
           payment_amount: number | null
           refund_amount: number
           cancel_reason: string | null
           cancelled_at: string | null
           participation_status: ParticipationStatus
           participation_method: ParticipationMethod
+          transfer_sender_name: string | null
+          transfer_deadline: string | null
+          refund_info: RefundAccountInfo | null
+          refund_completed_at: string | null
           created_at: string
           updated_at: string
         }
@@ -158,12 +174,17 @@ export interface Database {
           meeting_id: string
           status?: RegistrationStatus
           payment_status?: PaymentStatus | null
+          payment_method?: PaymentMethod | null
           payment_amount?: number | null
           refund_amount?: number
           cancel_reason?: string | null
           cancelled_at?: string | null
           participation_status?: ParticipationStatus
           participation_method?: ParticipationMethod
+          transfer_sender_name?: string | null
+          transfer_deadline?: string | null
+          refund_info?: RefundAccountInfo | null
+          refund_completed_at?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -173,12 +194,17 @@ export interface Database {
           meeting_id?: string
           status?: RegistrationStatus
           payment_status?: PaymentStatus | null
+          payment_method?: PaymentMethod | null
           payment_amount?: number | null
           refund_amount?: number
           cancel_reason?: string | null
           cancelled_at?: string | null
           participation_status?: ParticipationStatus
           participation_method?: ParticipationMethod
+          transfer_sender_name?: string | null
+          transfer_deadline?: string | null
+          refund_info?: RefundAccountInfo | null
+          refund_completed_at?: string | null
           created_at?: string
           updated_at?: string
         }

@@ -33,6 +33,13 @@ export enum ErrorCode {
   REFUND_ALREADY_PROCESSED = 2007,
   REFUND_AMOUNT_EXCEEDED = 2008,
 
+  // 계좌이체 (21xx)
+  TRANSFER_DEADLINE_EXPIRED = 2101,
+  TRANSFER_ALREADY_CONFIRMED = 2102,
+  TRANSFER_SENDER_NAME_MISMATCH = 2103,
+  TRANSFER_NOT_FOUND = 2104,
+  TRANSFER_INVALID_REFUND_ACCOUNT = 2105,
+
   // =============================================
   // 외부 서비스 (3xxx)
   // =============================================
@@ -112,6 +119,13 @@ export const ERROR_MESSAGES: Record<ErrorCode, string> = {
   [ErrorCode.REFUND_ALREADY_PROCESSED]: '이미 환불 처리되었습니다.',
   [ErrorCode.REFUND_AMOUNT_EXCEEDED]: '환불 금액이 결제 금액을 초과합니다.',
 
+  // 계좌이체
+  [ErrorCode.TRANSFER_DEADLINE_EXPIRED]: '입금 기한이 만료되었습니다.',
+  [ErrorCode.TRANSFER_ALREADY_CONFIRMED]: '이미 입금 확인된 건입니다.',
+  [ErrorCode.TRANSFER_SENDER_NAME_MISMATCH]: '입금자명이 일치하지 않습니다.',
+  [ErrorCode.TRANSFER_NOT_FOUND]: '계좌이체 신청 내역을 찾을 수 없습니다.',
+  [ErrorCode.TRANSFER_INVALID_REFUND_ACCOUNT]: '환불 계좌 정보가 올바르지 않습니다.',
+
   // 외부 서비스
   [ErrorCode.EXTERNAL_API_TIMEOUT]: '외부 서비스 응답이 지연되고 있습니다.',
   [ErrorCode.EXTERNAL_API_ERROR]: '외부 서비스 오류가 발생했습니다.',
@@ -184,6 +198,13 @@ export const ERROR_HTTP_STATUS: Record<ErrorCode, number> = {
   [ErrorCode.REFUND_NOT_ELIGIBLE]: 400,
   [ErrorCode.REFUND_ALREADY_PROCESSED]: 409,
   [ErrorCode.REFUND_AMOUNT_EXCEEDED]: 400,
+
+  // 계좌이체
+  [ErrorCode.TRANSFER_DEADLINE_EXPIRED]: 400,
+  [ErrorCode.TRANSFER_ALREADY_CONFIRMED]: 409,
+  [ErrorCode.TRANSFER_SENDER_NAME_MISMATCH]: 400,
+  [ErrorCode.TRANSFER_NOT_FOUND]: 404,
+  [ErrorCode.TRANSFER_INVALID_REFUND_ACCOUNT]: 400,
 
   // 외부 서비스 -> 502, 503
   [ErrorCode.EXTERNAL_API_TIMEOUT]: 504,

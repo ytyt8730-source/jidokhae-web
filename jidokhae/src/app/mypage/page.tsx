@@ -62,6 +62,11 @@ export default async function MyPage() {
     r => r.status === 'confirmed' && new Date(r.meetings.datetime) > new Date()
   )
 
+  // 입금대기 신청 (M5-046)
+  const pendingTransferRegistrations = (registrations || []).filter(
+    r => r.status === 'pending_transfer' && new Date(r.meetings.datetime) > new Date()
+  )
+
   // 취소된 신청
   const cancelledRegistrations = (registrations || []).filter(r => r.status === 'cancelled')
 
@@ -246,6 +251,41 @@ export default async function MyPage() {
           <p className="text-sm text-warm-500 text-center py-8">
             신청한 모임이 없습니다.
           </p>
+        )}
+
+        {/* 입금대기 (M5-046) */}
+        {pendingTransferRegistrations.length > 0 && (
+          <div className="mt-6">
+            <h4 className="text-sm font-medium text-warm-700 mb-3">입금대기</h4>
+            <div className="space-y-3">
+              {pendingTransferRegistrations.map((reg) => (
+                <Link
+                  key={reg.id}
+                  href={`/meetings/${reg.meeting_id}/transfer-pending`}
+                  className="block p-4 bg-yellow-50 rounded-xl hover:bg-yellow-100 transition-colors"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Badge variant="warning">입금대기</Badge>
+                        <span className="text-sm font-medium text-brand-600">
+                          {getDday(reg.meetings.datetime)}
+                        </span>
+                      </div>
+                      <h4 className="font-medium text-warm-900 truncate">{reg.meetings.title}</h4>
+                      <p className="text-sm text-warm-500 mt-1">
+                        {formatMeetingDate(reg.meetings.datetime)}
+                      </p>
+                      <p className="text-xs text-yellow-700 mt-2">
+                        입금 정보 확인하기 →
+                      </p>
+                    </div>
+                    <ArrowRight size={20} className="text-warm-400 flex-shrink-0 mt-1" />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
         )}
 
         {/* 대기 중 (M2-045) */}

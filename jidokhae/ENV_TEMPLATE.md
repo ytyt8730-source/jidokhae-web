@@ -29,6 +29,16 @@ NEXT_PUBLIC_PORTONE_CHANNEL_KEY=channel-key-xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 # 포트원 관리자 → 결제연동 → 연동 정보에서 확인
 PORTONE_API_SECRET=PortOneSecret-xxxxx
 PORTONE_WEBHOOK_SECRET=whsec_xxxxx
+
+# ============================================
+# 계좌이체 결제
+# ============================================
+# 회원이 입금할 계좌 정보
+TRANSFER_BANK_NAME=신한은행
+TRANSFER_ACCOUNT_NUMBER=110-xxx-xxxxxx
+TRANSFER_ACCOUNT_HOLDER=지독해
+# 입금 기한 (시간 단위, 기본값: 24)
+TRANSFER_DEADLINE_HOURS=24
 ```
 
 ---
@@ -71,6 +81,7 @@ LOG_LEVEL=debug
 |--------|----------|
 | Supabase | https://supabase.com/dashboard → 프로젝트 → Settings → API |
 | 포트원 V2 | https://admin.portone.io → 결제연동 → 연동 정보 → **V2 API** 탭 |
+| 계좌이체 | 운영자에게 입금 받을 계좌 정보 확인 |
 | 솔라피 | https://console.solapi.com → 설정 → API 키 관리 |
 
 ---

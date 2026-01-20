@@ -1,14 +1,14 @@
-# Scenario: M5 - 운영자 도구
+# Scenario: M5 - 운영자 도구 + 계좌이체
 
 ---
 
-**Work Package:** WP-M5  
-**총 Scenario 수:** 42개  
+**Work Package:** WP-M5
+**총 Scenario 수:** 57개
 **작성일:** 2026-01-14
 
 ---
 
-## Phase 1: 대시보드
+## Phase 1: 대시보드 + 계좌이체 결제
 
 ### Scenario M5-001: 대시보드 페이지 접근 성공
 
@@ -97,6 +97,174 @@
 - **When:** `/api/admin/stats` API가 호출됨
 - **Then:** 3초 이내에 응답됨
 - **선행 Scenario:** M5-001
+
+---
+
+### 계좌이체 - 사용자 측
+
+### Scenario M5-040: 결제 방식 선택 UI 표시
+
+- **Given:** 모임 상세에서 "신청하기" 클릭
+- **When:** 결제 방식 선택 화면이 표시됨
+- **Then:** "간편결제"와 "계좌이체" 두 옵션이 탭/라디오 형태로 표시됨
+- **선행 Scenario:** M2-007
+
+---
+
+### Scenario M5-041: 계좌이체 선택 시 계좌 정보 표시
+
+- **Given:** 결제 방식에서 "계좌이체"를 선택함
+- **When:** 계좌 정보 화면이 표시됨
+- **Then:** 은행명, 계좌번호, 예금주, 입금자명(MMDD_이름), 금액이 표시됨
+- **선행 Scenario:** M5-040
+
+---
+
+### Scenario M5-042: 계좌번호 클립보드 복사
+
+- **Given:** 계좌 정보 화면이 표시됨
+- **When:** 계좌번호 옆 복사 버튼을 클릭
+- **Then:** 계좌번호가 클립보드에 복사되고 "복사됨" 피드백 표시
+- **선행 Scenario:** M5-041
+
+---
+
+### Scenario M5-043: 입금자명 클립보드 복사
+
+- **Given:** 계좌 정보 화면이 표시됨
+- **When:** 입금자명 옆 복사 버튼을 클릭
+- **Then:** "0125_홍길동" 형태의 입금자명이 클립보드에 복사됨
+- **선행 Scenario:** M5-041
+
+---
+
+### Scenario M5-044: 입금 완료 체크 성공
+
+- **Given:** 사용자가 계좌이체 정보를 확인함
+- **When:** "입금했습니다" 버튼을 클릭하고 확인 모달에서 확인
+- **Then:** registrations 생성 (payment_method='transfer', status='pending_transfer'), current_participants +1, 입금대기 안내 화면 표시
+- **선행 Scenario:** M5-041
+
+---
+
+### Scenario M5-045: 입금 안내 알림톡 발송
+
+- **Given:** "입금했습니다" 체크 완료
+- **When:** registrations 생성 후
+- **Then:** 계좌번호, 입금자명, 금액, 기한이 포함된 알림톡 발송
+- **선행 Scenario:** M5-044, M3-011
+
+---
+
+### Scenario M5-046: 마이페이지 입금대기 상태 표시
+
+- **Given:** 계좌이체로 신청 후 입금대기 상태
+- **When:** 마이페이지 신청 내역 확인
+- **Then:** "[입금대기]" 뱃지와 함께 입금 정보 다시보기 링크 표시
+- **선행 Scenario:** M5-044
+
+---
+
+### Scenario M5-047: 입금대기 중 사용자 취소
+
+- **Given:** 입금대기 상태 (아직 운영자 확인 전)
+- **When:** 사용자가 취소 버튼 클릭
+- **Then:** registrations.status가 'cancelled', current_participants -1, 환불 계좌 입력 불필요
+- **선행 Scenario:** M5-044
+
+---
+
+### Scenario M5-048: 계좌이체 건 취소 시 환불 계좌 입력
+
+- **Given:** 계좌이체로 결제 확정된 모임을 취소하려 함
+- **When:** 취소하기 버튼을 클릭
+- **Then:** 환불 계좌 입력 모달 표시 (은행명, 계좌번호, 예금주)
+- **선행 Scenario:** M5-052
+
+---
+
+### Scenario M5-049: 환불 계좌 저장 성공
+
+- **Given:** 환불 계좌 입력 모달에서 정보 입력 완료
+- **When:** 확인 버튼 클릭
+- **Then:** registrations.refund_info에 환불 계좌 저장, status='cancelled'로 변경, current_participants -1
+- **선행 Scenario:** M5-048
+
+---
+
+### 계좌이체 - 운영자 측
+
+### Scenario M5-050: 입금대기 건수 대시보드 표시
+
+- **Given:** 입금대기 상태의 신청이 3건 있음
+- **When:** 대시보드를 확인함
+- **Then:** "⏳ 입금대기: 3건" 카드가 표시되고 클릭 시 목록으로 이동
+- **선행 Scenario:** M5-001, M5-044
+
+---
+
+### Scenario M5-051: 입금대기 목록 화면
+
+- **Given:** 운영자가 로그인됨
+- **When:** `/admin/transfers`에 접속함
+- **Then:** 입금대기 목록이 모임별 필터, 입금자명 검색 기능과 함께 표시됨
+- **선행 Scenario:** M5-044
+
+---
+
+### Scenario M5-052: 운영자 입금 확인 성공
+
+- **Given:** 입금대기 상태의 신청이 있고, 운영자가 통장에서 입금 확인함
+- **When:** 운영자가 "입금 확인" 버튼을 클릭
+- **Then:** registrations.status가 'confirmed', payment_status가 'paid'로 변경, 참가 확정 알림 발송
+- **선행 Scenario:** M5-051
+
+---
+
+### Scenario M5-053: 입금자명 불일치 시 수동 매칭
+
+- **Given:** 운영자 화면에서 입금대기 목록 확인 중, 입금자명이 예상과 다름
+- **When:** 운영자가 통장 내역과 비교하여 해당 회원 확인
+- **Then:** 운영자가 수동으로 해당 신청과 매칭하여 확정 처리 가능
+- **선행 Scenario:** M5-051
+
+---
+
+### Scenario M5-054: 환불대기 목록 표시
+
+- **Given:** 계좌이체 건이 취소되어 환불 대기 상태인 건이 2건 있음
+- **When:** `/admin/transfers` 환불대기 탭 클릭
+- **Then:** 환불 계좌 정보와 함께 2건이 목록으로 표시됨
+- **선행 Scenario:** M5-049
+
+---
+
+### Scenario M5-055: 운영자 환불 완료 체크
+
+- **Given:** 계좌이체 건이 취소되어 환불 대기 상태, 운영자가 수동 환불 완료
+- **When:** 운영자가 "환불 완료" 버튼 클릭
+- **Then:** registrations.payment_status가 'refunded', refund_completed_at에 시간 기록
+- **선행 Scenario:** M5-054
+
+---
+
+### 계좌이체 - 자동 처리
+
+### Scenario M5-056: 24시간 미입금 자동 취소
+
+- **Given:** 입금대기 상태로 24시간이 경과함
+- **When:** Cron Job이 실행됨
+- **Then:** registrations.status가 'cancelled', cancel_reason이 'transfer_expired'로 변경, current_participants -1, 자동 취소 알림 발송
+- **선행 Scenario:** M5-044
+
+---
+
+### Scenario M5-057: 입금 기한 임박 알림
+
+- **Given:** 입금대기 상태로 기한 6시간 전
+- **When:** Cron Job이 실행됨
+- **Then:** 미입금 시 자동취소 경고 알림톡 발송
+- **선행 Scenario:** M5-044, M3-011
 
 ---
 
@@ -371,11 +539,12 @@
 
 | Phase | 성공 케이스 | 실패 케이스 | 합계 |
 |-------|------------|------------|------|
-| Phase 1 | 9 | 1 | 10 |
+| Phase 1 (대시보드) | 9 | 1 | 10 |
+| Phase 1 (계좌이체) | 16 | 2 | 18 |
 | Phase 2 | 8 | 0 | 8 |
 | Phase 3 | 9 | 1 | 10 |
 | Phase 4 | 10 | 1 | 11 |
-| **총계** | **36** | **3** | **39** |
+| **총계** | **52** | **5** | **57** |
 
 ---
 
@@ -384,4 +553,5 @@
 | 날짜 | 버전 | 변경 내용 |
 |------|------|----------|
 | 2026-01-14 | 1.0 | SC-M5 최초 작성 |
+| 2026-01-20 | 1.1 | Phase 1에 계좌이체 시나리오 18개 추가 (M5-040 ~ M5-057) - M2에서 이동 |
 

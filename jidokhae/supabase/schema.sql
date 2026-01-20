@@ -1,6 +1,7 @@
 -- =============================================
 -- 지독해 웹서비스 - 데이터베이스 스키마
--- 버전: 1.1.0
+-- 버전: 1.2.0
+-- 최종 수정: 2026-01-20
 -- =============================================
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -66,12 +67,20 @@ CREATE TABLE registrations (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
   meeting_id UUID REFERENCES meetings(id) ON DELETE CASCADE NOT NULL,
-  status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'confirmed', 'cancelled')),
-  payment_status VARCHAR(20) CHECK (payment_status IN ('pending', 'paid', 'refunded', 'partial_refunded')),
+  status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'pending_transfer', 'confirmed', 'cancelled')),
+  payment_status VARCHAR(20) CHECK (payment_status IN ('pending', 'paid', 'refunded', 'partial_refunded', 'refund_pending')),
+  payment_method VARCHAR(20) CHECK (payment_method IN ('card', 'transfer')),
   payment_amount INTEGER,
   refund_amount INTEGER DEFAULT 0,
   cancel_reason TEXT,
   cancelled_at TIMESTAMP WITH TIME ZONE,
+  -- 계좌이체 전용 필드
+  transfer_sender_name VARCHAR(100),           -- 입금자명 (예: "0125_홍길동")
+  transfer_deadline TIMESTAMP WITH TIME ZONE,  -- 입금 기한 (24시간 후)
+  -- 환불 계좌 정보 (계좌이체 결제 시 취소 요청할 때 수집)
+  refund_info JSONB,  -- { "bank": "신한은행", "account": "110-xxx-xxx", "holder": "홍길동" }
+  refund_completed_at TIMESTAMP WITH TIME ZONE,
+  -- 참여 완료 관련
   participation_status VARCHAR(20) CHECK (participation_status IN ('completed', 'no_show')),
   participation_method VARCHAR(20) CHECK (participation_method IN ('praise', 'review', 'confirm', 'auto', 'admin')),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -82,6 +91,10 @@ CREATE TABLE registrations (
 CREATE INDEX idx_registrations_user_id ON registrations(user_id);
 CREATE INDEX idx_registrations_meeting_id ON registrations(meeting_id);
 CREATE INDEX idx_registrations_status ON registrations(status);
+CREATE INDEX idx_registrations_pending_transfer ON registrations(status, transfer_deadline)
+  WHERE status = 'pending_transfer';  -- 입금대기 자동 취소 Cron 최적화
+CREATE INDEX idx_registrations_refund_pending ON registrations(payment_status)
+  WHERE payment_status = 'refund_pending';  -- 환불대기 조회 최적화
 
 -- 5. waitlists
 CREATE TABLE waitlists (
@@ -188,7 +201,7 @@ CREATE TABLE admin_permissions (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
   permission VARCHAR(50) NOT NULL CHECK (permission IN (
-    'meeting_manage', 'notification_send', 'banner_manage',
+    'meeting_manage', 'payment_manage', 'notification_send', 'banner_manage',
     'request_respond', 'dashboard_view', 'template_manage'
   )),
   granted_by UUID REFERENCES users(id) ON DELETE SET NULL,
@@ -270,12 +283,24 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION update_meeting_participants()
 RETURNS TRIGGER AS $$
 BEGIN
-  IF NEW.status = 'confirmed' AND (OLD.status IS NULL OR OLD.status != 'confirmed') THEN
+  -- 참가 확정 시 정원 증가 (pending_transfer → confirmed 또는 pending → confirmed)
+  IF NEW.status = 'confirmed' AND (OLD.status IS NULL OR OLD.status NOT IN ('confirmed', 'pending_transfer')) THEN
     UPDATE meetings SET current_participants = current_participants + 1 WHERE id = NEW.meeting_id;
   END IF;
-  IF NEW.status = 'cancelled' AND OLD.status = 'confirmed' THEN
+
+  -- 계좌이체 입금대기 시 정원 즉시 예약 (pending → pending_transfer)
+  IF NEW.status = 'pending_transfer' AND (OLD.status IS NULL OR OLD.status = 'pending') THEN
+    UPDATE meetings SET current_participants = current_participants + 1 WHERE id = NEW.meeting_id;
+  END IF;
+
+  -- pending_transfer → confirmed 전환 시 정원 변화 없음 (이미 예약됨)
+  -- (위의 confirmed 조건에서 pending_transfer 제외됨)
+
+  -- 취소 시 정원 복구 (confirmed 또는 pending_transfer에서 cancelled로)
+  IF NEW.status = 'cancelled' AND OLD.status IN ('confirmed', 'pending_transfer') THEN
     UPDATE meetings SET current_participants = GREATEST(current_participants - 1, 0) WHERE id = NEW.meeting_id;
   END IF;
+
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -387,3 +412,29 @@ CREATE TRIGGER update_participants_on_registration_change AFTER INSERT OR UPDATE
 
 CREATE TRIGGER on_auth_user_created AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- =============================================
+-- 초기 데이터: 계좌이체 알림 템플릿
+-- =============================================
+
+INSERT INTO notification_templates (code, name, message_template, send_timing, is_active) VALUES
+  ('TRANSFER_PENDING', '계좌이체 입금대기 안내', '#{이름}님, #{모임명} 신청이 접수되었습니다.\n\n입금 계좌: #{은행} #{계좌번호}\n입금액: #{금액}콩\n입금자명: #{입금자명형식}\n입금 기한: #{기한}\n\n입금 확인 후 참가가 확정됩니다.', '입금대기 등록 시', true),
+  ('TRANSFER_CONFIRMED', '계좌이체 입금확인 완료', '#{이름}님, #{모임명} 입금이 확인되었습니다.\n\n참가가 확정되었습니다. 즐거운 모임 되세요!', '운영자 입금 확인 시', true),
+  ('TRANSFER_EXPIRED', '계좌이체 입금기한 만료', '#{이름}님, #{모임명} 입금 기한이 만료되어 신청이 자동 취소되었습니다.\n\n다시 신청하시려면 지독해 웹사이트를 방문해주세요.', '24시간 미입금 자동 취소 시', true),
+  ('REFUND_ACCOUNT_RECEIVED', '환불 계좌 접수 완료', '#{이름}님, #{모임명} 취소 요청이 접수되었습니다.\n\n환불 예정 금액: #{환불금액}콩\n환불 계좌: #{은행} #{계좌번호}\n\n영업일 기준 2-3일 내 환불됩니다.', '환불 계좌 수집 완료 시', true)
+ON CONFLICT (code) DO UPDATE SET
+  message_template = EXCLUDED.message_template,
+  send_timing = EXCLUDED.send_timing,
+  updated_at = NOW();
+
+-- =============================================
+-- 스키마 버전 기록
+-- =============================================
+-- 버전: 1.2.0
+-- 변경 내용: 계좌이체 결제 지원
+--   - registrations: payment_method, transfer_sender_name, transfer_deadline, refund_info, refund_completed_at 추가
+--   - registrations.status: pending_transfer 추가
+--   - registrations.payment_status: refund_pending 추가
+--   - admin_permissions: payment_manage 권한 추가
+--   - update_meeting_participants 함수: pending_transfer 상태 처리 추가
+--   - 계좌이체 알림 템플릿 4종 추가
