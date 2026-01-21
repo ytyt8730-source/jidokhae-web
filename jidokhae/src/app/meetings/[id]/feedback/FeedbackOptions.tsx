@@ -36,10 +36,12 @@ export default function FeedbackOptions({ meetingId, registrationId }: FeedbackO
         }),
       })
 
+      const data = await response.json()
       if (response.ok) {
-        router.push(`/meetings/${meetingId}/feedback/complete`)
+        const badges = data.data?.awardedBadges || []
+        const badgesParam = badges.length > 0 ? `?badges=${encodeURIComponent(badges.join(','))}` : ''
+        router.push(`/meetings/${meetingId}/feedback/complete${badgesParam}`)
       } else {
-        const data = await response.json()
         alert(data.error?.message || '처리 중 오류가 발생했습니다.')
       }
     } catch {

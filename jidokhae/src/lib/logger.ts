@@ -11,7 +11,7 @@ export enum LogLevel {
 /**
  * 서비스 구분
  */
-export type LogService = 
+export type LogService =
   | 'auth'
   | 'payment'
   | 'notification'
@@ -20,6 +20,10 @@ export type LogService =
   | 'waitlist'
   | 'cron'
   | 'system'
+  | 'templates'
+  | 'admin'
+  | 'reviews'
+  | 'eligibility'
 
 /**
  * 구조화된 로그 엔트리

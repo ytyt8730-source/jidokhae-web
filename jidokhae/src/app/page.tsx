@@ -1,10 +1,11 @@
 import MeetingList from '@/components/MeetingList'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { calculateMeetingStatus, formatMeetingDate } from '@/lib/utils'
 import { getDday } from '@/lib/payment'
 import { CalendarDays, ArrowRight, CheckCircle } from 'lucide-react'
 import Link from 'next/link'
 import Badge from '@/components/ui/Badge'
+import { BannerSlide } from '@/components/BannerSlide'
 import type { Meeting, Registration } from '@/types/database'
 
 export default async function HomePage() {
@@ -37,6 +38,17 @@ export default async function HomePage() {
     .order('datetime', { ascending: true })
     .limit(6) as { data: Meeting[] | null }
 
+  // 활성 배너 조회
+  const serviceClient = await createServiceClient()
+  const today = new Date().toISOString().split('T')[0]
+  const { data: banners } = await serviceClient
+    .from('banners')
+    .select('id, title, image_url, link_url')
+    .eq('is_active', true)
+    .or(`start_date.is.null,start_date.lte.${today}`)
+    .or(`end_date.is.null,end_date.gte.${today}`)
+    .order('display_order', { ascending: true })
+
   const meetingsWithStatus = (meetings || []).map(calculateMeetingStatus)
 
   // 이번 주 모임 분리
@@ -45,6 +57,13 @@ export default async function HomePage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-12">
+      {/* 배너 슬라이드 */}
+      {banners && banners.length > 0 && (
+        <section>
+          <BannerSlide banners={banners} />
+        </section>
+      )}
+
       {/* 히어로 섹션 */}
       <section className="text-center py-12 space-y-4">
         <h1 className="text-3xl sm:text-4xl font-bold text-warm-900">

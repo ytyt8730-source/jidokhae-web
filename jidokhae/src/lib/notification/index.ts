@@ -23,8 +23,13 @@ interface TemplateRow {
   id: string
   code: string
   name: string
+  description: string | null
   message_template: string
+  variables: string[] | null
   send_timing: string | null
+  send_days_before: number | null
+  send_time: string | null
+  kakao_template_id: string | null
   is_active: boolean
 }
 
@@ -208,8 +213,13 @@ export async function getNotificationTemplate(
       id: data.id,
       code: data.code,
       name: data.name,
+      description: data.description ?? undefined,
       messageTemplate: data.message_template,
-      sendTiming: data.send_timing,
+      variables: data.variables ?? undefined,
+      sendTiming: data.send_timing ?? undefined,
+      sendDaysBefore: data.send_days_before,
+      sendTime: data.send_time,
+      kakaoTemplateId: data.kakao_template_id,
       isActive: data.is_active,
     }
   } catch {
@@ -238,8 +248,13 @@ export async function getAllActiveTemplates(): Promise<NotificationTemplate[]> {
       id: item.id,
       code: item.code,
       name: item.name,
+      description: item.description ?? undefined,
       messageTemplate: item.message_template,
+      variables: item.variables ?? undefined,
       sendTiming: item.send_timing ?? undefined,
+      sendDaysBefore: item.send_days_before,
+      sendTime: item.send_time,
+      kakaoTemplateId: item.kakao_template_id,
       isActive: item.is_active,
     }))
   } catch {

@@ -1,7 +1,7 @@
 # 현재 작업 상태 (AI 에이전트용)
 
-> **마지막 업데이트**: 2026-01-20
-> **버전**: 1.6
+> **마지막 업데이트**: 2026-01-21
+> **버전**: 2.3
 
 ---
 
@@ -9,82 +9,96 @@
 
 | 항목 | 값 |
 |------|-----|
-| 완료된 WP | M1 기반구축, M2 핵심결제흐름, M3 알림시스템, M4 소속감, **M5 Phase 1** |
-| 다음 WP | **M5 Phase 2: 알림 템플릿 관리** |
+| 완료된 WP | M1 기반구축, M2 핵심결제흐름, M3 알림시스템, M4 소속감, M5 운영자도구, **M6 신규회원&출시준비 완료** |
+| 다음 WP | **MVP 완성!** (M1~M6 전체 완료) |
 | 블로커 | 솔라피 카카오 채널 승인 대기 중 (M3 실발송 전) |
 
 ---
 
 ## ✅ 마지막 완료 작업
 
-### WP-M5 Phase 1: 대시보드 + 계좌이체 결제 (2026-01-20 완료)
+### WP-M6: 신규 회원 & 출시 준비 (2026-01-21 완료)
 
-**코드 구현**: Phase 1 전체 완료
+**M6 전체 4 Phase 구현 완료!**
 
-#### A. 대시보드 기능 (M5-001 ~ M5-010)
-- ✅ `/api/admin/stats` - 통계 API (참가현황, 수입/환불, 재참여율, 세그먼트)
-- ✅ `/app/admin/DashboardClient.tsx` - 대시보드 클라이언트 컴포넌트
-- ✅ 월별 통계 필터링 (MonthPicker)
-- ✅ 모임 현황 테이블
+#### Phase 1: 후킹 랜딩페이지 (M6-001 ~ M6-010)
+- ✅ `/app/about/page.tsx` - SSR 기반 랜딩페이지 (통계, 후기 데이터)
+- ✅ `/app/about/LandingContent.tsx` - 애니메이션 기반 클라이언트 컴포넌트
+- ✅ `/api/reviews/public` - 공개 동의 후기 API (is_public=true만)
+- ✅ SEO 메타데이터 (title, description, og:image, twitter)
+- ✅ Framer Motion 스크롤 인터랙션 (섹션별 페이드인, 스태거 애니메이션)
+- ✅ 브랜드 스토리, 갤러리, 회원 후기, CTA 버튼 섹션
+- ✅ 반응형 디자인 (모바일/태블릿/데스크톱)
 
-#### B. 계좌이체 - 사용자 측 (M5-040 ~ M5-049)
-- ✅ `/lib/transfer.ts` - 계좌이체 유틸 (입금자명 생성, 입금기한 계산)
-- ✅ `PaymentMethodSelector.tsx` - 결제 방식 선택 UI (간편결제/계좌이체)
-- ✅ `TransferInfo.tsx` - 계좌 정보 표시 컴포넌트
-- ✅ `/api/registrations/transfer` - 계좌이체 신청/환불계좌 저장 API
-- ✅ `/meetings/[id]/transfer-pending` - 입금대기 안내 페이지 + CopyButton
-- ✅ `RefundAccountModal.tsx` - 환불 계좌 입력 모달
-- ✅ `PaymentButton.tsx` 수정 - 결제 방식 선택 연동
-- ✅ `/mypage/page.tsx` - 입금대기 상태 표시 (M5-046)
-- ✅ `CancelModal.tsx` - 계좌이체 결제건 취소 시 RefundAccountModal 연동 (M5-048)
+#### Phase 2: 신규 회원 플로우 (M6-011 ~ M6-021)
+- ✅ `NewMemberGuideModal.tsx` - 신규 회원 안내 팝업 (처음이시네요!)
+- ✅ "지독해 알아보기" / "바로 신청하기" 선택지
+- ✅ "다시 보지 않기" 로컬스토리지 옵션
+- ✅ `/api/cron/welcome` - 신규 회원 첫 모임 환영 알림 (D-1)
+- ✅ `/api/cron/first-meeting-followup` - 첫 모임 후 후기 요청 (D+3)
+- ✅ 신규→기존 회원 전환 로직 (`convertNewMemberToExisting`)
+- ✅ 다음 정기모임 추천 로직 포함
 
-#### C. 계좌이체 - 운영자 측 (M5-050 ~ M5-055)
-- ✅ `/api/admin/transfers` - 입금대기/환불대기 목록 조회 API
-- ✅ `/api/admin/registrations/confirm` - 입금 확인 API
-- ✅ `/api/admin/registrations/refund-complete` - 환불 완료 API
-- ✅ `/app/admin/transfers` - 입금관리 페이지 + TransfersClient
-- ✅ 대시보드에 입금대기/환불대기 건수 표시
+#### Phase 3: 자격 체크 & 유도 (M6-022 ~ M6-029)
+- ✅ `/lib/eligibility.ts` - 정기모임 자격 검증 모듈 (6개월 규정)
+- ✅ `checkRegularMeetingEligibility()` - 자격 상태 체크 함수
+- ✅ `IneligibilityModal.tsx` - 자격 미충족 팝업 (정기모임 유도)
+- ✅ `/api/cron/eligibility-warning` - 자격 만료 임박 알림 (30일 전)
+- ✅ `getEligibilityWarningUsers()` - 만료 임박 회원 조회
 
-#### D. 자동 처리 (M5-056 ~ M5-057)
-- ✅ `/api/cron/transfer-timeout` - 24시간 미입금 자동 취소 Cron
-- ✅ 입금 기한 6시간 전 경고 알림
+#### Phase 4: 알림 템플릿 + Cron 설정
+- ✅ `m6-notification-templates.sql` - M6 알림 템플릿 4개
+  - NEW_MEMBER_WELCOME (첫 모임 환영)
+  - FIRST_MEETING_FOLLOWUP (후기 요청)
+  - ELIGIBILITY_WARNING (자격 만료 임박)
+  - LAUNCH_ANNOUNCEMENT (정식 출시 안내)
+- ✅ `vercel.json` - 새 Cron 작업 추가 (welcome, followup, eligibility-warning)
 
 **테스트 현황**:
 
 | 항목 | 상태 | 비고 |
 |------|:----:|------|
 | TypeScript 타입 체크 | ✅ | `npx tsc --noEmit` 오류 없음 |
-| 프로덕션 빌드 | ✅ | `npm run build` 성공 (42 페이지) |
-| ESLint | ✅ | 에러/경고 0개 |
-| SC-M5 Phase 1 시나리오 | ✅ | 18/18 통과 |
+| 프로덕션 빌드 | ✅ | `npm run build` 성공 |
+| ESLint | ✅ | 에러 0개 (img 경고만 - 기존 이슈) |
+
+---
+
+## 🎉 MVP 완성!
+
+```
+M1: 프로젝트 기반 구축 ✅
+M2: 핵심 결제 흐름 ✅
+M3: 알림 시스템 ✅
+M4: 소속감 기능 ✅
+M5: 운영자 도구 ✅
+M6: 신규 회원 & 출시 준비 ✅
+
+총 진행률: 100% (모든 마일스톤 완료)
+```
 
 ---
 
 ## 🔜 다음 작업
 
-### WP-M5 Phase 2: 알림 템플릿 관리
+### 출시 전 필요 작업
 
-**구현 예정** (M5-011 ~ M5-018):
+1. **Supabase 스키마 업데이트**
+   - `m6-notification-templates.sql` 실행
+   - 4개 알림 템플릿 추가
 
-- `notification_templates` 테이블 생성
-- `/app/admin/templates` - 템플릿 목록/수정 화면
-- 문구 수정 및 변수 치환 미리보기
-- 발송 on/off 토글
-- 발송 시점 변경 기능
+2. **테스트 계정 생성 및 QA**
+   - super@test.com, admin@test.com, member@test.com
+   - 50개 수동 테스트 시나리오 진행 (`manual-test-scenario.md`)
 
-### WP-M5 Phase 3-4:
-- Phase 3: 권한 관리 (운영자별 권한 선택적 부여)
-- Phase 4: 요청함 & 배너 관리
-
-### M3 실발송 전 필요 작업 (영탁 담당)
-
-1. **솔라피 설정**
-   - [x] 솔라피 계정 생성
-   - [x] API 키 발급 → `.env.local`에 추가 완료
-   - [x] 충전 (1만원)
-   - [x] 발신번호 등록 (180일 후 재인증)
+3. **솔라피 설정 완료**
    - [ ] 카카오 비즈니스 채널 승인 대기 중
    - [ ] 알림톡 템플릿 등록 (채널 승인 후)
+
+4. **배포 준비**
+   - Vercel 환경 변수 설정 (production)
+   - 도메인 연결 (선택)
+   - SSL 인증서 확인
 
 ---
 
@@ -97,9 +111,8 @@
 | logger.startTimer 타입 | 반환 타입 미정의 | TimerResult 인터페이스 추가 |
 | AUTH_FORBIDDEN 미존재 | ErrorCode 미정의 | 1009 코드 추가 |
 | RPC 함수 누락 | schema.sql 미포함 | get_dormant_risk_users, adjust_waitlist_positions 추가 |
-| 계좌이체 위치 혼란 | M2 완료 후 추가 | M5로 이동하여 정리 |
-| M5-046 마이페이지 입금대기 | 미구현 | mypage에 pending_transfer 표시 추가 |
-| M5-048 취소시 환불계좌 | 미구현 | CancelModal에 RefundAccountModal 연동 |
+| templates LogService 누락 | LogService 타입에 미포함 | 'templates', 'admin', 'reviews', 'eligibility' 타입 추가 |
+| Client/Server import 충돌 | permissions.ts 서버 전용 | permissions-constants.ts 분리 |
 
 ---
 
@@ -108,52 +121,53 @@
 1. **포트 충돌**: 3000 사용 중이면 3001/3003으로 자동 변경 → Redirect URI 등록 필요
 2. **PC 결제 제한**: 카카오페이 PC에서 QR 스캔 필요, 모바일은 자동 연결
 3. **Mock 알림**: 개발 환경에서는 실제 발송 없이 로그만 기록
-4. **계좌이체 정원 관리**: pending_transfer 상태에서 이미 정원 차감됨 (기존 confirmed와 다름)
-5. **200줄 초과 파일**: 약 30개 파일이 200줄 초과 (최대 448줄) - 권장사항이나 기능상 문제 없음
+4. **계좌이체 정원 관리**: pending_transfer 상태에서 이미 정원 차감됨
+5. **갤러리 이미지**: `/public/images/gallery/` 폴더에 실제 이미지 필요 (플레이스홀더 사용 중)
+6. **템플릿 코드 대소문자**: 새 템플릿은 대문자 사용 (NEW_MEMBER_WELCOME 등)
+7. **권한 import 분리**: 클라이언트에서는 `permissions-constants.ts`, 서버에서는 `permissions.ts` import
 
 ---
 
 ## 📁 최근 수정/추가 파일
 
-### M5 Phase 1 구현 (2026-01-20)
+### M6 Phase 1-4 구현 (2026-01-21)
 
 **API Routes:**
-- `src/app/api/admin/stats/route.ts` - 대시보드 통계 API
-- `src/app/api/admin/transfers/route.ts` - 입금대기/환불대기 목록
-- `src/app/api/admin/registrations/confirm/route.ts` - 입금 확인
-- `src/app/api/admin/registrations/refund-complete/route.ts` - 환불 완료
-- `src/app/api/registrations/transfer/route.ts` - 계좌이체 신청/환불계좌
-- `src/app/api/cron/transfer-timeout/route.ts` - 24시간 자동 취소
+- `src/app/api/reviews/public/route.ts` - 공개 후기 API
+- `src/app/api/cron/welcome/route.ts` - 신규 회원 환영 알림 Cron
+- `src/app/api/cron/first-meeting-followup/route.ts` - 첫 모임 후 알림 Cron
+- `src/app/api/cron/eligibility-warning/route.ts` - 자격 만료 임박 알림 Cron
 
 **Pages:**
-- `src/app/admin/DashboardClient.tsx` - 대시보드 클라이언트
-- `src/app/admin/transfers/page.tsx` - 입금관리 페이지
-- `src/app/admin/transfers/TransfersClient.tsx` - 입금관리 클라이언트
-- `src/app/meetings/[id]/transfer-pending/page.tsx` - 입금대기 안내
-- `src/app/meetings/[id]/transfer-pending/CopyButton.tsx` - 복사 버튼
+- `src/app/about/page.tsx` - 랜딩페이지 (SSR + 메타데이터)
+- `src/app/about/LandingContent.tsx` - 랜딩페이지 클라이언트 컴포넌트
 
 **Components:**
-- `src/components/PaymentMethodSelector.tsx` - 결제 방식 선택
-- `src/components/TransferInfo.tsx` - 계좌 정보 표시
-- `src/components/RefundAccountModal.tsx` - 환불 계좌 모달
-
-**Modified:**
-- `src/components/PaymentButton.tsx` - 결제 방식 선택 연동
-- `src/components/CancelModal.tsx` - 계좌이체 환불계좌 연동 (M5-048)
-- `src/app/mypage/page.tsx` - 입금대기 표시 (M5-046)
-- `src/app/admin/layout.tsx` - 입금확인 메뉴 추가
+- `src/components/NewMemberGuideModal.tsx` - 신규 회원 안내 팝업
+- `src/components/IneligibilityModal.tsx` - 자격 미충족 팝업
 
 **Utilities:**
-- `src/lib/transfer.ts` - 계좌이체 유틸 함수
+- `src/lib/eligibility.ts` - 정기모임 자격 검증 모듈
+- `src/lib/animations.ts` - 스크롤 애니메이션 variants 추가
+
+**Types:**
+- `src/types/database.ts` - Review, PublicReview, EligibilityCheckResult 타입 추가
+- `src/lib/logger.ts` - LogService에 'reviews', 'eligibility' 추가
+
+**Config:**
+- `vercel.json` - welcome, first-meeting-followup, eligibility-warning Cron 추가
+
+**SQL:**
+- `supabase/m6-notification-templates.sql` - M6 알림 템플릿 4개
 
 ---
 
 ## 🔗 참조 문서
 
-- [WP-M5 운영자도구 + 계좌이체](/roadmap/work-packages/WP-M5-운영자도구.md) - 계좌이체 통합
-- [WP-M2 핵심결제흐름](/roadmap/work-packages/WP-M2-핵심결제흐름.md) - 포트원 결제
-- [SC-M5 시나리오](/roadmap/scenarios/SC-M5-운영자도구.md) - M5-040~057 계좌이체 시나리오
-- [milestones.md](/roadmap/milestones.md) - 전체 마일스톤 (v1.4)
+- [WP-M6 신규회원&출시](/roadmap/work-packages/WP-M6-신규회원-출시.md) - Phase 1-4 완료
+- [SC-M6 시나리오](/roadmap/scenarios/SC-M6-신규회원-출시.md) - 45개 시나리오
+- [수동 테스트 시나리오](/docs/manual-test-scenario.md) - 50개 테스트 항목
+- [milestones.md](/roadmap/milestones.md) - 전체 마일스톤
 - [외부 서비스 설정](/docs/external-services.md)
 - [환경 변수](/docs/env-variables.md)
 
@@ -168,4 +182,4 @@
 | 포트원 | V2 API |
 | 솔라피 | API 키 설정 완료, 카카오 채널 승인 대기 |
 | 배포 | 미배포 (개발 중) |
-| DB 스키마 | v1.2.0 (계좌이체 지원) |
+| DB 스키마 | v1.2.2 (M6 템플릿 추가) |

@@ -31,8 +31,13 @@ export interface NotificationTemplate {
   id: string
   code: string
   name: string
+  description?: string
   messageTemplate: string
+  variables?: string[]
   sendTiming?: string
+  sendDaysBefore?: number | null
+  sendTime?: string | null
+  kakaoTemplateId?: string | null
   isActive: boolean
 }
 

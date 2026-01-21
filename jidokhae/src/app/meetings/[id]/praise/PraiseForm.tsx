@@ -53,7 +53,9 @@ export default function PraiseForm({ meetingId, participants }: PraiseFormProps)
       const data = await response.json()
 
       if (response.ok) {
-        router.push(`/meetings/${meetingId}/praise/complete`)
+        const badges = data.data?.awardedBadges || []
+        const badgesParam = badges.length > 0 ? `?badges=${encodeURIComponent(badges.join(','))}` : ''
+        router.push(`/meetings/${meetingId}/praise/complete${badgesParam}`)
       } else {
         setError(data.error?.message || '처리 중 오류가 발생했습니다.')
       }

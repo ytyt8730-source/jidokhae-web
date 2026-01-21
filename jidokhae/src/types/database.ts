@@ -299,3 +299,69 @@ export interface QualificationResult {
   redirectTo?: string
 }
 
+// 알림 템플릿 타입
+export interface NotificationTemplate {
+  id: string
+  code: string
+  name: string
+  description: string | null
+  message_template: string
+  variables: string[]
+  send_timing: string | null
+  send_days_before: number | null
+  send_time: string | null
+  kakao_template_id: string | null
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+// 알림 템플릿 수정 타입
+export interface NotificationTemplateUpdate {
+  name?: string
+  description?: string | null
+  message_template?: string
+  variables?: string[]
+  send_timing?: string | null
+  send_days_before?: number | null
+  send_time?: string | null
+  kakao_template_id?: string | null
+  is_active?: boolean
+}
+
+// 후기 타입
+export interface Review {
+  id: string
+  user_id: string
+  meeting_id: string
+  content: string
+  is_public: boolean
+  created_at: string
+}
+
+// 공개 후기 타입 (랜딩페이지용)
+export interface PublicReview {
+  id: string
+  content: string
+  created_at: string
+  user: {
+    name: string
+    joined_year: number
+  }
+  meeting: {
+    title: string
+  }
+}
+
+// 자격 검증 상태 타입 (M6 Phase 3)
+export type EligibilityStatus = 'active' | 'warning' | 'expired' | 'new'
+
+// 자격 검증 결과 (상세)
+export interface EligibilityCheckResult {
+  isEligible: boolean
+  lastRegularMeetingAt: string | null
+  expiresAt: string | null
+  daysRemaining: number | null
+  status: EligibilityStatus
+}
+

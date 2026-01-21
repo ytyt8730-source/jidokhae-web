@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { LayoutDashboard, Calendar, Users, Settings, Bell, CreditCard } from 'lucide-react'
+import { LayoutDashboard, Calendar, Users, Settings, Bell, CreditCard, FileText, Shield, MessageSquare, Image } from 'lucide-react'
 
 interface AdminLayoutProps {
   children: React.ReactNode
@@ -9,9 +9,9 @@ interface AdminLayoutProps {
 
 export default async function AdminLayout({ children }: AdminLayoutProps) {
   const supabase = await createClient()
-  
+
   const { data: { user: authUser } } = await supabase.auth.getUser()
-  
+
   if (!authUser) {
     redirect('/auth/login')
   }
@@ -26,12 +26,18 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
     redirect('/')
   }
 
+  const isSuperAdmin = user.role === 'super_admin'
+
   const navItems = [
     { href: '/admin', label: '대시보드', icon: LayoutDashboard },
     { href: '/admin/meetings', label: '모임 관리', icon: Calendar },
     { href: '/admin/transfers', label: '입금 확인', icon: CreditCard },
     { href: '/admin/users', label: '회원 관리', icon: Users },
+    { href: '/admin/requests', label: '요청함', icon: MessageSquare },
+    { href: '/admin/banners', label: '배너 관리', icon: Image },
     { href: '/admin/notifications', label: '알림 발송', icon: Bell },
+    { href: '/admin/templates', label: '알림 템플릿', icon: FileText },
+    ...(isSuperAdmin ? [{ href: '/admin/permissions', label: '권한 관리', icon: Shield }] : []),
     { href: '/admin/settings', label: '설정', icon: Settings },
   ]
 
