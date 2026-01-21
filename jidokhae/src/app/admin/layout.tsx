@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { LayoutDashboard, Calendar, Users, Settings, Bell } from 'lucide-react'
+import { LayoutDashboard, Calendar, Users, Settings, Bell, CreditCard } from 'lucide-react'
 
 interface AdminLayoutProps {
   children: React.ReactNode
@@ -29,6 +29,7 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
   const navItems = [
     { href: '/admin', label: '대시보드', icon: LayoutDashboard },
     { href: '/admin/meetings', label: '모임 관리', icon: Calendar },
+    { href: '/admin/transfers', label: '입금 확인', icon: CreditCard },
     { href: '/admin/users', label: '회원 관리', icon: Users },
     { href: '/admin/notifications', label: '알림 발송', icon: Bell },
     { href: '/admin/settings', label: '설정', icon: Settings },

@@ -3,6 +3,7 @@
 /**
  * 취소 모달 컴포넌트
  * M2-022~032: 취소/환불 처리
+ * M5-048: 계좌이체 건 취소 시 환불 계좌 입력
  *
  * M2-023: 마음 돌리기 화면 표시
  * M2-029: 취소 사유 필수 입력
@@ -13,10 +14,14 @@ import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Calendar, AlertCircle } from 'lucide-react'
 import Button from '@/components/ui/Button'
+import RefundAccountModal from '@/components/RefundAccountModal'
 import { formatMeetingDate, formatFee } from '@/lib/utils'
 import { getDday, getRefundPercentText } from '@/lib/payment'
 import { overlayAnimation, modalAnimation } from '@/lib/animations'
-import type { Meeting, Registration, RefundRule } from '@/types/database'
+import { createLogger } from '@/lib/logger'
+import type { Meeting, Registration, RefundRule, RefundAccountInfo } from '@/types/database'
+
+const logger = createLogger('payment')
 
 interface CancelModalProps {
   isOpen: boolean
@@ -45,6 +50,12 @@ export default function CancelModal({
   const [customReason, setCustomReason] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+  const [showRefundAccountModal, setShowRefundAccountModal] = useState(false)
+
+  // 계좌이체 결제이고 이미 입금 확인된 경우 환불 계좌 입력 필요 (M5-048)
+  const isTransferPayment = registration.payment_method === 'transfer'
+  const isPaid = registration.payment_status === 'paid'
+  const needsRefundAccount = isTransferPayment && isPaid
 
   const dday = getDday(meeting.datetime)
   const refundPercent = getRefundPercentText(new Date(meeting.datetime), refundRules)
@@ -72,6 +83,17 @@ export default function CancelModal({
       return
     }
 
+    // 계좌이체 결제이고 이미 결제 완료된 경우 환불 계좌 입력 모달 표시 (M5-048)
+    if (needsRefundAccount) {
+      setShowRefundAccountModal(true)
+      return
+    }
+
+    await processCancellation()
+  }
+
+  // 실제 취소 처리 로직
+  const processCancellation = async () => {
     setIsLoading(true)
     setError('')
 
@@ -94,14 +116,47 @@ export default function CancelModal({
       if (data.data?.success) {
         onClose()
         router.refresh()
-        // 성공 토스트 또는 알림
         alert(data.data.message)
       } else {
         setError(data.data?.message || '취소 처리 중 오류가 발생했습니다')
       }
     } catch (err) {
-      console.error('Cancel error:', err)
+      logger.error('Cancel error', { error: err instanceof Error ? err.message : 'Unknown' })
       setError('취소 처리 중 오류가 발생했습니다')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // 환불 계좌 입력 후 취소 처리 (M5-049)
+  const handleRefundAccountSubmit = async (refundInfo: RefundAccountInfo) => {
+    setIsLoading(true)
+    setError('')
+
+    try {
+      // 환불 계좌 저장 API 호출
+      const res = await fetch('/api/registrations/transfer', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          registrationId: registration.id,
+          refundInfo,
+        }),
+      })
+
+      const data = await res.json()
+
+      if (data.data?.success) {
+        setShowRefundAccountModal(false)
+        onClose()
+        router.refresh()
+        alert('환불 신청이 완료되었습니다. 영업일 기준 1~2일 내 환불됩니다.')
+      } else {
+        setError(data.data?.message || '환불 계좌 저장 중 오류가 발생했습니다')
+      }
+    } catch (err) {
+      logger.error('Refund account save error', { error: err instanceof Error ? err.message : 'Unknown' })
+      setError('환불 계좌 저장 중 오류가 발생했습니다')
     } finally {
       setIsLoading(false)
     }
@@ -179,6 +234,12 @@ export default function CancelModal({
                       <span className="text-amber-700">{formatFee(refundAmount)}</span>
                     </div>
                   </div>
+                  {/* 계좌이체 결제인 경우 안내 (M5-048) */}
+                  {needsRefundAccount && (
+                    <p className="text-xs text-amber-600 mt-3 pt-2 border-t border-amber-200">
+                      계좌이체 결제는 환불 계좌 입력이 필요합니다.
+                    </p>
+                  )}
                 </div>
 
                 {/* 취소 사유 선택 (M2-029) */}
@@ -255,6 +316,15 @@ export default function CancelModal({
           </motion.div>
         </>
       )}
+
+      {/* 환불 계좌 입력 모달 (M5-048) */}
+      <RefundAccountModal
+        isOpen={showRefundAccountModal}
+        onClose={() => setShowRefundAccountModal(false)}
+        onSubmit={handleRefundAccountSubmit}
+        refundAmount={refundAmount}
+        isLoading={isLoading}
+      />
     </AnimatePresence>
   )
 }
