@@ -117,7 +117,7 @@ export default function AddBookForm() {
           />
         </div>
 
-        {/* 한 문장 기록 */}
+        {/* 한 문장 기록 (M7-012: 플레이스홀더 개선) */}
         <div>
           <label htmlFor="oneLine" className="block text-sm font-medium text-warm-700 mb-1">
             한 문장 기록
@@ -127,7 +127,7 @@ export default function AddBookForm() {
             id="oneLine"
             value={oneLine}
             onChange={(e) => setOneLine(e.target.value)}
-            placeholder="이 책에서 기억하고 싶은 한 문장 (선택)"
+            placeholder='예: "결국 우리는 모두 이야기가 되어간다" (선택)'
             maxLength={200}
             disabled={isSubmitting}
             className="w-full px-4 py-2.5 rounded-xl border-2 border-warm-200 focus:border-brand-500 focus:ring-0 text-warm-800 placeholder-warm-400 disabled:opacity-50"

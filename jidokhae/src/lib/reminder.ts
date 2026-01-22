@@ -19,6 +19,17 @@ import {
 } from 'date-fns'
 import { ko } from 'date-fns/locale'
 
+// M7-010: 벳지 표시 이름 매핑
+const BADGE_DISPLAY_NAMES: Record<string, string> = {
+  first_meeting: '첫 참여',
+  attendance_10: '10회 참석',
+  attendance_4_weeks: '연속 4주 참여',
+  praise_10: '칭찬 10개',
+  praise_30: '칭찬 30개',
+  praise_50: '칭찬 50개',
+  welcome_member: '웰컴 멤버',
+}
+
 // 한국 시간대 오프셋 (UTC+9)
 const KST_OFFSET = 9 * 60 * 60 * 1000
 
@@ -163,6 +174,61 @@ function formatMeetingTime(date: Date): string {
 }
 
 /**
+ * M7-010: 참여자 티저 문구 생성
+ * 해당 모임 참가자 중 벳지 보유자가 있을 때만 티저 문구 반환
+ */
+async function generateTeaserText(meetingId: string): Promise<string> {
+  const supabase = await createServiceClient()
+  
+  // 해당 모임 참가자의 벳지 조회
+  const { data: participants } = await supabase
+    .from('registrations')
+    .select(`
+      user_id,
+      users!inner (
+        id,
+        badges (
+          badge_type
+        )
+      )
+    `)
+    .eq('meeting_id', meetingId)
+    .eq('status', 'confirmed')
+
+  if (!participants || participants.length === 0) {
+    return ''
+  }
+
+  // 벳지 보유자 필터링
+  const badgeHolders: { badge_type: string }[] = []
+  
+  for (const p of participants) {
+    const user = p.users as { id: string; badges: { badge_type: string }[] | null } | null
+    if (user?.badges && user.badges.length > 0) {
+      badgeHolders.push(...user.badges)
+    }
+  }
+
+  if (badgeHolders.length === 0) {
+    return ''
+  }
+
+  // 랜덤으로 하나 선택 (첫 참여 벳지 제외)
+  const meaningfulBadges = badgeHolders.filter(
+    b => b.badge_type !== 'first_meeting' && b.badge_type !== 'welcome_member'
+  )
+  
+  if (meaningfulBadges.length === 0) {
+    return ''
+  }
+
+  const randomBadge = meaningfulBadges[Math.floor(Math.random() * meaningfulBadges.length)]
+  const badgeName = BADGE_DISPLAY_NAMES[randomBadge.badge_type] || randomBadge.badge_type
+
+  return `✨ 이번 모임에 '${badgeName}' 벳지 보유자님이 함께해요!`
+}
+
+/**
  * 리마인드 발송 (단일 대상)
  */
 export async function sendReminder(
@@ -187,17 +253,25 @@ export async function sendReminder(
     return false
   }
 
+  // M7-010: 1일 전 리마인드에만 티저 문구 추가
+  let teaserText = ''
+  if (daysBeforeMeeting === 1) {
+    teaserText = await generateTeaserText(target.meetingId)
+  }
+
   // 알림 발송
   const result = await sendAndLogNotification({
     templateCode,
     phone: target.phone,
     variables: {
       회원명: target.userName,
+      이름: target.userName,
       모임명: target.meetingTitle,
       날짜: formatMeetingDate(target.meetingDatetime),
       시간: formatMeetingTime(target.meetingDatetime),
       장소: target.meetingLocation,
       참가비: target.meetingFee.toLocaleString(),
+      티저_문구: teaserText, // M7-010
     },
     userId: target.userId,
     meetingId: target.meetingId,

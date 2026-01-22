@@ -5,7 +5,9 @@ import { calculateMeetingStatus, formatMeetingDate, formatFee } from '@/lib/util
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
 import PaymentButton from '@/components/PaymentButton'
-import { Calendar, MapPin, Coins, Users, ArrowLeft, Clock } from 'lucide-react'
+import { Calendar, MapPin, Coins, Users, ArrowLeft } from 'lucide-react'
+import RefundRulesSection from '@/components/RefundRulesSection'
+import AtmospherePreview from '@/components/AtmospherePreview'
 import type { Metadata } from 'next'
 import type { User, Meeting, RefundPolicy } from '@/types/database'
 
@@ -80,6 +82,22 @@ export default async function MeetingDetailPage({ params }: PageProps) {
     alreadyRegistered = !!existingReg
   }
 
+  // M7-003: 공개 동의한 후기 조회 (신규회원에게만 표시)
+  let publicReviews: { content: string }[] = []
+  if (currentUser?.is_new_member) {
+    const { data: reviews } = await supabase
+      .from('reviews')
+      .select('content')
+      .eq('is_public', true)
+      .limit(10)
+    
+    if (reviews && reviews.length > 0) {
+      // 랜덤 셔플 후 3개 선택
+      const shuffled = reviews.sort(() => Math.random() - 0.5)
+      publicReviews = shuffled.slice(0, 3)
+    }
+  }
+
   const meetingWithStatus = calculateMeetingStatus(meeting)
 
   // 환불 규정
@@ -108,20 +126,8 @@ export default async function MeetingDetailPage({ params }: PageProps) {
     return <Badge variant={type.variant}>{type.label}</Badge>
   }
 
-  const formatRefundRules = () => {
-    if (!refundPolicy?.rules) return null
-
-    const rules = refundPolicy.rules as { days_before: number; refund_percent: number }[]
-    return rules
-      .sort((a, b) => b.days_before - a.days_before)
-      .map((rule, index) => (
-        <li key={index} className="text-sm text-warm-600">
-          {rule.days_before === 0
-            ? '당일'
-            : `${rule.days_before}일 전`}: {rule.refund_percent}% 환불
-        </li>
-      ))
-  }
+  // 환불 규정 데이터 추출
+  const refundRules = refundPolicy?.rules as { days_before: number; refund_percent: number }[] | undefined
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
@@ -174,6 +180,11 @@ export default async function MeetingDetailPage({ params }: PageProps) {
 
         {/* 본문 */}
         <div className="p-6 sm:p-8 space-y-8">
+          {/* M7-003: 분위기 미리보기 (신규회원만) */}
+          {currentUser?.is_new_member && publicReviews.length > 0 && (
+            <AtmospherePreview reviews={publicReviews} />
+          )}
+
           {/* 모임 설명 */}
           {meeting.description && (
             <div>
@@ -184,21 +195,30 @@ export default async function MeetingDetailPage({ params }: PageProps) {
             </div>
           )}
 
-          {/* 환불 규정 */}
-          {refundPolicy && (
-            <div>
-              <h2 className="flex items-center gap-2 text-lg font-semibold text-warm-900 mb-3">
-                <Clock size={18} />
-                환불 규정
-              </h2>
-              <ul className="space-y-1.5 list-disc list-inside pl-1">
-                {formatRefundRules()}
-              </ul>
-            </div>
+          {/* 환불 규정 (M7-001: "더보기"로 접기) */}
+          {refundRules && refundRules.length > 0 && (
+            <RefundRulesSection 
+              rules={refundRules} 
+              policyName={refundPolicy?.name}
+            />
           )}
 
           {/* 신청 버튼 (M2-007) */}
           <div className="pt-4 border-t border-warm-100">
+            {/* M7-002: 첫 방문 벳지 넣지 배너 (신규회원만) */}
+            {currentUser?.is_new_member && !alreadyRegistered && meetingWithStatus.displayStatus !== 'closed' && (
+              <div className="mb-4 p-3 bg-brand-50 rounded-xl flex items-center gap-3 animate-pulse-slow">
+                <div className="w-10 h-10 bg-brand-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-xl">🎖️</span>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-brand-700">
+                    첫 모임 신청 시 <span className="font-bold">웰컴 멤버</span> 벳지가 지급됩니다!
+                  </p>
+                </div>
+              </div>
+            )}
+
             {alreadyRegistered ? (
               <div>
                 <Button disabled className="w-full sm:w-auto">

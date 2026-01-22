@@ -1,5 +1,11 @@
 'use client'
 
+/**
+ * @deprecated M7-003에서 인라인 미리보기(AtmospherePreview)로 대체됨
+ * 모임 상세 페이지에서 신규회원에게 직접 분위기를 보여주는 방식으로 변경
+ * 이 컴포넌트는 더 이상 사용되지 않지만 롤백을 위해 유지
+ */
+
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/navigation'
@@ -7,6 +13,9 @@ import { X, Home, FileText } from 'lucide-react'
 import { overlayAnimation, modalAnimation } from '@/lib/animations'
 
 const DONT_SHOW_AGAIN_KEY = 'jidokhae_new_member_guide_hidden'
+
+// M7-003: 팝업 비활성화 - 인라인 미리보기로 대체
+const POPUP_DISABLED = true
 
 interface NewMemberGuideModalProps {
   isOpen: boolean
@@ -26,6 +35,12 @@ export default function NewMemberGuideModal({
   const [shouldShow, setShouldShow] = useState(false)
 
   useEffect(() => {
+    // M7-003: 팝업 비활성화
+    if (POPUP_DISABLED) {
+      setShouldShow(false)
+      return
+    }
+    
     // 로컬스토리지에서 "다시 보지 않기" 설정 확인
     const hidden = localStorage.getItem(DONT_SHOW_AGAIN_KEY)
     setShouldShow(isNewMember && !hidden)

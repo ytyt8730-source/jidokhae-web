@@ -10,6 +10,7 @@ import { ArrowLeft, BookOpen } from 'lucide-react'
 import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import AddBookForm from './AddBookForm'
+import QuoteCardGenerator from '@/components/QuoteCardGenerator'
 
 export const metadata = {
   title: '내 책장 - 지독해',
@@ -90,6 +91,15 @@ export default async function BookshelfPage() {
                     <p className="mt-2 text-xs text-warm-400">
                       {format(new Date(book.created_at), 'yyyy년 M월 d일', { locale: ko })} 등록
                     </p>
+                    
+                    {/* M7-020: 한 문장 카드 이미지 생성 */}
+                    {book.one_line_note && (
+                      <QuoteCardGenerator
+                        quote={book.one_line_note}
+                        bookTitle={book.title}
+                        author={book.author}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
