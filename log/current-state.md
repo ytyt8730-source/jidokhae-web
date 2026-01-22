@@ -1,7 +1,7 @@
 # 현재 작업 상태 (AI 에이전트용)
 
 > **마지막 업데이트**: 2026-01-22
-> **버전**: 2.4
+> **버전**: 2.5
 
 ---
 
@@ -9,9 +9,37 @@
 
 | 항목 | 값 |
 |------|-----|
-| 완료된 WP | M1 기반구축, M2 핵심결제흐름, M3 알림시스템, M4 소속감, M5 운영자도구, M6 신규회원&출시준비, **M7 Polish & Growth 완료** |
-| 다음 WP | 추가 피드백 반영 또는 프로덕션 배포 |
+| 완료된 WP | M1~M7 **전체 완료** |
+| 다음 작업 | **Vercel 배포 + 도메인 연결** |
 | 블로커 | 솔라피 카카오 채널 승인 대기 중 (M3 실발송 전) |
+
+---
+
+## 🚀 다음 작업: Vercel 배포
+
+### 상태
+- GitHub 저장소: `ytyt8730-source/jidokhae-web` ✅
+- vercel.json 설정: ✅ (Cron 포함)
+- Vercel 연결: ❌ **진행 필요**
+
+### 할 일
+1. Vercel Pro 요금제 업그레이드 (또는 새 계정)
+2. 프로젝트 생성 시 **Root Directory: `jidokhae`** 설정
+3. 환경 변수 추가 (`.env.local` 참고)
+4. 도메인 연결
+
+### 환경 변수 목록 (Vercel에 추가)
+```
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_ANON_KEY
+SUPABASE_SERVICE_ROLE_KEY
+NEXT_PUBLIC_PORTONE_STORE_ID
+NEXT_PUBLIC_PORTONE_CHANNEL_KEY
+SOLAPI_API_KEY
+SOLAPI_API_SECRET
+SOLAPI_SENDER
+SOLAPI_KAKAO_PFID
+```
 
 ---
 

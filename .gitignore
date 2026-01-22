@@ -22,5 +22,8 @@ Thumbs.db
 .env.local
 .env.*.local
 
+# ===== Context Pack (Claude 대화용, 커밋 제외) =====
+_CONTEXT_PACK.txt
+
 # ===== jidokhae 폴더는 자체 .gitignore 사용 =====
 # jidokhae/.gitignore 참조

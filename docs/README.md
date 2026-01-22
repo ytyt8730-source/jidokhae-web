@@ -1,7 +1,7 @@
 # 지독해 웹서비스 - 기술 문서
 
-> **버전**: 1.1  
-> **마지막 업데이트**: 2026-01-17
+> **버전**: 1.2
+> **마지막 업데이트**: 2026-01-22
 
 이 폴더는 개발 및 운영에 필요한 기술 문서를 관리합니다.
 
@@ -12,21 +12,23 @@
 ```
 docs/
 ├── README.md                    # 이 문서
-├── external-services.md         # ⭐ 외부 서비스 설정 (카카오/포트원/솔라피)
+├── 서브에이전트-사용-가이드.md    # ⭐ 서브에이전트 사용법 (비전공자용)
+├── external-services.md         # ⭐ 외부 서비스 설정 (통합 가이드)
 ├── env-variables.md             # 환경 변수 목록
 ├── troubleshooting-patterns.md  # 트러블슈팅 패턴
 ├── adr/                         # 아키텍처 결정 기록
 │   ├── README.md
-│   └── ADR-001-*.md
+│   └── ADR-001 ~ ADR-006
 ├── runbook/                     # 운영 가이드
 │   ├── incident-response.md
 │   └── rollback-procedure.md
 ├── testing/                     # 테스트 전략
-│   └── e2e-scenarios.md
+│   ├── e2e-scenarios.md
+│   ├── local-test-plan.md
+│   └── manual-test-scenario.md
 ├── code-quality.md              # 코드 품질 가이드
 ├── design-system.md             # 디자인 시스템
 ├── git-workflow.md              # Git 워크플로
-├── integration-order.md         # 통합 순서
 └── tech-stack-versions.md       # 기술 스택 버전
 ```
 
@@ -36,6 +38,7 @@ docs/
 
 | 문서 | 용도 | 대상 |
 |------|------|------|
+| **서브에이전트-사용-가이드.md** | 서브에이전트 사용법 (친절한 설명) | 개발자 |
 | **git-workflow.md** | Git 브랜치/커밋/푸시 규칙 | 개발자, AI |
 | **external-services.md** | 외부 서비스 설정 통합 가이드 | 개발자, AI |
 | **env-variables.md** | 환경 변수 목록 및 설명 | 개발자, AI |
@@ -77,7 +80,9 @@ docs/
 | PRD | `/core/1__지독해_웹서비스_-_PRD_v1.4.md` |
 | 기술 스택 | `/core/2__지독해_웹서비스_-_기술_스택_및_개발_로드맵_v1.2.md` |
 | 시스템 구조 | `/core/3__지독해_웹서비스_-_시스템_구조_v1.3.md` |
-| AI 에이전트 가이드 (메타) | `/core/AI_AGENT_GUIDE.md` |
+| AI 에이전트 가이드 | `/core/AI_AGENT_GUIDE.md` |
 | AI 빠른 참조 | `/core/AI_QUICK_REFERENCE.md` |
 | 개발 로드맵 | `/roadmap/milestones.md` |
 | 환경 변수 템플릿 | `/jidokhae/ENV_TEMPLATE.md` |
+| 서브에이전트 시스템 | `/.claude/agents/README.md` |
+| 스크립트 가이드 | `/scripts/README.md` |
