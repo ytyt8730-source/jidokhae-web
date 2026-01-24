@@ -13,14 +13,14 @@ export default function ReviewCompletePage() {
       <div className="card p-8">
         {/* 성공 아이콘 */}
         <div className="w-16 h-16 mx-auto rounded-full bg-blue-100 flex items-center justify-center mb-6">
-          <PenLine size={32} className="text-blue-600" />
+          <PenLine size={32} strokeWidth={1.5} className="text-blue-600" />
         </div>
 
         {/* 메시지 */}
-        <h1 className="text-2xl font-bold text-warm-900 mb-2">
+        <h1 className="text-2xl font-bold font-serif text-brand-800 mb-2">
           소중한 후기 감사합니다
         </h1>
-        <p className="text-warm-600 mb-8">
+        <p className="text-gray-600 mb-8">
           다음 모임에서 또 만나요 📚
         </p>
 
@@ -28,13 +28,13 @@ export default function ReviewCompletePage() {
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link href="/meetings">
             <Button variant="secondary" className="w-full sm:w-auto">
-              <Home size={16} className="mr-2" />
+              <Home size={16} strokeWidth={1.5} className="mr-2" />
               모임 둘러보기
             </Button>
           </Link>
           <Link href="/mypage">
             <Button className="w-full sm:w-auto">
-              <User size={16} className="mr-2" />
+              <User size={16} strokeWidth={1.5} className="mr-2" />
               마이페이지
             </Button>
           </Link>

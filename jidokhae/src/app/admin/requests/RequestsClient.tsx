@@ -98,7 +98,7 @@ export function RequestsClient() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-6 h-6 animate-spin text-brand-500" />
+        <Loader2 className="w-6 h-6 animate-spin text-brand-500" strokeWidth={1.5} />
       </div>
     )
   }
@@ -112,7 +112,7 @@ export function RequestsClient() {
           className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
             filter === 'all'
               ? 'bg-brand-500 text-white'
-              : 'bg-warm-100 text-warm-600 hover:bg-warm-200'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
           }`}
         >
           전체 ({requests.length})
@@ -122,7 +122,7 @@ export function RequestsClient() {
           className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
             filter === 'pending'
               ? 'bg-brand-500 text-white'
-              : 'bg-warm-100 text-warm-600 hover:bg-warm-200'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
           }`}
         >
           미답변 ({pendingCount})
@@ -132,7 +132,7 @@ export function RequestsClient() {
           className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
             filter === 'answered'
               ? 'bg-brand-500 text-white'
-              : 'bg-warm-100 text-warm-600 hover:bg-warm-200'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
           }`}
         >
           답변완료 ({requests.length - pendingCount})
@@ -142,8 +142,8 @@ export function RequestsClient() {
       {/* 요청 목록 */}
       {filteredRequests.length === 0 ? (
         <div className="card p-12 text-center">
-          <MessageSquare className="w-12 h-12 text-warm-300 mx-auto mb-4" />
-          <p className="text-warm-500">
+          <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+          <p className="text-gray-500">
             {filter === 'pending' ? '미답변 요청이 없습니다' : '요청이 없습니다'}
           </p>
         </div>
@@ -164,18 +164,18 @@ export function RequestsClient() {
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-brand-100 flex items-center justify-center">
-                    <User size={20} className="text-brand-600" />
+                    <User size={20} className="text-brand-600" strokeWidth={1.5} />
                   </div>
                   <div>
-                    <span className="font-semibold text-warm-900">
+                    <span className="font-semibold text-brand-800">
                       {request.user?.name || '익명'}
                     </span>
                     {request.meeting && (
-                      <span className="text-sm text-warm-500 ml-2">
+                      <span className="text-sm text-gray-500 ml-2">
                         ({request.meeting.title})
                       </span>
                     )}
-                    <div className="text-xs text-warm-400">{formatDate(request.created_at)}</div>
+                    <div className="text-xs text-gray-400">{formatDate(request.created_at)}</div>
                   </div>
                 </div>
                 <span
@@ -187,29 +187,29 @@ export function RequestsClient() {
                 >
                   {request.status === 'pending' ? (
                     <span className="flex items-center gap-1">
-                      <Clock size={12} />
+                      <Clock size={12} strokeWidth={1.5} />
                       미답변
                     </span>
                   ) : (
                     <span className="flex items-center gap-1">
-                      <CheckCircle size={12} />
+                      <CheckCircle size={12} strokeWidth={1.5} />
                       답변완료
                     </span>
                   )}
                 </span>
               </div>
 
-              <p className="text-warm-700 whitespace-pre-wrap line-clamp-3">{request.content}</p>
+              <p className="text-gray-700 whitespace-pre-wrap line-clamp-3">{request.content}</p>
 
               {request.answer && (
-                <div className="mt-4 pt-4 border-t border-warm-100">
+                <div className="mt-4 pt-4 border-t border-gray-100">
                   <div className="flex items-center gap-2 mb-2">
-                    <Send size={14} className="text-brand-500" />
+                    <Send size={14} className="text-brand-500" strokeWidth={1.5} />
                     <span className="text-sm font-medium text-brand-600">
                       {request.answerer?.name || '운영자'} 답변
                     </span>
                   </div>
-                  <p className="text-sm text-warm-600 whitespace-pre-wrap line-clamp-2">
+                  <p className="text-sm text-gray-600 whitespace-pre-wrap line-clamp-2">
                     {request.answer}
                   </p>
                 </div>
@@ -231,15 +231,15 @@ export function RequestsClient() {
             >
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-warm-900">요청 상세</h2>
+                  <h2 className="text-xl font-bold text-brand-800">요청 상세</h2>
                   <button
                     onClick={() => {
                       setSelectedRequest(null)
                       setAnswerText('')
                     }}
-                    className="text-warm-400 hover:text-warm-600"
+                    className="text-gray-400 hover:text-gray-600"
                   >
-                    <X size={24} />
+                    <X size={24} strokeWidth={1.5} />
                   </button>
                 </div>
 
@@ -247,29 +247,29 @@ export function RequestsClient() {
                 <div className="mb-6">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-10 h-10 rounded-full bg-brand-100 flex items-center justify-center">
-                      <User size={20} className="text-brand-600" />
+                      <User size={20} className="text-brand-600" strokeWidth={1.5} />
                     </div>
                     <div>
-                      <div className="font-semibold text-warm-900">
+                      <div className="font-semibold text-brand-800">
                         {selectedRequest.user?.name || '익명'}
                       </div>
-                      <div className="text-sm text-warm-500">
+                      <div className="text-sm text-gray-500">
                         {selectedRequest.user?.email}
                         {selectedRequest.meeting && ` · ${selectedRequest.meeting.title}`}
                       </div>
                     </div>
                   </div>
-                  <div className="bg-warm-50 rounded-lg p-4">
-                    <p className="text-warm-700 whitespace-pre-wrap">{selectedRequest.content}</p>
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <p className="text-gray-700 whitespace-pre-wrap">{selectedRequest.content}</p>
                   </div>
-                  <div className="text-xs text-warm-400 mt-2">
+                  <div className="text-xs text-gray-400 mt-2">
                     {formatDate(selectedRequest.created_at)}
                   </div>
                 </div>
 
                 {/* 답변 입력 */}
                 <div>
-                  <label className="block text-sm font-medium text-warm-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     {selectedRequest.status === 'pending' ? '답변 작성' : '답변 수정'}
                   </label>
                   <textarea
@@ -296,9 +296,9 @@ export function RequestsClient() {
                     className="btn-primary flex items-center gap-2"
                   >
                     {submitting ? (
-                      <Loader2 size={18} className="animate-spin" />
+                      <Loader2 size={18} className="animate-spin" strokeWidth={1.5} />
                     ) : (
-                      <Send size={18} />
+                      <Send size={18} strokeWidth={1.5} />
                     )}
                     {selectedRequest.status === 'pending' ? '답변 등록' : '답변 수정'}
                   </button>

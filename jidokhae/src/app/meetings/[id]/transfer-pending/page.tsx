@@ -84,9 +84,9 @@ export default async function TransferPendingPage({ params }: PageProps) {
       {/* 뒤로 가기 */}
       <Link
         href={`/meetings/${resolvedParams.id}`}
-        className="inline-flex items-center gap-1.5 text-sm text-warm-500 hover:text-warm-700 mb-6"
+        className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-6"
       >
-        <ArrowLeft size={16} />
+        <ArrowLeft size={16} strokeWidth={1.5} />
         모임 상세로
       </Link>
 
@@ -94,10 +94,10 @@ export default async function TransferPendingPage({ params }: PageProps) {
         {/* 헤더 */}
         <div className="bg-yellow-50 p-6 text-center border-b border-yellow-100">
           <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Clock className="text-yellow-600" size={32} />
+            <Clock className="text-yellow-600" size={32} strokeWidth={1.5} />
           </div>
-          <h1 className="text-xl font-bold text-warm-900 mb-2">입금대기 중</h1>
-          <p className="text-warm-600">
+          <h1 className="text-xl font-bold font-serif text-brand-800 mb-2">입금대기 중</h1>
+          <p className="text-gray-600">
             아래 계좌로 입금해주시면 참가가 확정됩니다.
           </p>
         </div>
@@ -105,27 +105,27 @@ export default async function TransferPendingPage({ params }: PageProps) {
         {/* 본문 */}
         <div className="p-6 space-y-6">
           {/* 모임 정보 */}
-          <div className="bg-warm-50 rounded-xl p-4">
-            <p className="font-semibold text-warm-900 mb-1">{meeting.title}</p>
-            <p className="text-sm text-warm-600">{formatDate(meeting.datetime)}</p>
+          <div className="bg-gray-50 rounded-xl p-4">
+            <p className="font-semibold text-brand-800 mb-1">{meeting.title}</p>
+            <p className="text-sm text-gray-600">{formatDate(meeting.datetime)}</p>
           </div>
 
           {/* 계좌 정보 */}
           <div className="space-y-4">
-            <h2 className="font-semibold text-warm-900">입금 계좌 정보</h2>
+            <h2 className="font-semibold text-brand-800">입금 계좌 정보</h2>
 
-            <div className="space-y-3 bg-warm-50 rounded-xl p-4">
+            <div className="space-y-3 bg-gray-50 rounded-xl p-4">
               {/* 은행 */}
               <div className="flex justify-between items-center">
-                <span className="text-warm-500 text-sm">은행</span>
-                <span className="font-medium text-warm-900">{TRANSFER_BANK_NAME}</span>
+                <span className="text-gray-500 text-sm">은행</span>
+                <span className="font-medium text-brand-800">{TRANSFER_BANK_NAME}</span>
               </div>
 
               {/* 계좌번호 */}
               <div className="flex justify-between items-center">
-                <span className="text-warm-500 text-sm">계좌번호</span>
+                <span className="text-gray-500 text-sm">계좌번호</span>
                 <div className="flex items-center gap-2">
-                  <span className="font-medium text-warm-900 font-mono">
+                  <span className="font-medium text-brand-800 font-mono">
                     {TRANSFER_ACCOUNT_NUMBER}
                   </span>
                   <CopyButton text={TRANSFER_ACCOUNT_NUMBER} label="계좌번호" />
@@ -134,15 +134,15 @@ export default async function TransferPendingPage({ params }: PageProps) {
 
               {/* 예금주 */}
               <div className="flex justify-between items-center">
-                <span className="text-warm-500 text-sm">예금주</span>
-                <span className="font-medium text-warm-900">{TRANSFER_ACCOUNT_HOLDER}</span>
+                <span className="text-gray-500 text-sm">예금주</span>
+                <span className="font-medium text-brand-800">{TRANSFER_ACCOUNT_HOLDER}</span>
               </div>
 
-              <hr className="border-warm-200" />
+              <hr className="border-gray-200" />
 
               {/* 입금자명 */}
               <div className="flex justify-between items-center">
-                <span className="text-warm-500 text-sm">입금자명</span>
+                <span className="text-gray-500 text-sm">입금자명</span>
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-brand-600 font-mono text-lg">
                     {registration.transfer_sender_name}
@@ -157,8 +157,8 @@ export default async function TransferPendingPage({ params }: PageProps) {
 
               {/* 입금 금액 */}
               <div className="flex justify-between items-center">
-                <span className="text-warm-500 text-sm">입금 금액</span>
-                <span className="font-bold text-warm-900 text-lg">
+                <span className="text-gray-500 text-sm">입금 금액</span>
+                <span className="font-bold text-brand-800 text-lg">
                   {formatAmount(registration.payment_amount || meeting.fee)}
                 </span>
               </div>
@@ -168,7 +168,7 @@ export default async function TransferPendingPage({ params }: PageProps) {
           {/* 입금 기한 */}
           {registration.transfer_deadline && (
             <div className="flex items-center gap-2 p-4 bg-orange-50 rounded-xl">
-              <AlertCircle size={20} className="text-orange-500 flex-shrink-0" />
+              <AlertCircle size={20} strokeWidth={1.5} className="text-orange-500 flex-shrink-0" />
               <div>
                 <p className="text-orange-800 font-medium">
                   입금 기한: {formatTransferDeadline(registration.transfer_deadline)}
@@ -181,17 +181,17 @@ export default async function TransferPendingPage({ params }: PageProps) {
           )}
 
           {/* 안내사항 */}
-          <div className="text-sm text-warm-500 space-y-2">
+          <div className="text-sm text-gray-500 space-y-2">
             <p className="flex items-start gap-2">
-              <CheckCircle size={16} className="text-brand-500 mt-0.5 flex-shrink-0" />
+              <CheckCircle size={16} strokeWidth={1.5} className="text-brand-500 mt-0.5 flex-shrink-0" />
               <span>입금자명을 반드시 위와 같이 입력해주세요.</span>
             </p>
             <p className="flex items-start gap-2">
-              <CheckCircle size={16} className="text-brand-500 mt-0.5 flex-shrink-0" />
+              <CheckCircle size={16} strokeWidth={1.5} className="text-brand-500 mt-0.5 flex-shrink-0" />
               <span>입금 확인 후 알림톡으로 참가 확정 안내가 발송됩니다.</span>
             </p>
             <p className="flex items-start gap-2">
-              <CheckCircle size={16} className="text-brand-500 mt-0.5 flex-shrink-0" />
+              <CheckCircle size={16} strokeWidth={1.5} className="text-brand-500 mt-0.5 flex-shrink-0" />
               <span>입금자명이 다를 경우 확인이 지연될 수 있습니다.</span>
             </p>
           </div>
@@ -206,7 +206,7 @@ export default async function TransferPendingPage({ params }: PageProps) {
             </Link>
             <Link
               href="/meetings"
-              className="block w-full py-3 border border-warm-200 text-warm-700 text-center rounded-xl font-medium hover:bg-warm-50 transition-colors"
+              className="block w-full py-3 border border-gray-200 text-gray-700 text-center rounded-xl font-medium hover:bg-gray-50 transition-colors"
             >
               다른 모임 둘러보기
             </Link>

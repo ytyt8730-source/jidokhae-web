@@ -100,10 +100,10 @@ export default function NewMemberGuideModal({
               {/* 닫기 버튼 */}
               <button
                 onClick={handleClose}
-                className="absolute top-4 right-4 p-2 text-warm-400 hover:text-warm-600 transition-colors"
+                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 transition-colors"
                 aria-label="닫기"
               >
-                <X size={20} />
+                <X size={20} strokeWidth={1.5} />
               </button>
 
               {/* 헤더 */}
@@ -111,10 +111,10 @@ export default function NewMemberGuideModal({
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-brand-50 rounded-full mb-4">
                   <span className="text-3xl">👋</span>
                 </div>
-                <h2 className="text-2xl font-bold text-warm-900 mb-2">
+                <h2 className="text-2xl font-bold text-brand-800 mb-2">
                   처음이시네요!
                 </h2>
-                <p className="text-warm-600 leading-relaxed">
+                <p className="text-gray-600 leading-relaxed">
                   지독해가 어떤 곳인지
                   <br />
                   먼저 둘러보시는 걸 추천해요.
@@ -129,38 +129,38 @@ export default function NewMemberGuideModal({
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-brand-100 group-hover:bg-brand-200 rounded-lg flex items-center justify-center transition-colors">
-                      <Home className="text-brand-600" size={20} />
+                      <Home className="text-brand-600" size={20} strokeWidth={1.5} />
                     </div>
                     <div>
-                      <p className="font-semibold text-warm-900">지독해 알아보기</p>
-                      <p className="text-sm text-warm-500">분위기와 회원 후기를 먼저</p>
+                      <p className="font-semibold text-brand-800">지독해 알아보기</p>
+                      <p className="text-sm text-gray-500">분위기와 회원 후기를 먼저</p>
                     </div>
                   </div>
                 </button>
 
                 <button
                   onClick={handleProceed}
-                  className="w-full p-4 bg-warm-50 hover:bg-warm-100 rounded-xl text-left transition-colors group"
+                  className="w-full p-4 bg-gray-50 hover:bg-gray-100 rounded-xl text-left transition-colors group"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-warm-100 group-hover:bg-warm-200 rounded-lg flex items-center justify-center transition-colors">
-                      <FileText className="text-warm-600" size={20} />
+                    <div className="w-10 h-10 bg-gray-100 group-hover:bg-gray-200 rounded-lg flex items-center justify-center transition-colors">
+                      <FileText className="text-gray-600" size={20} strokeWidth={1.5} />
                     </div>
                     <div>
-                      <p className="font-semibold text-warm-900">바로 신청하기</p>
-                      <p className="text-sm text-warm-500">이미 알고 있어요!</p>
+                      <p className="font-semibold text-brand-800">바로 신청하기</p>
+                      <p className="text-sm text-gray-500">이미 알고 있어요!</p>
                     </div>
                   </div>
                 </button>
               </div>
 
               {/* 다시 보지 않기 체크박스 */}
-              <label className="flex items-center gap-2 text-sm text-warm-500 cursor-pointer">
+              <label className="flex items-center gap-2 text-sm text-gray-500 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={dontShowAgain}
                   onChange={(e) => setDontShowAgain(e.target.checked)}
-                  className="w-4 h-4 rounded border-warm-300 text-brand-500 focus:ring-brand-500"
+                  className="w-4 h-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500"
                 />
                 <span>다시 보지 않기</span>
               </label>

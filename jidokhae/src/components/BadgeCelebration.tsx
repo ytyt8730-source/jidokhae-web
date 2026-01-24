@@ -135,10 +135,10 @@ export default function BadgeCelebration({ badges, onComplete }: BadgeCelebratio
                 <p className="text-sm text-brand-500 font-medium mb-2">
                   새로운 배지 획득!
                 </p>
-                <h2 className="text-2xl font-bold text-warm-900 mb-2">
+                <h2 className="text-2xl font-bold text-brand-800 mb-2">
                   {badgeInfo.name}
                 </h2>
-                <p className="text-warm-600 mb-6">
+                <p className="text-gray-600 mb-6">
                   {badgeInfo.description}
                 </p>
               </motion.div>
@@ -156,7 +156,7 @@ export default function BadgeCelebration({ badges, onComplete }: BadgeCelebratio
 
               {/* 배지 카운터 (여러 개일 때) */}
               {badges.length > 1 && (
-                <p className="text-sm text-warm-400 mt-4">
+                <p className="text-sm text-gray-400 mt-4">
                   {currentBadgeIndex + 1} / {badges.length}
                 </p>
               )}

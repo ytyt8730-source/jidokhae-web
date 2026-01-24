@@ -46,15 +46,15 @@ export default function WelcomeBadgeNudge({
           }}
           className="w-10 h-10 bg-gradient-to-br from-brand-100 to-amber-100 rounded-full flex items-center justify-center flex-shrink-0"
         >
-          <Award size={20} className="text-brand-600" />
+          <Award size={20} strokeWidth={1.5} className="text-brand-600" />
         </motion.div>
-        
+
         {/* 텍스트 */}
         <div>
-          <p className="font-medium text-warm-800 text-sm">
+          <p className="font-medium text-brand-800 text-sm">
             첫 모임 신청 시 <span className="text-brand-600 font-bold">웰컴 멤버</span> 배지가 지급됩니다!
           </p>
-          <p className="text-xs text-warm-500 mt-0.5">
+          <p className="text-xs text-gray-500 mt-0.5">
             지독해와 함께하는 첫 발걸음을 기념해요 ✨
           </p>
         </div>

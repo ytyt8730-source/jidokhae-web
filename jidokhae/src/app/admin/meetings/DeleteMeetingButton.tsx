@@ -49,10 +49,10 @@ export default function DeleteMeetingButton({ meetingId, meetingTitle }: DeleteM
             <AlertTriangle size={24} />
             <h3 className="font-semibold text-lg">모임 삭제</h3>
           </div>
-          <p className="text-warm-600 mb-6">
+          <p className="text-gray-600 mb-6">
             &ldquo;{meetingTitle}&rdquo; 모임을 정말 삭제하시겠습니까?
             <br />
-            <span className="text-sm text-warm-500">이 작업은 되돌릴 수 없습니다.</span>
+            <span className="text-sm text-gray-500">이 작업은 되돌릴 수 없습니다.</span>
           </p>
           <div className="flex gap-3">
             <Button

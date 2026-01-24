@@ -66,12 +66,12 @@ export default async function HomePage() {
 
       {/* 히어로 섹션 */}
       <section className="text-center py-12 space-y-4">
-        <h1 className="text-3xl sm:text-4xl font-bold text-warm-900">
+        <h1 className="text-3xl sm:text-4xl font-bold font-serif text-brand-800">
           <span className="text-gradient">지독해</span>와 함께하는
           <br />
           따뜻한 독서 시간
         </h1>
-        <p className="text-warm-600 text-lg max-w-xl mx-auto">
+        <p className="text-gray-600 text-lg max-w-xl mx-auto">
           경주와 포항에서 매주 열리는 독서모임입니다.
           <br className="hidden sm:block" />
           함께 책을 읽고, 생각을 나눠요.
@@ -82,8 +82,8 @@ export default async function HomePage() {
       {authUser && myRegistrations.length > 0 && (
         <section className="card bg-gradient-to-r from-brand-50 to-brand-100/50 p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="flex items-center gap-2 text-lg font-semibold text-warm-900">
-              <CheckCircle className="text-brand-500" size={20} />
+            <h2 className="flex items-center gap-2 text-lg font-semibold text-brand-800">
+              <CheckCircle className="text-brand-500" size={20} strokeWidth={1.5} />
               내 신청 모임
             </h2>
             <Link
@@ -102,9 +102,9 @@ export default async function HomePage() {
               >
                 <div className="flex items-center gap-3">
                   <Badge variant="success">{getDday(reg.meetings.datetime)}</Badge>
-                  <span className="font-medium text-warm-900">{reg.meetings.title}</span>
+                  <span className="font-medium text-brand-800">{reg.meetings.title}</span>
                 </div>
-                <span className="text-sm text-warm-500">
+                <span className="text-sm text-gray-500">
                   {formatMeetingDate(reg.meetings.datetime)}
                 </span>
               </Link>
@@ -117,8 +117,8 @@ export default async function HomePage() {
       {thisWeekMeetings.length > 0 && (
         <section>
           <div className="flex items-center justify-between mb-6">
-            <h2 className="flex items-center gap-2 text-xl font-semibold text-warm-900">
-              <CalendarDays className="text-brand-500" size={24} />
+            <h2 className="flex items-center gap-2 text-xl font-semibold text-brand-800">
+              <CalendarDays className="text-brand-500" size={24} strokeWidth={1.5} />
               이번 주 모임
             </h2>
           </div>
@@ -129,33 +129,33 @@ export default async function HomePage() {
       {/* 다가오는 모임 */}
       <section>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-warm-900">
+          <h2 className="text-xl font-semibold text-brand-800">
             {thisWeekMeetings.length > 0 ? '다가오는 모임' : '모임 일정'}
           </h2>
-          <Link 
+          <Link
             href="/meetings"
             className="flex items-center gap-1 text-sm text-brand-600 hover:text-brand-700 font-medium"
           >
             전체 보기
-            <ArrowRight size={16} />
+            <ArrowRight size={16} strokeWidth={1.5} />
           </Link>
         </div>
-        
+
         {upcomingMeetings.length > 0 ? (
           <MeetingList meetings={upcomingMeetings} />
         ) : thisWeekMeetings.length === 0 ? (
           <div className="card p-12 text-center">
-            <p className="text-warm-500">등록된 모임이 없습니다.</p>
+            <p className="text-gray-500">등록된 모임이 없습니다.</p>
           </div>
         ) : null}
       </section>
 
       {/* CTA 섹션 */}
       <section className="card bg-gradient-to-br from-brand-50 to-brand-100 p-8 text-center">
-        <h3 className="text-xl font-semibold text-warm-900 mb-2">
+        <h3 className="text-xl font-semibold text-brand-800 mb-2">
           지독해가 처음이신가요?
         </h3>
-        <p className="text-warm-600 mb-6">
+        <p className="text-gray-600 mb-6">
           독서모임이 어떤 곳인지 궁금하다면 소개 페이지를 확인해보세요.
         </p>
         <Link href="/about" className="btn-primary">

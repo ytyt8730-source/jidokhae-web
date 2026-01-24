@@ -42,21 +42,21 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
   ]
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-warm-50">
+    <div className="min-h-[calc(100vh-4rem)] bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-6">
         <div className="flex flex-col lg:flex-row gap-6">
           {/* 사이드바 */}
           <aside className="lg:w-64 flex-shrink-0">
             <nav className="card p-4">
-              <h2 className="font-semibold text-warm-900 mb-4 px-2">관리자</h2>
+              <h2 className="font-semibold text-brand-800 mb-4 px-2">관리자</h2>
               <ul className="space-y-1">
                 {navItems.map((item) => (
                   <li key={item.href}>
                     <Link
                       href={item.href}
-                      className="flex items-center gap-3 px-3 py-2 rounded-lg text-warm-600 hover:bg-warm-50 hover:text-warm-900 transition-colors"
+                      className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-brand-800 transition-colors"
                     >
-                      <item.icon size={18} />
+                      <item.icon size={18} strokeWidth={1.5} />
                       {item.label}
                     </Link>
                   </li>

@@ -1,13 +1,13 @@
 /**
- * 권한 관리 페이지
- * super_admin 전용 - 운영자 목록 및 권한 관리
+ * 회원 관리 페이지
+ * admin, super_admin 전용 - 회원 목록 조회 및 관리
  */
 
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { PermissionsClient } from './PermissionsClient'
+import { UsersClient } from './UsersClient'
 
-export default async function PermissionsPage() {
+export default async function UsersPage() {
   const supabase = await createClient()
 
   // 인증 확인
@@ -16,26 +16,26 @@ export default async function PermissionsPage() {
     redirect('/auth/login')
   }
 
-  // super_admin 권한 확인
+  // admin 이상 권한 확인
   const { data: user } = await supabase
     .from('users')
     .select('role')
     .eq('id', authUser.id)
     .single()
 
-  if (!user || user.role !== 'super_admin') {
+  if (!user || !['admin', 'super_admin'].includes(user.role)) {
     redirect('/admin')
   }
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-brand-800">권한 관리</h1>
+        <h1 className="text-2xl font-bold text-brand-800">회원 관리</h1>
         <p className="text-gray-600 mt-1">
-          운영자에게 역할에 맞는 권한을 부여하세요
+          전체 회원 목록을 확인하고 관리하세요
         </p>
       </div>
-      <PermissionsClient />
+      <UsersClient />
     </div>
   )
 }

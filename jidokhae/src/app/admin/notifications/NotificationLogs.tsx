@@ -138,63 +138,63 @@ export default function NotificationLogs() {
     <div>
       {/* 헤더 */}
       <div className="flex items-center justify-between mb-4">
-        <p className="text-sm text-warm-500">
+        <p className="text-sm text-gray-500">
           총 {pagination.total.toLocaleString()}건
         </p>
         <button
           onClick={handleRefresh}
           disabled={isLoading}
-          className="p-2 text-warm-500 hover:bg-warm-100 rounded-lg transition-colors disabled:opacity-50"
+          className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
         >
-          <RefreshCw className={isLoading ? 'animate-spin' : ''} size={18} />
+          <RefreshCw className={isLoading ? 'animate-spin' : ''} size={18} strokeWidth={1.5} />
         </button>
       </div>
 
       {/* 로그 목록 */}
       {isLoading && logs.length === 0 ? (
         <div className="text-center py-12">
-          <RefreshCw className="animate-spin mx-auto text-warm-400 mb-2" size={24} />
-          <p className="text-warm-500">불러오는 중...</p>
+          <RefreshCw className="animate-spin mx-auto text-gray-400 mb-2" size={24} strokeWidth={1.5} />
+          <p className="text-gray-500">불러오는 중...</p>
         </div>
       ) : logs.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-warm-500">발송 이력이 없습니다</p>
+          <p className="text-gray-500">발송 이력이 없습니다</p>
         </div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-warm-200">
-                <th className="text-left text-sm font-medium text-warm-500 py-3 px-2">일시</th>
-                <th className="text-left text-sm font-medium text-warm-500 py-3 px-2">수신자</th>
-                <th className="text-left text-sm font-medium text-warm-500 py-3 px-2">유형</th>
-                <th className="text-left text-sm font-medium text-warm-500 py-3 px-2">상태</th>
+              <tr className="border-b border-gray-200">
+                <th className="text-left text-sm font-medium text-gray-500 py-3 px-2">일시</th>
+                <th className="text-left text-sm font-medium text-gray-500 py-3 px-2">수신자</th>
+                <th className="text-left text-sm font-medium text-gray-500 py-3 px-2">유형</th>
+                <th className="text-left text-sm font-medium text-gray-500 py-3 px-2">상태</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-warm-100">
+            <tbody className="divide-y divide-gray-100">
               {logs.map((log) => {
                 const statusConfig = STATUS_CONFIG[log.status] || STATUS_CONFIG.pending
                 const StatusIcon = statusConfig.icon
 
                 return (
-                  <tr key={log.id} className="hover:bg-warm-50">
+                  <tr key={log.id} className="hover:bg-gray-100">
                     <td className="py-3 px-2">
-                      <span className="text-sm text-warm-600">
+                      <span className="text-sm text-gray-600">
                         {formatDateTime(log.created_at)}
                       </span>
                     </td>
                     <td className="py-3 px-2">
                       <div>
-                        <p className="text-sm font-medium text-warm-900">
+                        <p className="text-sm font-medium text-brand-800">
                           {log.users?.name || '알 수 없음'}
                         </p>
-                        <p className="text-xs text-warm-400">
+                        <p className="text-xs text-gray-400">
                           {maskPhone(log.phone_number)}
                         </p>
                       </div>
                     </td>
                     <td className="py-3 px-2">
-                      <span className="text-sm text-warm-600">
+                      <span className="text-sm text-gray-600">
                         {TEMPLATE_LABELS[log.template_code] || log.template_code}
                       </span>
                     </td>
@@ -225,19 +225,19 @@ export default function NotificationLogs() {
           <button
             onClick={handlePrevPage}
             disabled={pagination.offset === 0 || isLoading}
-            className="p-2 text-warm-500 hover:bg-warm-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <ChevronLeft size={20} />
+            <ChevronLeft size={20} strokeWidth={1.5} />
           </button>
-          <span className="text-sm text-warm-600">
+          <span className="text-sm text-gray-600">
             {Math.floor(pagination.offset / pagination.limit) + 1} / {Math.ceil(pagination.total / pagination.limit)}
           </span>
           <button
             onClick={handleNextPage}
             disabled={!pagination.hasMore || isLoading}
-            className="p-2 text-warm-500 hover:bg-warm-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <ChevronRight size={20} />
+            <ChevronRight size={20} strokeWidth={1.5} />
           </button>
         </div>
       )}

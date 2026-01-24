@@ -56,7 +56,7 @@ export default async function RootLayout({
   return (
     <html lang="ko" className={`${pretendard.variable} ${notoSerifKR.variable}`}>
       {/* M7-030: 레터박스 UI - 데스크톱에서 모바일 앱 감성 유지 */}
-      <body className="font-sans min-h-screen bg-warm-100">
+      <body className="font-sans min-h-screen bg-gray-100">
         <div className="max-w-[480px] mx-auto bg-white min-h-screen shadow-xl flex flex-col">
           <Header user={user} />
           <main className="flex-1">

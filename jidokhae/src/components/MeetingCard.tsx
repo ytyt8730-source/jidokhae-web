@@ -50,7 +50,7 @@ export default function MeetingCard({ meeting }: MeetingCardProps) {
       whileTap={cardHoverTap.tap}
     >
       <Link href={`/meetings/${meeting.id}`}>
-        <article className="card p-4 sm:p-5 group cursor-pointer">
+        <article className="card p-6 group cursor-pointer">
         {/* 상단: 뱃지들 */}
         <div className="flex items-center gap-2 flex-wrap mb-3">
           {meeting.isThisWeek && (
@@ -61,30 +61,30 @@ export default function MeetingCard({ meeting }: MeetingCardProps) {
         </div>
 
         {/* 제목 */}
-        <h3 className="font-semibold text-warm-900 text-lg mb-3 group-hover:text-brand-600 transition-colors">
+        <h3 className="font-serif font-semibold text-brand-800 text-lg mb-3 group-hover:text-brand-600 transition-colors">
           {meeting.title}
         </h3>
 
         {/* 정보 */}
-        <div className="space-y-2 text-sm text-warm-600">
+        <div className="space-y-2 text-sm text-gray-600">
           <div className="flex items-center gap-2">
-            <Calendar size={16} className="text-warm-400 flex-shrink-0" />
+            <Calendar size={16} strokeWidth={1.5} className="text-gray-400 flex-shrink-0" />
             <span>{formatMeetingDate(meeting.datetime)}</span>
           </div>
           <div className="flex items-center gap-2">
-            <MapPin size={16} className="text-warm-400 flex-shrink-0" />
+            <MapPin size={16} strokeWidth={1.5} className="text-gray-400 flex-shrink-0" />
             <span className="truncate">{meeting.location}</span>
           </div>
           <div className="flex items-center gap-2">
-            <Coins size={16} className="text-warm-400 flex-shrink-0" />
+            <Coins size={16} strokeWidth={1.5} className="text-gray-400 flex-shrink-0" />
             <span>{formatFee(meeting.fee)}</span>
           </div>
         </div>
 
         {/* 하단: 참가 인원 */}
-        <div className="flex items-center justify-between mt-4 pt-4 border-t border-warm-100">
-          <div className="flex items-center gap-1.5 text-sm text-warm-500">
-            <Users size={16} />
+        <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+          <div className="flex items-center gap-1.5 text-sm text-gray-500">
+            <Users size={16} strokeWidth={1.5} />
             <span>{meeting.current_participants}명 참여</span>
           </div>
         </div>

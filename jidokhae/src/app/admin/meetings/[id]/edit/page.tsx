@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, use } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, AlertCircle } from 'lucide-react'
@@ -10,11 +10,10 @@ import { createClient } from '@/lib/supabase/client'
 import type { RefundPolicy, MeetingType, MeetingStatus } from '@/types/database'
 
 interface PageProps {
-  params: Promise<{ id: string }>
+  params: { id: string }
 }
 
 export default function EditMeetingPage({ params }: PageProps) {
-  const resolvedParams = use(params)
   const router = useRouter()
   const supabase = createClient()
 
@@ -41,7 +40,7 @@ export default function EditMeetingPage({ params }: PageProps) {
       const { data: meeting, error: meetingError } = await supabase
         .from('meetings')
         .select('*')
-        .eq('id', resolvedParams.id)
+        .eq('id', params.id)
         .single()
 
       if (meetingError || !meeting) {
@@ -81,7 +80,7 @@ export default function EditMeetingPage({ params }: PageProps) {
     }
 
     fetchData()
-  }, [resolvedParams.id, router, supabase])
+  }, [params.id, router, supabase])
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -134,7 +133,7 @@ export default function EditMeetingPage({ params }: PageProps) {
       const { error: updateError } = await supabase
         .from('meetings')
         .update(updateData as never)
-        .eq('id', resolvedParams.id)
+        .eq('id', params.id)
 
       if (updateError) {
         setError('모임 수정 중 오류가 발생했습니다.')
@@ -163,18 +162,18 @@ export default function EditMeetingPage({ params }: PageProps) {
     <div className="max-w-2xl">
       <Link
         href="/admin/meetings"
-        className="inline-flex items-center gap-1.5 text-sm text-warm-500 hover:text-warm-700 mb-6"
+        className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-6"
       >
-        <ArrowLeft size={16} />
+        <ArrowLeft size={16} strokeWidth={1.5} />
         모임 목록으로
       </Link>
 
-      <h1 className="text-2xl font-bold text-warm-900 mb-6">모임 수정</h1>
+      <h1 className="text-2xl font-bold text-brand-800 mb-6">모임 수정</h1>
 
       <form onSubmit={handleSubmit} className="card p-6 space-y-6">
         {error && (
           <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-100 rounded-xl text-sm text-red-600">
-            <AlertCircle size={18} />
+            <AlertCircle size={18} strokeWidth={1.5} />
             {error}
           </div>
         )}
@@ -190,14 +189,14 @@ export default function EditMeetingPage({ params }: PageProps) {
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-warm-700">
+            <label className="block text-sm font-medium text-gray-700">
               모임 유형
             </label>
             <select
               name="meeting_type"
               value={formData.meeting_type}
               onChange={handleChange}
-              className="w-full rounded-xl border border-warm-200 bg-white px-4 py-3 text-warm-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+              className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-brand-800 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
             >
               <option value="regular">정기모임</option>
               <option value="discussion">토론모임</option>
@@ -206,14 +205,14 @@ export default function EditMeetingPage({ params }: PageProps) {
           </div>
 
           <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-warm-700">
+            <label className="block text-sm font-medium text-gray-700">
               상태
             </label>
             <select
               name="status"
               value={formData.status}
               onChange={handleChange}
-              className="w-full rounded-xl border border-warm-200 bg-white px-4 py-3 text-warm-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+              className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-brand-800 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
             >
               <option value="open">모집중</option>
               <option value="closed">마감</option>
@@ -263,14 +262,14 @@ export default function EditMeetingPage({ params }: PageProps) {
         </div>
 
         <div className="space-y-1.5">
-          <label className="block text-sm font-medium text-warm-700">
+          <label className="block text-sm font-medium text-gray-700">
             환불 규정
           </label>
           <select
             name="refund_policy_id"
             value={formData.refund_policy_id}
             onChange={handleChange}
-            className="w-full rounded-xl border border-warm-200 bg-white px-4 py-3 text-warm-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-brand-800 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
           >
             <option value="">선택 안함</option>
             {refundPolicies.map((policy) => (
@@ -282,7 +281,7 @@ export default function EditMeetingPage({ params }: PageProps) {
         </div>
 
         <div className="space-y-1.5">
-          <label className="block text-sm font-medium text-warm-700">
+          <label className="block text-sm font-medium text-gray-700">
             모임 설명 (선택)
           </label>
           <textarea
@@ -291,7 +290,7 @@ export default function EditMeetingPage({ params }: PageProps) {
             onChange={handleChange}
             placeholder="모임에 대한 추가 안내 사항을 입력해주세요."
             rows={4}
-            className="w-full rounded-xl border border-warm-200 bg-white px-4 py-3 text-warm-900 placeholder:text-warm-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent resize-none"
+            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-brand-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent resize-none"
           />
         </div>
 

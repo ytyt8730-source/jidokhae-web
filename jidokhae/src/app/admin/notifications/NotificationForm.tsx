@@ -97,7 +97,7 @@ export default function NotificationForm({ meetings }: NotificationFormProps) {
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* 대상 선택 */}
       <div>
-        <label className="block text-sm font-medium text-warm-700 mb-3">
+        <label className="block text-sm font-medium text-gray-700 mb-3">
           발송 대상
         </label>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -108,7 +108,7 @@ export default function NotificationForm({ meetings }: NotificationFormProps) {
                 relative flex flex-col p-4 border-2 rounded-xl cursor-pointer transition-colors
                 ${targetType === option.value
                   ? 'border-brand-500 bg-brand-50'
-                  : 'border-warm-200 hover:border-warm-300'
+                  : 'border-gray-200 hover:border-gray-300'
                 }
               `}
             >
@@ -120,8 +120,8 @@ export default function NotificationForm({ meetings }: NotificationFormProps) {
                 onChange={(e) => setTargetType(e.target.value as TargetType)}
                 className="sr-only"
               />
-              <span className="font-medium text-warm-900">{option.label}</span>
-              <span className="text-sm text-warm-500 mt-1">{option.description}</span>
+              <span className="font-medium text-brand-800">{option.label}</span>
+              <span className="text-sm text-gray-500 mt-1">{option.description}</span>
             </label>
           ))}
         </div>
@@ -130,13 +130,13 @@ export default function NotificationForm({ meetings }: NotificationFormProps) {
       {/* 모임 선택 (특정 모임 참가자 선택 시) */}
       {targetType === 'meeting_participants' && (
         <div>
-          <label className="block text-sm font-medium text-warm-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             모임 선택
           </label>
           <select
             value={selectedMeetingId}
             onChange={(e) => setSelectedMeetingId(e.target.value)}
-            className="w-full px-4 py-3 border border-warm-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500"
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500"
           >
             <option value="">모임을 선택하세요</option>
             {meetings.map((meeting) => (
@@ -153,7 +153,7 @@ export default function NotificationForm({ meetings }: NotificationFormProps) {
 
       {/* 메시지 입력 */}
       <div>
-        <label className="block text-sm font-medium text-warm-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
           알림 메시지
         </label>
         <textarea
@@ -162,9 +162,9 @@ export default function NotificationForm({ meetings }: NotificationFormProps) {
           placeholder="회원에게 전달할 메시지를 입력하세요"
           rows={4}
           maxLength={500}
-          className="w-full px-4 py-3 border border-warm-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none"
+          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none"
         />
-        <p className="text-sm text-warm-400 mt-1 text-right">
+        <p className="text-sm text-gray-400 mt-1 text-right">
           {message.length}/500자
         </p>
       </div>
@@ -177,9 +177,9 @@ export default function NotificationForm({ meetings }: NotificationFormProps) {
           }`}
         >
           {result.success ? (
-            <CheckCircle className="flex-shrink-0 mt-0.5" size={20} />
+            <CheckCircle className="flex-shrink-0 mt-0.5" size={20} strokeWidth={1.5} />
           ) : (
-            <AlertCircle className="flex-shrink-0 mt-0.5" size={20} />
+            <AlertCircle className="flex-shrink-0 mt-0.5" size={20} strokeWidth={1.5} />
           )}
           <div>
             <p className="font-medium">{result.message}</p>
@@ -200,12 +200,12 @@ export default function NotificationForm({ meetings }: NotificationFormProps) {
       >
         {isLoading ? (
           <>
-            <Loader2 className="animate-spin" size={18} />
+            <Loader2 className="animate-spin" size={18} strokeWidth={1.5} />
             발송 중...
           </>
         ) : (
           <>
-            <Send size={18} />
+            <Send size={18} strokeWidth={1.5} />
             알림 발송
           </>
         )}

@@ -29,10 +29,10 @@ export default function PraiseCompleteClient() {
           </div>
 
           {/* 메시지 */}
-          <h1 className="text-2xl font-bold text-warm-900 mb-2">
+          <h1 className="text-2xl font-bold font-serif text-brand-800 mb-2">
             따뜻한 마음이 전해졌어요
           </h1>
-          <p className="text-warm-600 mb-8">
+          <p className="text-gray-600 mb-8">
             익명으로 칭찬이 전달되었습니다
           </p>
 
@@ -40,13 +40,13 @@ export default function PraiseCompleteClient() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link href="/meetings">
               <Button variant="secondary" className="w-full sm:w-auto">
-                <Home size={16} className="mr-2" />
+                <Home size={16} strokeWidth={1.5} className="mr-2" />
                 모임 둘러보기
               </Button>
             </Link>
             <Link href="/mypage">
               <Button className="w-full sm:w-auto">
-                <User size={16} className="mr-2" />
+                <User size={16} strokeWidth={1.5} className="mr-2" />
                 마이페이지
               </Button>
             </Link>

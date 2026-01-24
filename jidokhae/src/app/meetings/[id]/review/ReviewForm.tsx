@@ -61,7 +61,7 @@ export default function ReviewForm({ meetingId }: ReviewFormProps) {
     <div className="p-6 sm:p-8 space-y-6">
       {/* 후기 입력 */}
       <div>
-        <label htmlFor="content" className="block font-medium text-warm-900 mb-2">
+        <label htmlFor="content" className="block font-medium text-brand-800 mb-2">
           후기 내용
         </label>
         <textarea
@@ -72,9 +72,9 @@ export default function ReviewForm({ meetingId }: ReviewFormProps) {
           rows={6}
           maxLength={1000}
           disabled={isSubmitting}
-          className="w-full px-4 py-3 rounded-xl border-2 border-warm-200 focus:border-brand-500 focus:ring-0 text-warm-800 placeholder-warm-400 resize-none disabled:opacity-50"
+          className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-brand-500 focus:ring-0 text-brand-800 placeholder-gray-400 resize-none disabled:opacity-50"
         />
-        <div className="mt-2 flex justify-between text-xs text-warm-500">
+        <div className="mt-2 flex justify-between text-xs text-gray-500">
           <span>최소 10자</span>
           <span>{content.length}/1000</span>
         </div>
@@ -88,14 +88,14 @@ export default function ReviewForm({ meetingId }: ReviewFormProps) {
           checked={isPublic}
           onChange={(e) => setIsPublic(e.target.checked)}
           disabled={isSubmitting}
-          className="mt-1 h-4 w-4 rounded border-warm-300 text-brand-500 focus:ring-brand-500"
+          className="mt-1 h-4 w-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500"
         />
-        <label htmlFor="isPublic" className="text-sm text-warm-700">
+        <label htmlFor="isPublic" className="text-sm text-gray-700">
           <span className="font-medium flex items-center gap-1">
-            <Eye size={14} />
+            <Eye size={14} strokeWidth={1.5} />
             후기 공개에 동의합니다
           </span>
-          <span className="block text-warm-500 mt-1">
+          <span className="block text-gray-500 mt-1">
             동의하시면 랜딩 페이지에 익명으로 후기가 게시될 수 있습니다.
           </span>
         </label>
@@ -117,12 +117,12 @@ export default function ReviewForm({ meetingId }: ReviewFormProps) {
       >
         {isSubmitting ? (
           <>
-            <Loader2 size={20} className="mr-2 animate-spin" />
+            <Loader2 size={20} strokeWidth={1.5} className="mr-2 animate-spin" />
             등록 중...
           </>
         ) : (
           <>
-            <PenLine size={20} className="mr-2" />
+            <PenLine size={20} strokeWidth={1.5} className="mr-2" />
             후기 등록하기
           </>
         )}

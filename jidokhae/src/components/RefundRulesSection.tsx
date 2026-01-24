@@ -38,14 +38,14 @@ export default function RefundRulesSection({ rules }: RefundRulesSectionProps) {
 
   return (
     <div className="space-y-2">
-      <h2 className="flex items-center gap-2 text-lg font-semibold text-warm-900">
-        <Clock size={18} />
+      <h2 className="flex items-center gap-2 text-lg font-semibold text-brand-800">
+        <Clock size={18} strokeWidth={1.5} />
         환불 규정
       </h2>
       
       {/* 핵심 규정 (항상 표시) */}
       <div className="flex items-center gap-2">
-        <p className="text-sm text-warm-600">
+        <p className="text-sm text-gray-600">
           <span className="font-medium text-brand-600">
             {mainRule.days_before}일 전까지 {mainRule.refund_percent}% 환불
           </span>
@@ -54,17 +54,17 @@ export default function RefundRulesSection({ rules }: RefundRulesSectionProps) {
         {hasMoreRules && (
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="inline-flex items-center gap-1 text-sm text-warm-500 hover:text-brand-600 transition-colors"
+            className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-brand-600 transition-colors"
           >
             {isExpanded ? (
               <>
                 접기
-                <ChevronUp size={14} />
+                <ChevronUp size={14} strokeWidth={1.5} />
               </>
             ) : (
               <>
                 자세히
-                <ChevronDown size={14} />
+                <ChevronDown size={14} strokeWidth={1.5} />
               </>
             )}
           </button>
@@ -82,7 +82,7 @@ export default function RefundRulesSection({ rules }: RefundRulesSectionProps) {
             className="space-y-1 pl-1 overflow-hidden"
           >
             {sortedRules.slice(1).map((rule, index) => (
-              <li key={index} className="text-sm text-warm-500">
+              <li key={index} className="text-sm text-gray-500">
                 • {formatRule(rule)}
               </li>
             ))}

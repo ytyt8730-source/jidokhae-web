@@ -70,7 +70,7 @@ export default function PraiseForm({ meetingId, participants }: PraiseFormProps)
     <div className="p-6 sm:p-8 space-y-6">
       {/* 참가자 선택 */}
       <div>
-        <h3 className="font-medium text-warm-900 mb-3">
+        <h3 className="font-medium text-brand-800 mb-3">
           함께했던 분들
         </h3>
         <div className="space-y-2">
@@ -82,14 +82,14 @@ export default function PraiseForm({ meetingId, participants }: PraiseFormProps)
               className={`w-full p-3 rounded-xl border-2 text-left transition-all duration-200 flex items-center justify-between ${
                 selectedPerson === participant.id
                   ? 'border-brand-500 bg-brand-50'
-                  : 'border-warm-200 hover:border-warm-300'
+                  : 'border-gray-200 hover:border-gray-300'
               } disabled:opacity-50`}
             >
-              <span className="font-medium text-warm-800">
+              <span className="font-medium text-brand-800">
                 {participant.name}
               </span>
               {selectedPerson === participant.id && (
-                <Check size={20} className="text-brand-500" />
+                <Check size={20} strokeWidth={1.5} className="text-brand-500" />
               )}
             </button>
           ))}
@@ -98,7 +98,7 @@ export default function PraiseForm({ meetingId, participants }: PraiseFormProps)
 
       {/* 칭찬 문구 선택 */}
       <div>
-        <h3 className="font-medium text-warm-900 mb-3">
+        <h3 className="font-medium text-brand-800 mb-3">
           어떤 마음을 전할까요?
         </h3>
         <div className="space-y-2">
@@ -110,14 +110,14 @@ export default function PraiseForm({ meetingId, participants }: PraiseFormProps)
               className={`w-full p-3 rounded-xl border-2 text-left transition-all duration-200 flex items-center justify-between ${
                 selectedPhrase === phrase.id
                   ? 'border-yellow-500 bg-yellow-50'
-                  : 'border-warm-200 hover:border-warm-300'
+                  : 'border-gray-200 hover:border-gray-300'
               } disabled:opacity-50`}
             >
-              <span className="text-warm-700">
+              <span className="text-gray-700">
                 {phrase.text}
               </span>
               {selectedPhrase === phrase.id && (
-                <Heart size={20} className="text-yellow-500 fill-yellow-500" />
+                <Heart size={20} strokeWidth={1.5} className="text-yellow-500 fill-yellow-500" />
               )}
             </button>
           ))}
@@ -140,12 +140,12 @@ export default function PraiseForm({ meetingId, participants }: PraiseFormProps)
       >
         {isSubmitting ? (
           <>
-            <Loader2 size={20} className="mr-2 animate-spin" />
+            <Loader2 size={20} strokeWidth={1.5} className="mr-2 animate-spin" />
             전송 중...
           </>
         ) : (
           <>
-            <Heart size={20} className="mr-2" />
+            <Heart size={20} strokeWidth={1.5} className="mr-2" />
             칭찬 보내기
           </>
         )}

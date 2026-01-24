@@ -96,7 +96,7 @@ export function BannerSlide({ banners, autoPlayInterval = 5000 }: BannerSlidePro
   )
 
   return (
-    <div className="relative w-full aspect-[2/1] md:aspect-[3/1] rounded-2xl overflow-hidden bg-warm-100">
+    <div className="relative w-full aspect-[2/1] md:aspect-[3/1] rounded-2xl overflow-hidden bg-gray-100">
       <AnimatePresence initial={false} custom={direction}>
         {currentBanner.link_url ? (
           <Link href={currentBanner.link_url} className="block absolute inset-0">
@@ -115,14 +115,14 @@ export function BannerSlide({ banners, autoPlayInterval = 5000 }: BannerSlidePro
             className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 hover:bg-white flex items-center justify-center shadow-md transition-colors z-10"
             aria-label="이전 배너"
           >
-            <ChevronLeft size={24} className="text-warm-700" />
+            <ChevronLeft size={24} className="text-gray-700" />
           </button>
           <button
             onClick={next}
             className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 hover:bg-white flex items-center justify-center shadow-md transition-colors z-10"
             aria-label="다음 배너"
           >
-            <ChevronRight size={24} className="text-warm-700" />
+            <ChevronRight size={24} className="text-gray-700" />
           </button>
         </>
       )}

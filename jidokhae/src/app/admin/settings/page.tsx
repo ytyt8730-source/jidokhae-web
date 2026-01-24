@@ -1,13 +1,13 @@
 /**
- * 권한 관리 페이지
- * super_admin 전용 - 운영자 목록 및 권한 관리
+ * 설정 페이지
+ * super_admin 전용 - 시스템 설정 관리
  */
 
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { PermissionsClient } from './PermissionsClient'
+import { SettingsClient } from './SettingsClient'
 
-export default async function PermissionsPage() {
+export default async function SettingsPage() {
   const supabase = await createClient()
 
   // 인증 확인
@@ -27,15 +27,21 @@ export default async function PermissionsPage() {
     redirect('/admin')
   }
 
+  // 환불 정책 조회
+  const { data: refundPolicies } = await supabase
+    .from('refund_policies')
+    .select('*')
+    .order('name')
+
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-brand-800">권한 관리</h1>
+        <h1 className="text-2xl font-bold text-brand-800">설정</h1>
         <p className="text-gray-600 mt-1">
-          운영자에게 역할에 맞는 권한을 부여하세요
+          시스템 설정을 관리하세요
         </p>
       </div>
-      <PermissionsClient />
+      <SettingsClient initialPolicies={refundPolicies || []} />
     </div>
   )
 }

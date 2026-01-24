@@ -280,14 +280,14 @@ export default function PaymentMethodSelector({
         <>
           {/* 결제 방식 선택 */}
           <div className="space-y-3">
-            <h3 className="font-semibold text-warm-900">결제 방식 선택</h3>
+            <h3 className="font-semibold text-brand-800">결제 방식 선택</h3>
 
             {/* 간편결제 */}
             <label
               className={`flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all
                 ${selectedMethod === 'easy'
                   ? 'border-brand-500 bg-brand-50'
-                  : 'border-warm-200 hover:border-warm-300'
+                  : 'border-gray-200 hover:border-gray-300'
                 }`}
             >
               <input
@@ -299,17 +299,17 @@ export default function PaymentMethodSelector({
                 className="sr-only"
               />
               <div className={`w-10 h-10 rounded-lg flex items-center justify-center
-                ${selectedMethod === 'easy' ? 'bg-brand-100' : 'bg-warm-100'}`}>
-                <CreditCard size={20} className={selectedMethod === 'easy' ? 'text-brand-600' : 'text-warm-500'} />
+                ${selectedMethod === 'easy' ? 'bg-brand-100' : 'bg-gray-100'}`}>
+                <CreditCard size={20} strokeWidth={1.5} className={selectedMethod === 'easy' ? 'text-brand-600' : 'text-gray-500'} />
               </div>
               <div className="flex-1">
-                <p className={`font-medium ${selectedMethod === 'easy' ? 'text-brand-700' : 'text-warm-900'}`}>
+                <p className={`font-medium ${selectedMethod === 'easy' ? 'text-brand-700' : 'text-brand-800'}`}>
                   간편결제
                 </p>
-                <p className="text-sm text-warm-500">카카오페이, 토스페이 등</p>
+                <p className="text-sm text-gray-500">카카오페이, 토스페이 등</p>
               </div>
               <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center
-                ${selectedMethod === 'easy' ? 'border-brand-500' : 'border-warm-300'}`}>
+                ${selectedMethod === 'easy' ? 'border-brand-500' : 'border-gray-300'}`}>
                 {selectedMethod === 'easy' && (
                   <div className="w-3 h-3 rounded-full bg-brand-500" />
                 )}
@@ -322,7 +322,7 @@ export default function PaymentMethodSelector({
                 ${!isTransferAvailable ? 'opacity-50 cursor-not-allowed' : ''}
                 ${selectedMethod === 'transfer'
                   ? 'border-brand-500 bg-brand-50'
-                  : 'border-warm-200 hover:border-warm-300'
+                  : 'border-gray-200 hover:border-gray-300'
                 }`}
             >
               <input
@@ -335,19 +335,19 @@ export default function PaymentMethodSelector({
                 disabled={!isTransferAvailable}
               />
               <div className={`w-10 h-10 rounded-lg flex items-center justify-center
-                ${selectedMethod === 'transfer' ? 'bg-brand-100' : 'bg-warm-100'}`}>
-                <Building2 size={20} className={selectedMethod === 'transfer' ? 'text-brand-600' : 'text-warm-500'} />
+                ${selectedMethod === 'transfer' ? 'bg-brand-100' : 'bg-gray-100'}`}>
+                <Building2 size={20} strokeWidth={1.5} className={selectedMethod === 'transfer' ? 'text-brand-600' : 'text-gray-500'} />
               </div>
               <div className="flex-1">
-                <p className={`font-medium ${selectedMethod === 'transfer' ? 'text-brand-700' : 'text-warm-900'}`}>
+                <p className={`font-medium ${selectedMethod === 'transfer' ? 'text-brand-700' : 'text-brand-800'}`}>
                   계좌이체
                 </p>
-                <p className="text-sm text-warm-500">
+                <p className="text-sm text-gray-500">
                   {isTransferAvailable ? '직접 계좌로 입금' : '현재 이용 불가'}
                 </p>
               </div>
               <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center
-                ${selectedMethod === 'transfer' ? 'border-brand-500' : 'border-warm-300'}`}>
+                ${selectedMethod === 'transfer' ? 'border-brand-500' : 'border-gray-300'}`}>
                 {selectedMethod === 'transfer' && (
                   <div className="w-3 h-3 rounded-full bg-brand-500" />
                 )}
@@ -358,7 +358,7 @@ export default function PaymentMethodSelector({
           {/* 에러 메시지 */}
           {error && (
             <div className="flex items-center gap-2 p-3 bg-red-50 rounded-lg">
-              <AlertCircle size={18} className="text-red-500" />
+              <AlertCircle size={18} strokeWidth={1.5} className="text-red-500" />
               <p className="text-sm text-red-600">{error}</p>
             </div>
           )}
@@ -390,9 +390,9 @@ export default function PaymentMethodSelector({
           {/* 뒤로 가기 */}
           <button
             onClick={() => setStep('select')}
-            className="flex items-center gap-1.5 text-sm text-warm-500 hover:text-warm-700"
+            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700"
           >
-            <ArrowLeft size={16} />
+            <ArrowLeft size={16} strokeWidth={1.5} />
             결제 방식 다시 선택
           </button>
 
@@ -408,7 +408,7 @@ export default function PaymentMethodSelector({
           {/* 에러 메시지 */}
           {error && (
             <div className="flex items-center gap-2 p-3 bg-red-50 rounded-lg">
-              <AlertCircle size={18} className="text-red-500" />
+              <AlertCircle size={18} strokeWidth={1.5} className="text-red-500" />
               <p className="text-sm text-red-600">{error}</p>
             </div>
           )}
@@ -420,8 +420,8 @@ export default function PaymentMethodSelector({
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/50" onClick={() => setShowTransferConfirm(false)} />
           <div className="relative bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl">
-            <h3 className="text-lg font-semibold text-warm-900 mb-2">입금 확인</h3>
-            <p className="text-warm-600 mb-4">
+            <h3 className="text-lg font-semibold text-brand-800 mb-2">입금 확인</h3>
+            <p className="text-gray-600 mb-4">
               입금을 완료하셨나요?<br />
               확인 후 참가 신청이 완료됩니다.
             </p>

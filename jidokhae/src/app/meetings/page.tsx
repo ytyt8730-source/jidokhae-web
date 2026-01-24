@@ -26,11 +26,11 @@ export default async function MeetingsPage() {
     <div className="max-w-5xl mx-auto px-4 py-8">
       {/* 페이지 헤더 */}
       <div className="mb-8">
-        <h1 className="flex items-center gap-3 text-2xl font-bold text-warm-900 mb-2">
-          <CalendarDays className="text-brand-500" size={28} />
+        <h1 className="flex items-center gap-3 text-2xl font-bold font-serif text-brand-800 mb-2">
+          <CalendarDays className="text-brand-500" size={28} strokeWidth={1.5} />
           모임 일정
         </h1>
-        <p className="text-warm-600">
+        <p className="text-gray-600">
           다가오는 모임을 확인하고 참여해보세요.
         </p>
       </div>
@@ -44,8 +44,8 @@ export default async function MeetingsPage() {
         </div>
       ) : (
         <div className="card p-12 text-center">
-          <p className="text-warm-500 mb-2">등록된 모임이 없습니다.</p>
-          <p className="text-sm text-warm-400">
+          <p className="text-gray-500 mb-2">등록된 모임이 없습니다.</p>
+          <p className="text-sm text-gray-400">
             곧 새로운 모임이 등록될 예정이에요.
           </p>
         </div>

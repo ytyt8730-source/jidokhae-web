@@ -110,15 +110,15 @@ export default function CompleteProfilePage() {
         {/* 헤더 */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-brand-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <User className="w-8 h-8 text-brand-600" />
+            <User className="w-8 h-8 text-brand-600" strokeWidth={1.5} />
           </div>
-          <h1 className="text-2xl font-bold text-warm-900 mb-2">
+          <h1 className="text-2xl font-bold font-serif text-brand-800 mb-2">
             환영합니다, {userName}님!
           </h1>
-          <p className="text-warm-600">
+          <p className="text-gray-600">
             모임 알림을 위해 전화번호를 입력해주세요.
             <br />
-            <span className="text-sm text-warm-500">(선택사항)</span>
+            <span className="text-sm text-gray-500">(선택사항)</span>
           </p>
         </div>
 
@@ -133,7 +133,7 @@ export default function CompleteProfilePage() {
             )}
 
             <div className="relative">
-              <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-warm-400" size={18} />
+              <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} strokeWidth={1.5} />
               <Input
                 type="tel"
                 placeholder="010-0000-0000"
@@ -144,7 +144,7 @@ export default function CompleteProfilePage() {
               />
             </div>
 
-            <p className="text-xs text-warm-500">
+            <p className="text-xs text-gray-500">
               전화번호는 모임 알림 및 긴급 연락 시에만 사용됩니다.
             </p>
 
@@ -160,7 +160,7 @@ export default function CompleteProfilePage() {
               <button
                 type="button"
                 onClick={handleSkip}
-                className="w-full text-sm text-warm-500 hover:text-warm-700 py-2"
+                className="w-full text-sm text-gray-500 hover:text-gray-700 py-2"
               >
                 나중에 입력하기
               </button>

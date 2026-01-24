@@ -152,7 +152,7 @@ export function BannersClient() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-6 h-6 animate-spin text-brand-500" />
+        <Loader2 className="w-6 h-6 animate-spin text-brand-500" strokeWidth={1.5} />
       </div>
     )
   }
@@ -162,7 +162,7 @@ export function BannersClient() {
       {/* 배너 추가 버튼 */}
       <div className="flex justify-end">
         <button onClick={openCreateModal} className="btn-primary flex items-center gap-2">
-          <Plus size={18} />
+          <Plus size={18} strokeWidth={1.5} />
           배너 추가
         </button>
       </div>
@@ -170,8 +170,8 @@ export function BannersClient() {
       {/* 배너 목록 */}
       {banners.length === 0 ? (
         <div className="card p-12 text-center">
-          <ImageIcon className="w-12 h-12 text-warm-300 mx-auto mb-4" />
-          <p className="text-warm-500">등록된 배너가 없습니다</p>
+          <ImageIcon className="w-12 h-12 text-gray-300 mx-auto mb-4" strokeWidth={1.5} />
+          <p className="text-gray-500">등록된 배너가 없습니다</p>
         </div>
       ) : (
         <Reorder.Group
@@ -187,17 +187,17 @@ export function BannersClient() {
                 className="card p-4 flex items-center gap-4 cursor-grab active:cursor-grabbing"
               >
                 {/* 드래그 핸들 */}
-                <div className="text-warm-400 hover:text-warm-600">
-                  <GripVertical size={20} />
+                <div className="text-gray-400 hover:text-gray-600">
+                  <GripVertical size={20} strokeWidth={1.5} />
                 </div>
 
                 {/* 순서 번호 */}
-                <div className="w-8 h-8 rounded-full bg-warm-100 flex items-center justify-center text-sm font-medium text-warm-600">
+                <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm font-medium text-gray-600">
                   {banner.display_order}
                 </div>
 
                 {/* 썸네일 */}
-                <div className="w-24 h-16 rounded-lg overflow-hidden bg-warm-100 flex-shrink-0">
+                <div className="w-24 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
                   {banner.image_url ? (
                     <img
                       src={banner.image_url}
@@ -206,7 +206,7 @@ export function BannersClient() {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <ImageIcon className="w-8 h-8 text-warm-300" />
+                      <ImageIcon className="w-8 h-8 text-gray-300" strokeWidth={1.5} />
                     </div>
                   )}
                 </div>
@@ -214,7 +214,7 @@ export function BannersClient() {
                 {/* 정보 */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="font-medium text-warm-900 truncate">{banner.title}</span>
+                    <span className="font-medium text-brand-800 truncate">{banner.title}</span>
                     {banner.link_url && (
                       <a
                         href={banner.link_url}
@@ -223,11 +223,11 @@ export function BannersClient() {
                         className="text-brand-500 hover:text-brand-600"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <ExternalLink size={14} />
+                        <ExternalLink size={14} strokeWidth={1.5} />
                       </a>
                     )}
                   </div>
-                  <div className="text-sm text-warm-500 truncate">{banner.image_url}</div>
+                  <div className="text-sm text-gray-500 truncate">{banner.image_url}</div>
                 </div>
 
                 {/* 상태 토글 */}
@@ -239,17 +239,17 @@ export function BannersClient() {
                   className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm ${
                     banner.is_active
                       ? 'bg-green-100 text-green-700'
-                      : 'bg-warm-100 text-warm-500'
+                      : 'bg-gray-100 text-gray-500'
                   }`}
                 >
                   {banner.is_active ? (
                     <>
-                      <ToggleRight size={16} />
+                      <ToggleRight size={16} strokeWidth={1.5} />
                       활성
                     </>
                   ) : (
                     <>
-                      <ToggleLeft size={16} />
+                      <ToggleLeft size={16} strokeWidth={1.5} />
                       비활성
                     </>
                   )}
@@ -262,9 +262,9 @@ export function BannersClient() {
                       e.stopPropagation()
                       openEditModal(banner)
                     }}
-                    className="p-2 text-warm-400 hover:text-brand-500 hover:bg-brand-50 rounded-lg transition-colors"
+                    className="p-2 text-gray-400 hover:text-brand-500 hover:bg-brand-50 rounded-lg transition-colors"
                   >
-                    <Edit2 size={18} />
+                    <Edit2 size={18} strokeWidth={1.5} />
                   </button>
                   <button
                     onClick={(e) => {
@@ -272,12 +272,12 @@ export function BannersClient() {
                       deleteBanner(banner.id)
                     }}
                     disabled={deletingId === banner.id}
-                    className="p-2 text-warm-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                   >
                     {deletingId === banner.id ? (
-                      <Loader2 size={18} className="animate-spin" />
+                      <Loader2 size={18} className="animate-spin" strokeWidth={1.5} />
                     ) : (
-                      <Trash2 size={18} />
+                      <Trash2 size={18} strokeWidth={1.5} />
                     )}
                   </button>
                 </div>
@@ -287,7 +287,7 @@ export function BannersClient() {
         </Reorder.Group>
       )}
 
-      <p className="text-sm text-warm-500 text-center">
+      <p className="text-sm text-gray-500 text-center">
         드래그하여 배너 순서를 변경할 수 있습니다
       </p>
 
@@ -300,17 +300,17 @@ export function BannersClient() {
             className="bg-white rounded-2xl w-full max-w-lg p-6"
           >
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-warm-900">
+              <h2 className="text-xl font-bold text-brand-800">
                 {editingBanner ? '배너 수정' : '새 배너 추가'}
               </h2>
-              <button onClick={closeModal} className="text-warm-400 hover:text-warm-600">
-                <X size={24} />
+              <button onClick={closeModal} className="text-gray-400 hover:text-gray-600">
+                <X size={24} strokeWidth={1.5} />
               </button>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-warm-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   제목 <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -323,7 +323,7 @@ export function BannersClient() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-warm-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   이미지 URL <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -334,7 +334,7 @@ export function BannersClient() {
                   className="input w-full"
                 />
                 {formData.image_url && (
-                  <div className="mt-2 rounded-lg overflow-hidden bg-warm-100">
+                  <div className="mt-2 rounded-lg overflow-hidden bg-gray-100">
                     <img
                       src={formData.image_url}
                       alt="미리보기"
@@ -348,7 +348,7 @@ export function BannersClient() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-warm-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   링크 URL (선택)
                 </label>
                 <input
@@ -370,7 +370,7 @@ export function BannersClient() {
                 disabled={submitting || !formData.title || !formData.image_url}
                 className="btn-primary flex items-center gap-2"
               >
-                {submitting && <Loader2 size={18} className="animate-spin" />}
+                {submitting && <Loader2 size={18} className="animate-spin" strokeWidth={1.5} />}
                 {editingBanner ? '수정' : '추가'}
               </button>
             </div>

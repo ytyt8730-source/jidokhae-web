@@ -98,8 +98,8 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         {/* 헤더 */}
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-warm-900 mb-2">로그인</h1>
-          <p className="text-warm-600">
+          <h1 className="text-2xl font-bold font-serif text-brand-800 mb-2">로그인</h1>
+          <p className="text-gray-600">
             지독해에 오신 것을 환영합니다
           </p>
         </div>
@@ -109,7 +109,7 @@ export default function LoginPage() {
           {/* 에러 메시지 */}
           {error && (
             <div className="flex items-center gap-2 p-3 mb-5 bg-red-50 border border-red-100 rounded-xl text-sm text-red-600">
-              <AlertCircle size={18} />
+              <AlertCircle size={18} strokeWidth={1.5} />
               {error}
             </div>
           )}
@@ -127,15 +127,15 @@ export default function LoginPage() {
 
           {/* 구분선 */}
           <div className="flex items-center gap-4 my-6">
-            <div className="flex-1 h-px bg-warm-200" />
-            <span className="text-sm text-warm-400">또는</span>
-            <div className="flex-1 h-px bg-warm-200" />
+            <div className="flex-1 h-px bg-gray-200" />
+            <span className="text-sm text-gray-400">또는</span>
+            <div className="flex-1 h-px bg-gray-200" />
           </div>
 
           {/* 이메일 로그인 폼 (M2-006 기존 기능 유지) */}
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-warm-400" size={18} />
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} strokeWidth={1.5} />
               <Input
                 type="email"
                 placeholder="이메일"
@@ -147,7 +147,7 @@ export default function LoginPage() {
             </div>
 
             <div className="relative">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-warm-400" size={18} />
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} strokeWidth={1.5} />
               <Input
                 type="password"
                 placeholder="비밀번호"
@@ -170,11 +170,11 @@ export default function LoginPage() {
 
           {/* 구분선 */}
           <div className="flex items-center gap-4 my-6">
-            <div className="flex-1 h-px bg-warm-200" />
+            <div className="flex-1 h-px bg-gray-200" />
           </div>
 
           {/* 회원가입 링크 */}
-          <p className="text-center text-sm text-warm-600">
+          <p className="text-center text-sm text-gray-600">
             아직 계정이 없으신가요?{' '}
             <Link href="/auth/signup" className="text-brand-600 font-medium hover:underline">
               회원가입

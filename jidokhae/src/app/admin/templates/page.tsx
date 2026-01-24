@@ -40,10 +40,10 @@ export default async function TemplatesPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-warm-900">알림 템플릿 관리</h1>
+        <h1 className="text-2xl font-bold text-brand-800">알림 템플릿 관리</h1>
       </div>
 
-      <p className="text-warm-600 text-sm">
+      <p className="text-gray-600 text-sm">
         알림 문구를 수정하고, 발송 여부를 설정할 수 있습니다.
       </p>
 
