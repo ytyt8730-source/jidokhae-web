@@ -37,12 +37,12 @@ export default function Header({ user }: HeaderProps) {
     : []
 
   return (
-    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-warm-100">
+    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
       <nav className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* 로고 */}
         <Link href="/" className="flex items-center gap-2">
           <span className="text-2xl">📚</span>
-          <span className="font-bold text-xl text-warm-900">지독해</span>
+          <span className="font-serif font-bold text-xl text-brand-800">지독해</span>
         </Link>
 
         {/* 데스크톱 네비게이션 */}
@@ -55,7 +55,7 @@ export default function Header({ user }: HeaderProps) {
                 'text-sm font-medium transition-colors',
                 pathname === item.href
                   ? 'text-brand-600'
-                  : 'text-warm-600 hover:text-warm-900'
+                  : 'text-gray-600 hover:text-gray-900'
               )}
             >
               {item.label}
@@ -75,18 +75,18 @@ export default function Header({ user }: HeaderProps) {
                     'flex items-center gap-1.5 text-sm font-medium transition-colors',
                     pathname === item.href
                       ? 'text-brand-600'
-                      : 'text-warm-600 hover:text-warm-900'
+                      : 'text-gray-600 hover:text-gray-900'
                   )}
                 >
-                  {item.icon && <item.icon size={16} />}
+                  {item.icon && <item.icon size={16} strokeWidth={1.5} />}
                   {item.label}
                 </Link>
               ))}
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-1.5 text-sm font-medium text-warm-500 hover:text-warm-700 transition-colors"
+                className="flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors"
               >
-                <LogOut size={16} />
+                <LogOut size={16} strokeWidth={1.5} />
                 로그아웃
               </button>
             </>
@@ -100,16 +100,16 @@ export default function Header({ user }: HeaderProps) {
         {/* 모바일 메뉴 버튼 */}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="md:hidden p-2 text-warm-600"
+          className="md:hidden p-2 text-gray-600"
           aria-label="메뉴"
         >
-          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          {isMenuOpen ? <X size={24} strokeWidth={1.5} /> : <Menu size={24} strokeWidth={1.5} />}
         </button>
       </nav>
 
       {/* 모바일 메뉴 */}
       {isMenuOpen && (
-        <div className="md:hidden bg-white border-b border-warm-100">
+        <div className="md:hidden bg-white border-b border-gray-100">
           <div className="max-w-5xl mx-auto px-4 py-4 space-y-3">
             {navItems.map((item) => (
               <Link
@@ -120,13 +120,13 @@ export default function Header({ user }: HeaderProps) {
                   'block py-2 text-base font-medium transition-colors',
                   pathname === item.href
                     ? 'text-brand-600'
-                    : 'text-warm-600'
+                    : 'text-gray-600'
                 )}
               >
                 {item.label}
               </Link>
             ))}
-            <hr className="border-warm-100" />
+            <hr className="border-gray-100" />
             {user ? (
               <>
                 {userItems.map((item) => (
@@ -138,18 +138,18 @@ export default function Header({ user }: HeaderProps) {
                       'flex items-center gap-2 py-2 text-base font-medium transition-colors',
                       pathname === item.href
                         ? 'text-brand-600'
-                        : 'text-warm-600'
+                        : 'text-gray-600'
                     )}
                   >
-                    {item.icon && <item.icon size={18} />}
+                    {item.icon && <item.icon size={18} strokeWidth={1.5} />}
                     {item.label}
                   </Link>
                 ))}
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-2 py-2 text-base font-medium text-warm-500"
+                  className="flex items-center gap-2 py-2 text-base font-medium text-gray-500"
                 >
-                  <LogOut size={18} />
+                  <LogOut size={18} strokeWidth={1.5} />
                   로그아웃
                 </button>
               </>

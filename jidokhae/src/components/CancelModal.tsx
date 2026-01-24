@@ -186,25 +186,25 @@ export default function CancelModal({
           >
             <div className="bg-white rounded-2xl w-full max-w-md shadow-xl">
               {/* 헤더 */}
-              <div className="flex items-center justify-between p-4 border-b border-warm-100">
-                <h2 className="text-lg font-semibold text-warm-900">마음 돌리기</h2>
+              <div className="flex items-center justify-between p-4 border-b border-gray-100">
+                <h2 className="text-lg font-semibold text-brand-800">마음 돌리기</h2>
                 <button
                   onClick={onClose}
-                  className="p-2 text-warm-400 hover:text-warm-600 rounded-lg"
+                  className="p-2 text-gray-400 hover:text-gray-600 rounded-lg"
                 >
-                  <X size={20} />
+                  <X size={20} strokeWidth={1.5} />
                 </button>
               </div>
 
               {/* 본문 */}
               <div className="p-4 space-y-4">
                 {/* 모임 정보 */}
-                <div className="bg-warm-50 rounded-xl p-4">
+                <div className="bg-gray-50 rounded-xl p-4">
                   <div className="flex items-start justify-between">
                     <div>
-                      <h3 className="font-medium text-warm-900">{meeting.title}</h3>
-                      <div className="flex items-center gap-2 mt-1 text-sm text-warm-600">
-                        <Calendar size={14} />
+                      <h3 className="font-medium text-brand-800">{meeting.title}</h3>
+                      <div className="flex items-center gap-2 mt-1 text-sm text-gray-600">
+                        <Calendar size={14} strokeWidth={1.5} />
                         <span>{formatMeetingDate(meeting.datetime)}</span>
                       </div>
                     </div>
@@ -217,20 +217,20 @@ export default function CancelModal({
                 {/* 환불 정보 */}
                 <div className="bg-amber-50 rounded-xl p-4">
                   <div className="flex items-center gap-2 text-amber-700 mb-2">
-                    <AlertCircle size={16} />
+                    <AlertCircle size={16} strokeWidth={1.5} />
                     <span className="text-sm font-medium">환불 안내</span>
                   </div>
                   <div className="space-y-1 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-warm-600">결제 금액</span>
-                      <span className="text-warm-900">{formatFee(paymentAmount)}</span>
+                      <span className="text-gray-600">결제 금액</span>
+                      <span className="text-brand-800">{formatFee(paymentAmount)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-warm-600">환불율</span>
-                      <span className="text-warm-900">{refundPercent}</span>
+                      <span className="text-gray-600">환불율</span>
+                      <span className="text-brand-800">{refundPercent}</span>
                     </div>
                     <div className="flex justify-between font-medium pt-2 border-t border-amber-200">
-                      <span className="text-warm-700">환불 예정 금액</span>
+                      <span className="text-gray-700">환불 예정 금액</span>
                       <span className="text-amber-700">{formatFee(refundAmount)}</span>
                     </div>
                   </div>
@@ -244,7 +244,7 @@ export default function CancelModal({
 
                 {/* 취소 사유 선택 (M2-029) */}
                 <div>
-                  <label className="block text-sm font-medium text-warm-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     취소 사유 <span className="text-red-500">*</span>
                   </label>
                   <div className="space-y-2">
@@ -254,7 +254,7 @@ export default function CancelModal({
                         className={`flex items-center p-3 rounded-xl border cursor-pointer transition-colors ${
                           selectedReason === reason.value
                             ? 'border-brand-500 bg-brand-50'
-                            : 'border-warm-200 hover:border-warm-300'
+                            : 'border-gray-200 hover:border-gray-300'
                         }`}
                       >
                         <input
@@ -266,7 +266,7 @@ export default function CancelModal({
                           className="sr-only"
                         />
                         <span className={`text-sm ${
-                          selectedReason === reason.value ? 'text-brand-700' : 'text-warm-700'
+                          selectedReason === reason.value ? 'text-brand-700' : 'text-gray-700'
                         }`}>
                           {reason.label}
                         </span>
@@ -279,7 +279,7 @@ export default function CancelModal({
                       value={customReason}
                       onChange={(e) => setCustomReason(e.target.value)}
                       placeholder="취소 사유를 입력해주세요"
-                      className="w-full mt-2 p-3 border border-warm-200 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-brand-500"
+                      className="w-full mt-2 p-3 border border-gray-200 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-brand-500"
                       rows={3}
                     />
                   )}
@@ -288,14 +288,14 @@ export default function CancelModal({
                 {/* 에러 메시지 */}
                 {error && (
                   <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-100 rounded-xl text-sm text-red-600">
-                    <AlertCircle size={16} />
+                    <AlertCircle size={16} strokeWidth={1.5} />
                     {error}
                   </div>
                 )}
               </div>
 
               {/* 푸터 */}
-              <div className="p-4 border-t border-warm-100 space-y-2">
+              <div className="p-4 border-t border-gray-100 space-y-2">
                 <Button
                   onClick={handleCancel}
                   isLoading={isLoading}

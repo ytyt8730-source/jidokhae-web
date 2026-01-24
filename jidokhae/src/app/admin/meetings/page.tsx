@@ -42,10 +42,10 @@ export default async function AdminMeetingsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-warm-900">모임 관리</h1>
+        <h1 className="text-2xl font-bold text-brand-800">모임 관리</h1>
         <Link href="/admin/meetings/new">
           <Button>
-            <Plus size={18} className="mr-1" />
+            <Plus size={18} strokeWidth={1.5} className="mr-1" />
             모임 생성
           </Button>
         </Link>
@@ -54,7 +54,7 @@ export default async function AdminMeetingsPage() {
       {/* 모임 목록 */}
       <div className="card overflow-hidden">
         {meetings && meetings.length > 0 ? (
-          <div className="divide-y divide-warm-100">
+          <div className="divide-y divide-gray-100">
             {meetings.map((meeting) => (
               <div key={meeting.id} className="p-4 flex flex-col sm:flex-row sm:items-center gap-4">
                 <div className="flex-1 min-w-0">
@@ -62,18 +62,18 @@ export default async function AdminMeetingsPage() {
                     {getMeetingTypeBadge(meeting.meeting_type)}
                     {getStatusBadge(meeting.status)}
                   </div>
-                  <h3 className="font-medium text-warm-900 truncate">{meeting.title}</h3>
-                  <p className="text-sm text-warm-500 mt-1">
+                  <h3 className="font-medium text-brand-800 truncate">{meeting.title}</h3>
+                  <p className="text-sm text-gray-500 mt-1">
                     {formatMeetingDate(meeting.datetime)} · {meeting.location}
                   </p>
-                  <p className="text-sm text-warm-500">
+                  <p className="text-sm text-gray-500">
                     {formatFee(meeting.fee)} · {meeting.current_participants}/{meeting.capacity}명
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <Link href={`/admin/meetings/${meeting.id}/edit`}>
                     <Button variant="secondary" size="sm">
-                      <Edit size={16} className="mr-1" />
+                      <Edit size={16} strokeWidth={1.5} className="mr-1" />
                       수정
                     </Button>
                   </Link>
@@ -84,7 +84,7 @@ export default async function AdminMeetingsPage() {
           </div>
         ) : (
           <div className="p-12 text-center">
-            <p className="text-warm-500 mb-4">등록된 모임이 없습니다.</p>
+            <p className="text-gray-500 mb-4">등록된 모임이 없습니다.</p>
             <Link href="/admin/meetings/new">
               <Button>첫 모임 만들기</Button>
             </Link>

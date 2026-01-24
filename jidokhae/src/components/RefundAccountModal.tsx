@@ -72,13 +72,13 @@ export default function RefundAccountModal({
       {/* 모달 */}
       <div className="relative bg-white rounded-2xl w-full max-w-md shadow-xl">
         {/* 헤더 */}
-        <div className="flex items-center justify-between p-5 border-b border-warm-100">
-          <h2 className="text-lg font-semibold text-warm-900">환불 계좌 입력</h2>
+        <div className="flex items-center justify-between p-5 border-b border-gray-100">
+          <h2 className="text-lg font-semibold text-brand-800">환불 계좌 입력</h2>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg hover:bg-warm-100 transition-colors"
+            className="p-1 rounded-lg hover:bg-gray-100 transition-colors"
           >
-            <X size={20} className="text-warm-500" />
+            <X size={20} strokeWidth={1.5} className="text-gray-500" />
           </button>
         </div>
 
@@ -86,7 +86,7 @@ export default function RefundAccountModal({
         <form onSubmit={handleSubmit} className="p-5 space-y-5">
           {/* 안내 메시지 */}
           <div className="flex items-start gap-2 p-3 bg-orange-50 rounded-lg">
-            <AlertCircle size={18} className="text-orange-500 flex-shrink-0 mt-0.5" />
+            <AlertCircle size={18} strokeWidth={1.5} className="text-orange-500 flex-shrink-0 mt-0.5" />
             <div className="text-sm text-orange-800">
               <p>계좌이체 결제 건은 수동으로 환불됩니다.</p>
               <p className="text-xs text-orange-600 mt-1">
@@ -96,8 +96,8 @@ export default function RefundAccountModal({
           </div>
 
           {/* 환불 금액 */}
-          <div className="flex justify-between items-center py-3 border-b border-warm-100">
-            <span className="text-warm-600">환불 예정 금액</span>
+          <div className="flex justify-between items-center py-3 border-b border-gray-100">
+            <span className="text-gray-600">환불 예정 금액</span>
             <span className="text-xl font-bold text-brand-600">
               {formatAmount(refundAmount)}
             </span>
@@ -105,15 +105,15 @@ export default function RefundAccountModal({
 
           {/* 은행 선택 */}
           <div>
-            <label className="block text-sm font-medium text-warm-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               은행 선택
             </label>
             <select
               value={bank}
               onChange={(e) => setBank(e.target.value)}
-              className="w-full px-4 py-3 border border-warm-200 rounded-xl
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl
                          focus:ring-2 focus:ring-brand-500 focus:border-transparent
-                         bg-white text-warm-900"
+                         bg-white text-brand-800"
               required
             >
               <option value="">은행을 선택하세요</option>
@@ -127,7 +127,7 @@ export default function RefundAccountModal({
 
           {/* 계좌번호 */}
           <div>
-            <label className="block text-sm font-medium text-warm-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               계좌번호
             </label>
             <input
@@ -135,16 +135,16 @@ export default function RefundAccountModal({
               value={account}
               onChange={(e) => setAccount(e.target.value)}
               placeholder="계좌번호를 입력하세요"
-              className="w-full px-4 py-3 border border-warm-200 rounded-xl
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl
                          focus:ring-2 focus:ring-brand-500 focus:border-transparent
-                         text-warm-900 placeholder:text-warm-400"
+                         text-brand-800 placeholder:text-gray-400"
               required
             />
           </div>
 
           {/* 예금주 */}
           <div>
-            <label className="block text-sm font-medium text-warm-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               예금주
             </label>
             <input
@@ -152,9 +152,9 @@ export default function RefundAccountModal({
               value={holder}
               onChange={(e) => setHolder(e.target.value)}
               placeholder="예금주명을 입력하세요"
-              className="w-full px-4 py-3 border border-warm-200 rounded-xl
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl
                          focus:ring-2 focus:ring-brand-500 focus:border-transparent
-                         text-warm-900 placeholder:text-warm-400"
+                         text-brand-800 placeholder:text-gray-400"
               required
             />
           </div>
@@ -171,7 +171,7 @@ export default function RefundAccountModal({
           )}
 
           {/* 환불 소요 시간 */}
-          <p className="text-xs text-warm-500 text-center">
+          <p className="text-xs text-gray-500 text-center">
             환불 소요: 영업일 기준 1~2일
           </p>
 
@@ -181,8 +181,8 @@ export default function RefundAccountModal({
               type="button"
               onClick={onClose}
               disabled={isLoading}
-              className="flex-1 py-3 border border-warm-200 text-warm-700 rounded-xl
-                         font-medium hover:bg-warm-50 transition-colors
+              className="flex-1 py-3 border border-gray-200 text-gray-700 rounded-xl
+                         font-medium hover:bg-gray-50 transition-colors
                          disabled:opacity-50 disabled:cursor-not-allowed"
             >
               취소

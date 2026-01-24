@@ -39,17 +39,17 @@ export default async function BookshelfPage() {
       <div>
         <Link
           href="/mypage"
-          className="inline-flex items-center gap-1.5 text-sm text-warm-500 hover:text-warm-700 mb-4"
+          className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-4"
         >
-          <ArrowLeft size={16} />
+          <ArrowLeft size={16} strokeWidth={1.5} />
           마이페이지로
         </Link>
 
-        <h1 className="flex items-center gap-3 text-2xl font-bold text-warm-900">
-          <BookOpen className="text-brand-500" size={28} />
+        <h1 className="flex items-center gap-3 text-2xl font-bold text-brand-800">
+          <BookOpen className="text-brand-500" size={28} strokeWidth={1.5} />
           내 책장
         </h1>
-        <p className="text-warm-600 mt-2">
+        <p className="text-gray-600 mt-2">
           지독해와 함께 읽은 책을 기록해보세요.
         </p>
       </div>
@@ -59,7 +59,7 @@ export default async function BookshelfPage() {
 
       {/* 책 목록 */}
       <div className="space-y-4">
-        <h2 className="font-semibold text-warm-900">
+        <h2 className="font-semibold text-brand-800">
           등록한 책 ({books?.length || 0}권)
         </h2>
 
@@ -72,26 +72,26 @@ export default async function BookshelfPage() {
               >
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 bg-brand-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <BookOpen size={20} className="text-brand-500" />
+                    <BookOpen size={20} strokeWidth={1.5} className="text-brand-500" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-warm-900 truncate">
+                    <h3 className="font-medium text-brand-800 truncate">
                       {book.title}
                     </h3>
                     {book.author && (
-                      <p className="text-sm text-warm-500">
+                      <p className="text-sm text-gray-500">
                         {book.author} 저
                       </p>
                     )}
                     {book.one_line_note && (
-                      <p className="mt-2 text-sm text-warm-700 italic">
+                      <p className="mt-2 text-sm text-gray-700 italic">
                         &quot;{book.one_line_note}&quot;
                       </p>
                     )}
-                    <p className="mt-2 text-xs text-warm-400">
+                    <p className="mt-2 text-xs text-gray-400">
                       {format(new Date(book.created_at), 'yyyy년 M월 d일', { locale: ko })} 등록
                     </p>
-                    
+
                     {/* M7-020: 한 문장 카드 이미지 생성 */}
                     {book.one_line_note && (
                       <QuoteCardGenerator
@@ -107,11 +107,11 @@ export default async function BookshelfPage() {
           </div>
         ) : (
           <div className="card p-8 text-center">
-            <BookOpen size={48} className="mx-auto text-warm-300 mb-4" />
-            <p className="text-warm-500">
+            <BookOpen size={48} strokeWidth={1.5} className="mx-auto text-gray-300 mb-4" />
+            <p className="text-gray-500">
               아직 등록한 책이 없습니다.
             </p>
-            <p className="text-sm text-warm-400 mt-1">
+            <p className="text-sm text-gray-400 mt-1">
               위에서 첫 번째 책을 등록해보세요!
             </p>
           </div>

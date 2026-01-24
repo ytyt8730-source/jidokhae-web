@@ -76,18 +76,18 @@ export default async function FeedbackPage({ params }: PageProps) {
     return (
       <div className="max-w-lg mx-auto px-4 py-12 text-center">
         <div className="card p-8">
-          <BookOpen size={48} className="mx-auto text-warm-400 mb-4" />
-          <h1 className="text-xl font-bold text-warm-900 mb-2">
+          <BookOpen size={48} strokeWidth={1.5} className="mx-auto text-gray-400 mb-4" />
+          <h1 className="text-xl font-bold font-serif text-brand-800 mb-2">
             참여 기록이 없습니다
           </h1>
-          <p className="text-warm-600 mb-6">
+          <p className="text-gray-600 mb-6">
             해당 모임에 참가 신청 내역이 없습니다.
           </p>
           <Link
             href="/meetings"
             className="inline-flex items-center gap-2 text-brand-600 hover:text-brand-700"
           >
-            <ArrowLeft size={16} />
+            <ArrowLeft size={16} strokeWidth={1.5} />
             모임 목록으로
           </Link>
         </div>
@@ -100,14 +100,14 @@ export default async function FeedbackPage({ params }: PageProps) {
     return (
       <div className="max-w-lg mx-auto px-4 py-12 text-center">
         <div className="card p-8">
-          <CheckCircle size={48} className="mx-auto text-green-500 mb-4" />
-          <h1 className="text-xl font-bold text-warm-900 mb-2">
+          <CheckCircle size={48} strokeWidth={1.5} className="mx-auto text-green-500 mb-4" />
+          <h1 className="text-xl font-bold font-serif text-brand-800 mb-2">
             이미 참여 완료되었습니다
           </h1>
-          <p className="text-warm-600 mb-2">
+          <p className="text-gray-600 mb-2">
             {meeting.title}
           </p>
-          <p className="text-sm text-warm-500 mb-6">
+          <p className="text-sm text-gray-500 mb-6">
             {registration.participation_method === 'praise' && '칭찬하기로 완료'}
             {registration.participation_method === 'review' && '후기 남기기로 완료'}
             {registration.participation_method === 'confirm' && '참여 확인 완료'}
@@ -130,20 +130,20 @@ export default async function FeedbackPage({ params }: PageProps) {
     return (
       <div className="max-w-lg mx-auto px-4 py-12 text-center">
         <div className="card p-8">
-          <div className="w-12 h-12 mx-auto rounded-full bg-warm-100 flex items-center justify-center mb-4">
+          <div className="w-12 h-12 mx-auto rounded-full bg-gray-100 flex items-center justify-center mb-4">
             <span className="text-2xl">😔</span>
           </div>
-          <h1 className="text-xl font-bold text-warm-900 mb-2">
+          <h1 className="text-xl font-bold font-serif text-brand-800 mb-2">
             미참여 처리된 모임입니다
           </h1>
-          <p className="text-warm-600 mb-6">
+          <p className="text-gray-600 mb-6">
             다음 모임에서 만나요!
           </p>
           <Link
             href="/meetings"
             className="inline-flex items-center gap-2 text-brand-600 hover:text-brand-700"
           >
-            <ArrowLeft size={16} />
+            <ArrowLeft size={16} strokeWidth={1.5} />
             다음 모임 보기
           </Link>
         </div>
@@ -158,20 +158,20 @@ export default async function FeedbackPage({ params }: PageProps) {
       {/* 뒤로 가기 */}
       <Link
         href="/mypage"
-        className="inline-flex items-center gap-1.5 text-sm text-warm-500 hover:text-warm-700 mb-6"
+        className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-6"
       >
-        <ArrowLeft size={16} />
+        <ArrowLeft size={16} strokeWidth={1.5} />
         마이페이지로
       </Link>
 
       <div className="card overflow-hidden">
         {/* 헤더 */}
-        <div className="p-6 sm:p-8 border-b border-warm-100 text-center">
+        <div className="p-6 sm:p-8 border-b border-gray-100 text-center">
           <div className="text-4xl mb-4">📚</div>
-          <h1 className="text-xl sm:text-2xl font-bold text-warm-900 mb-2">
+          <h1 className="text-xl sm:text-2xl font-bold font-serif text-brand-800 mb-2">
             {meeting.title} 어떠셨어요?
           </h1>
-          <p className="text-warm-600">
+          <p className="text-gray-600">
             {meetingDate}에 함께한 모임이
             <br />
             어떠셨는지 알려주세요!
@@ -186,7 +186,7 @@ export default async function FeedbackPage({ params }: PageProps) {
 
         {/* 안내 문구 */}
         <div className="px-6 pb-6 sm:px-8 sm:pb-8">
-          <p className="text-xs text-warm-500 text-center">
+          <p className="text-xs text-gray-500 text-center">
             셋 중 하나를 선택하면 참여 완료!
           </p>
         </div>

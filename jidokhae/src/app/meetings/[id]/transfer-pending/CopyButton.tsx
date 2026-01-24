@@ -36,14 +36,14 @@ export default function CopyButton({ text, label, highlight = false }: CopyButto
       className={`p-1.5 rounded-lg transition-colors ${
         highlight
           ? 'bg-brand-50 hover:bg-brand-100'
-          : 'bg-warm-100 hover:bg-warm-200'
+          : 'bg-gray-100 hover:bg-gray-200'
       }`}
       title={`${label} 복사`}
     >
       {copied ? (
         <Check size={16} className="text-green-500" />
       ) : (
-        <Copy size={16} className={highlight ? 'text-brand-500' : 'text-warm-500'} />
+        <Copy size={16} className={highlight ? 'text-brand-500' : 'text-gray-500'} />
       )}
     </button>
   )

@@ -98,11 +98,11 @@ export default async function MyPage() {
     <div className="max-w-3xl mx-auto px-4 py-8 space-y-8">
       {/* 페이지 헤더 */}
       <div>
-        <h1 className="flex items-center gap-3 text-2xl font-bold text-warm-900 mb-2">
-          <User className="text-brand-500" size={28} />
+        <h1 className="flex items-center gap-3 text-2xl font-bold font-serif text-brand-800 mb-2">
+          <User className="text-brand-500" size={28} strokeWidth={1.5} />
           마이페이지
         </h1>
-        <p className="text-warm-600">
+        <p className="text-gray-600">
           내 정보와 참여 기록을 확인하세요.
         </p>
       </div>
@@ -116,10 +116,10 @@ export default async function MyPage() {
             </span>
           </div>
           <div className="flex-1">
-            <h2 className="text-xl font-semibold text-warm-900">{user.name}</h2>
-            <p className="text-warm-500">{user.email}</p>
+            <h2 className="text-xl font-semibold text-brand-800">{user.name}</h2>
+            <p className="text-gray-500">{user.email}</p>
             {user.phone && (
-              <p className="text-sm text-warm-400 mt-1">{user.phone}</p>
+              <p className="text-sm text-gray-400 mt-1">{user.phone}</p>
             )}
           </div>
         </div>
@@ -136,32 +136,32 @@ export default async function MyPage() {
       {/* 참여 통계 */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div className="card p-4 text-center">
-          <Calendar className="mx-auto text-warm-400 mb-2" size={24} />
-          <p className="text-2xl font-bold text-warm-900">{user.total_participations}</p>
-          <p className="text-xs text-warm-500">총 참여</p>
+          <Calendar className="mx-auto text-gray-400 mb-2" size={24} strokeWidth={1.5} />
+          <p className="text-2xl font-bold text-brand-800">{user.total_participations}</p>
+          <p className="text-xs text-gray-500">총 참여</p>
         </div>
         <div className="card p-4 text-center">
-          <Award className="mx-auto text-warm-400 mb-2" size={24} />
-          <p className="text-2xl font-bold text-warm-900">{user.consecutive_weeks}</p>
-          <p className="text-xs text-warm-500">연속 참여 (주)</p>
+          <Award className="mx-auto text-gray-400 mb-2" size={24} strokeWidth={1.5} />
+          <p className="text-2xl font-bold text-brand-800">{user.consecutive_weeks}</p>
+          <p className="text-xs text-gray-500">연속 참여 (주)</p>
         </div>
         <div className="card p-4 text-center">
           <span className="block text-2xl mb-2">💛</span>
-          <p className="text-2xl font-bold text-warm-900">{user.total_praises_received}</p>
-          <p className="text-xs text-warm-500">받은 칭찬</p>
+          <p className="text-2xl font-bold text-brand-800">{user.total_praises_received}</p>
+          <p className="text-xs text-gray-500">받은 칭찬</p>
         </div>
         <Link href="/mypage/bookshelf" className="card p-4 text-center hover:shadow-md transition-shadow">
-          <BookOpen className="mx-auto text-warm-400 mb-2" size={24} />
-          <p className="text-2xl font-bold text-warm-900">{bookCount || 0}</p>
-          <p className="text-xs text-warm-500">등록한 책</p>
+          <BookOpen className="mx-auto text-gray-400 mb-2" size={24} strokeWidth={1.5} />
+          <p className="text-2xl font-bold text-brand-800">{bookCount || 0}</p>
+          <p className="text-xs text-gray-500">등록한 책</p>
         </Link>
       </div>
 
       {/* 배지 섹션 */}
       {userBadges.length > 0 && (
         <div className="card p-6">
-          <h3 className="flex items-center gap-2 font-semibold text-warm-900 mb-4">
-            <Trophy size={20} className="text-yellow-500" />
+          <h3 className="flex items-center gap-2 font-semibold text-brand-800 mb-4">
+            <Trophy size={20} className="text-yellow-500" strokeWidth={1.5} />
             나의 배지
           </h3>
           <div className="flex flex-wrap gap-3">
@@ -171,11 +171,11 @@ export default async function MyPage() {
               return (
                 <div
                   key={badge.id}
-                  className="flex items-center gap-2 px-3 py-2 bg-warm-50 rounded-xl"
+                  className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-xl"
                   title={info.description}
                 >
                   <span className="text-xl">{info.icon}</span>
-                  <span className="text-sm font-medium text-warm-700">{info.name}</span>
+                  <span className="text-sm font-medium text-gray-700">{info.name}</span>
                 </div>
               )
             })}
@@ -185,31 +185,31 @@ export default async function MyPage() {
 
       {/* 정기모임 자격 상태 */}
       <div className="card p-6">
-        <h3 className="font-semibold text-warm-900 mb-4">정기모임 자격 상태</h3>
+        <h3 className="font-semibold text-brand-800 mb-4">정기모임 자격 상태</h3>
         <div className={`p-4 rounded-xl ${
           qualification.status === 'active' ? 'bg-green-50' :
           qualification.status === 'warning' ? 'bg-orange-50' :
           qualification.status === 'expired' ? 'bg-red-50' :
-          'bg-warm-50'
+          'bg-gray-50'
         }`}>
           <div className="flex items-center gap-3">
             <div className={`w-3 h-3 rounded-full ${
               qualification.status === 'active' ? 'bg-green-500' :
               qualification.status === 'warning' ? 'bg-orange-500' :
               qualification.status === 'expired' ? 'bg-red-500' :
-              'bg-warm-400'
+              'bg-gray-400'
             }`} />
             <p className={`font-medium ${
               qualification.status === 'active' ? 'text-green-800' :
               qualification.status === 'warning' ? 'text-orange-800' :
               qualification.status === 'expired' ? 'text-red-800' :
-              'text-warm-600'
+              'text-gray-600'
             }`}>
               {qualification.message}
             </p>
           </div>
           {user.last_regular_meeting_at && (
-            <p className="text-xs text-warm-500 mt-2 ml-6">
+            <p className="text-xs text-gray-500 mt-2 ml-6">
               마지막 참여: {new Date(user.last_regular_meeting_at).toLocaleDateString('ko-KR')}
             </p>
           )}
@@ -218,7 +218,7 @@ export default async function MyPage() {
 
       {/* 신청 내역 (M2-043~047) */}
       <div className="card p-6">
-        <h3 className="font-semibold text-warm-900 mb-4">내 신청 모임</h3>
+        <h3 className="font-semibold text-brand-800 mb-4">내 신청 모임</h3>
 
         {/* 확정된 신청 (M2-044) */}
         {confirmedRegistrations.length > 0 ? (
@@ -227,7 +227,7 @@ export default async function MyPage() {
               <Link
                 key={reg.id}
                 href={`/meetings/${reg.meeting_id}`}
-                className="block p-4 bg-warm-50 rounded-xl hover:bg-warm-100 transition-colors"
+                className="block p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
@@ -237,18 +237,18 @@ export default async function MyPage() {
                         {getDday(reg.meetings.datetime)}
                       </span>
                     </div>
-                    <h4 className="font-medium text-warm-900 truncate">{reg.meetings.title}</h4>
-                    <p className="text-sm text-warm-500 mt-1">
+                    <h4 className="font-medium text-brand-800 truncate">{reg.meetings.title}</h4>
+                    <p className="text-sm text-gray-500 mt-1">
                       {formatMeetingDate(reg.meetings.datetime)}
                     </p>
                   </div>
-                  <ArrowRight size={20} className="text-warm-400 flex-shrink-0 mt-1" />
+                  <ArrowRight size={20} className="text-gray-400 flex-shrink-0 mt-1" strokeWidth={1.5} />
                 </div>
               </Link>
             ))}
           </div>
         ) : (
-          <p className="text-sm text-warm-500 text-center py-8">
+          <p className="text-sm text-gray-500 text-center py-8">
             신청한 모임이 없습니다.
           </p>
         )}
@@ -256,7 +256,7 @@ export default async function MyPage() {
         {/* 입금대기 (M5-046) */}
         {pendingTransferRegistrations.length > 0 && (
           <div className="mt-6">
-            <h4 className="text-sm font-medium text-warm-700 mb-3">입금대기</h4>
+            <h4 className="text-sm font-medium text-gray-700 mb-3">입금대기</h4>
             <div className="space-y-3">
               {pendingTransferRegistrations.map((reg) => (
                 <Link
@@ -272,15 +272,15 @@ export default async function MyPage() {
                           {getDday(reg.meetings.datetime)}
                         </span>
                       </div>
-                      <h4 className="font-medium text-warm-900 truncate">{reg.meetings.title}</h4>
-                      <p className="text-sm text-warm-500 mt-1">
+                      <h4 className="font-medium text-brand-800 truncate">{reg.meetings.title}</h4>
+                      <p className="text-sm text-gray-500 mt-1">
                         {formatMeetingDate(reg.meetings.datetime)}
                       </p>
                       <p className="text-xs text-yellow-700 mt-2">
                         입금 정보 확인하기 →
                       </p>
                     </div>
-                    <ArrowRight size={20} className="text-warm-400 flex-shrink-0 mt-1" />
+                    <ArrowRight size={20} className="text-gray-400 flex-shrink-0 mt-1" strokeWidth={1.5} />
                   </div>
                 </Link>
               ))}
@@ -291,7 +291,7 @@ export default async function MyPage() {
         {/* 대기 중 (M2-045) */}
         {waitlists && waitlists.length > 0 && (
           <div className="mt-6">
-            <h4 className="text-sm font-medium text-warm-700 mb-3">대기 중</h4>
+            <h4 className="text-sm font-medium text-gray-700 mb-3">대기 중</h4>
             <div className="space-y-3">
               {waitlists.map((wl) => (
                 <Link
@@ -304,12 +304,12 @@ export default async function MyPage() {
                       <div className="flex items-center gap-2 mb-1">
                         <Badge variant="info">대기 {wl.position}번째</Badge>
                       </div>
-                      <h4 className="font-medium text-warm-900 truncate">{wl.meetings.title}</h4>
-                      <p className="text-sm text-warm-500 mt-1">
+                      <h4 className="font-medium text-brand-800 truncate">{wl.meetings.title}</h4>
+                      <p className="text-sm text-gray-500 mt-1">
                         {formatMeetingDate(wl.meetings.datetime)}
                       </p>
                     </div>
-                    <ArrowRight size={20} className="text-warm-400 flex-shrink-0 mt-1" />
+                    <ArrowRight size={20} className="text-gray-400 flex-shrink-0 mt-1" strokeWidth={1.5} />
                   </div>
                 </Link>
               ))}
@@ -319,20 +319,20 @@ export default async function MyPage() {
 
         {/* 취소된 신청 (M2-046) */}
         {cancelledRegistrations.length > 0 && (
-          <div className="mt-6 pt-6 border-t border-warm-100">
-            <h4 className="text-sm font-medium text-warm-500 mb-3">취소된 신청</h4>
+          <div className="mt-6 pt-6 border-t border-gray-100">
+            <h4 className="text-sm font-medium text-gray-500 mb-3">취소된 신청</h4>
             <div className="space-y-2">
               {cancelledRegistrations.slice(0, 3).map((reg) => (
                 <div
                   key={reg.id}
-                  className="p-3 bg-warm-50 rounded-lg opacity-60"
+                  className="p-3 bg-gray-50 rounded-lg opacity-60"
                 >
                   <div className="flex items-center gap-2">
                     <Badge variant="default">취소됨</Badge>
-                    <span className="text-sm text-warm-600 truncate">{reg.meetings.title}</span>
+                    <span className="text-sm text-gray-600 truncate">{reg.meetings.title}</span>
                   </div>
                   {reg.refund_amount > 0 && (
-                    <p className="text-xs text-warm-500 mt-1">
+                    <p className="text-xs text-gray-500 mt-1">
                       환불: {formatFee(reg.refund_amount)}
                     </p>
                   )}

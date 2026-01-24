@@ -19,8 +19,8 @@ interface QuoteCardGeneratorProps {
 
 // 배경 그라데이션 옵션
 const GRADIENTS = [
-  'from-warm-100 to-warm-200',
-  'from-brand-50 to-warm-100',
+  'from-gray-100 to-gray-200',
+  'from-brand-50 to-brand-100',
   'from-amber-50 to-orange-100',
   'from-rose-50 to-pink-100',
   'from-sky-50 to-blue-100',
@@ -63,7 +63,7 @@ export default function QuoteCardGenerator({ quote, bookTitle, author }: QuoteCa
   return (
     <div className="mt-4">
       {/* 카드 프리뷰 (작은 크기) */}
-      <div className="aspect-[9/16] max-w-[180px] mx-auto mb-3 rounded-xl overflow-hidden shadow-lg border border-warm-200">
+      <div className="aspect-[9/16] max-w-[180px] mx-auto mb-3 rounded-xl overflow-hidden shadow-lg border border-gray-200">
         <div
           ref={cardRef}
           className={`w-[1080px] h-[1920px] bg-gradient-to-b ${gradient} p-16 flex flex-col justify-center items-center text-center relative`}
@@ -75,24 +75,24 @@ export default function QuoteCardGenerator({ quote, bookTitle, author }: QuoteCa
         >
           {/* 상단 장식 */}
           <div className="absolute top-24 left-1/2 -translate-x-1/2">
-            <div className="text-6xl text-warm-300">&ldquo;</div>
+            <div className="text-6xl text-gray-300">&ldquo;</div>
           </div>
 
           {/* 인용문 */}
-          <p className="text-5xl text-warm-800 leading-relaxed mb-12 px-8 font-medium">
+          <p className="text-5xl text-brand-800 leading-relaxed mb-12 px-8 font-medium">
             {quote}
           </p>
 
           {/* 책 정보 */}
-          <div className="text-2xl text-warm-600">
+          <div className="text-2xl text-gray-600">
             <p className="font-medium">『{bookTitle}』</p>
-            {author && <p className="mt-2 text-warm-500">{author}</p>}
+            {author && <p className="mt-2 text-gray-500">{author}</p>}
           </div>
 
           {/* 하단 로고 */}
           <div className="absolute bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
-            <div className="w-16 h-[2px] bg-warm-300" />
-            <p className="text-xl text-warm-400 tracking-widest">지독해 JIDOKHAE</p>
+            <div className="w-16 h-[2px] bg-gray-300" />
+            <p className="text-xl text-gray-400 tracking-widest">지독해 JIDOKHAE</p>
           </div>
         </div>
       </div>
@@ -105,12 +105,12 @@ export default function QuoteCardGenerator({ quote, bookTitle, author }: QuoteCa
       >
         {isGenerating ? (
           <>
-            <Loader2 size={16} className="animate-spin" />
+            <Loader2 size={16} strokeWidth={1.5} className="animate-spin" />
             생성 중...
           </>
         ) : (
           <>
-            <Download size={16} />
+            <Download size={16} strokeWidth={1.5} />
             이미지로 저장
           </>
         )}

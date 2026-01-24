@@ -126,18 +126,18 @@ export default function NewMeetingPage() {
     <div className="max-w-2xl">
       <Link
         href="/admin/meetings"
-        className="inline-flex items-center gap-1.5 text-sm text-warm-500 hover:text-warm-700 mb-6"
+        className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-6"
       >
-        <ArrowLeft size={16} />
+        <ArrowLeft size={16} strokeWidth={1.5} />
         모임 목록으로
       </Link>
 
-      <h1 className="text-2xl font-bold text-warm-900 mb-6">새 모임 생성</h1>
+      <h1 className="text-2xl font-bold text-brand-800 mb-6">새 모임 생성</h1>
 
       <form onSubmit={handleSubmit} className="card p-6 space-y-6">
         {error && (
           <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-100 rounded-xl text-sm text-red-600">
-            <AlertCircle size={18} />
+            <AlertCircle size={18} strokeWidth={1.5} />
             {error}
           </div>
         )}
@@ -152,14 +152,14 @@ export default function NewMeetingPage() {
         />
 
         <div className="space-y-1.5">
-          <label className="block text-sm font-medium text-warm-700">
+          <label className="block text-sm font-medium text-gray-700">
             모임 유형
           </label>
           <select
             name="meeting_type"
             value={formData.meeting_type}
             onChange={handleChange}
-            className="w-full rounded-xl border border-warm-200 bg-white px-4 py-3 text-warm-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-brand-800 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
           >
             <option value="regular">정기모임</option>
             <option value="discussion">토론모임</option>
@@ -208,14 +208,14 @@ export default function NewMeetingPage() {
         </div>
 
         <div className="space-y-1.5">
-          <label className="block text-sm font-medium text-warm-700">
+          <label className="block text-sm font-medium text-gray-700">
             환불 규정
           </label>
           <select
             name="refund_policy_id"
             value={formData.refund_policy_id}
             onChange={handleChange}
-            className="w-full rounded-xl border border-warm-200 bg-white px-4 py-3 text-warm-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-brand-800 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
           >
             <option value="">선택 안함</option>
             {refundPolicies.map((policy) => (
@@ -227,7 +227,7 @@ export default function NewMeetingPage() {
         </div>
 
         <div className="space-y-1.5">
-          <label className="block text-sm font-medium text-warm-700">
+          <label className="block text-sm font-medium text-gray-700">
             모임 설명 (선택)
           </label>
           <textarea
@@ -236,7 +236,7 @@ export default function NewMeetingPage() {
             onChange={handleChange}
             placeholder="모임에 대한 추가 안내 사항을 입력해주세요."
             rows={4}
-            className="w-full rounded-xl border border-warm-200 bg-white px-4 py-3 text-warm-900 placeholder:text-warm-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent resize-none"
+            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-brand-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent resize-none"
           />
         </div>
 

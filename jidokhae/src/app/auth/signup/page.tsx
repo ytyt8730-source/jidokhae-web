@@ -26,6 +26,14 @@ export default function SignupPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
+
+    // 전화번호는 숫자만 허용
+    if (name === 'phone') {
+      const digitsOnly = value.replace(/\D/g, '')
+      setFormData(prev => ({ ...prev, [name]: digitsOnly }))
+      return
+    }
+
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
@@ -35,8 +43,16 @@ export default function SignupPage() {
     setIsLoading(true)
 
     // 유효성 검사
-    if (formData.password.length < 6) {
-      setError('비밀번호는 6자 이상이어야 합니다.')
+    if (formData.password.length < 8) {
+      setError('비밀번호는 8자 이상이어야 합니다.')
+      setIsLoading(false)
+      return
+    }
+
+    // 특수문자 포함 검사
+    const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/
+    if (!specialCharRegex.test(formData.password)) {
+      setError('비밀번호에 특수문자를 1개 이상 포함해주세요.')
       setIsLoading(false)
       return
     }
@@ -113,10 +129,10 @@ export default function SignupPage() {
       <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md card p-8 text-center">
           <div className="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
-            <CheckCircle className="text-green-600" size={32} />
+            <CheckCircle className="text-green-600" size={32} strokeWidth={1.5} />
           </div>
-          <h2 className="text-xl font-semibold text-warm-900 mb-2">회원가입 완료!</h2>
-          <p className="text-warm-600">
+          <h2 className="text-xl font-semibold font-serif text-brand-800 mb-2">회원가입 완료!</h2>
+          <p className="text-gray-600">
             잠시 후 로그인 페이지로 이동합니다.
           </p>
         </div>
@@ -129,8 +145,8 @@ export default function SignupPage() {
       <div className="w-full max-w-md">
         {/* 헤더 */}
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-warm-900 mb-2">회원가입</h1>
-          <p className="text-warm-600">
+          <h1 className="text-2xl font-bold font-serif text-brand-800 mb-2">회원가입</h1>
+          <p className="text-gray-600">
             지독해와 함께 독서 여정을 시작하세요
           </p>
         </div>
@@ -140,13 +156,13 @@ export default function SignupPage() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
               <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-100 rounded-xl text-sm text-red-600">
-                <AlertCircle size={18} />
+                <AlertCircle size={18} strokeWidth={1.5} />
                 {error}
               </div>
             )}
 
             <div className="relative">
-              <User className="absolute left-4 top-1/2 -translate-y-1/2 text-warm-400" size={18} />
+              <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} strokeWidth={1.5} />
               <Input
                 type="text"
                 name="name"
@@ -159,7 +175,7 @@ export default function SignupPage() {
             </div>
 
             <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-warm-400" size={18} />
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} strokeWidth={1.5} />
               <Input
                 type="email"
                 name="email"
@@ -172,33 +188,34 @@ export default function SignupPage() {
             </div>
 
             <div className="relative">
-              <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-warm-400" size={18} />
+              <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} strokeWidth={1.5} />
               <Input
                 type="tel"
                 name="phone"
-                placeholder="전화번호 (선택)"
+                placeholder="전화번호 (선택, 숫자만)"
                 value={formData.phone}
                 onChange={handleChange}
                 className="pl-11"
+                maxLength={11}
               />
             </div>
 
             <div className="relative">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-warm-400" size={18} />
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} strokeWidth={1.5} />
               <Input
                 type="password"
                 name="password"
-                placeholder="비밀번호 (6자 이상)"
+                placeholder="비밀번호 (8자 이상, 특수문자 포함)"
                 value={formData.password}
                 onChange={handleChange}
                 className="pl-11"
                 required
-                minLength={6}
+                minLength={8}
               />
             </div>
 
             <div className="relative">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-warm-400" size={18} />
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} strokeWidth={1.5} />
               <Input
                 type="password"
                 name="passwordConfirm"
@@ -221,13 +238,13 @@ export default function SignupPage() {
 
           {/* 구분선 */}
           <div className="flex items-center gap-4 my-6">
-            <div className="flex-1 h-px bg-warm-200" />
-            <span className="text-sm text-warm-400">또는</span>
-            <div className="flex-1 h-px bg-warm-200" />
+            <div className="flex-1 h-px bg-gray-200" />
+            <span className="text-sm text-gray-400">또는</span>
+            <div className="flex-1 h-px bg-gray-200" />
           </div>
 
           {/* 로그인 링크 */}
-          <p className="text-center text-sm text-warm-600">
+          <p className="text-center text-sm text-gray-600">
             이미 계정이 있으신가요?{' '}
             <Link href="/auth/login" className="text-brand-600 font-medium hover:underline">
               로그인

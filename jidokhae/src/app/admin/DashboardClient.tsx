@@ -24,11 +24,11 @@ function StatCard({ label, value, subValue, icon: Icon, color, bg, href, urgent 
   const content = (
     <div className={`card p-4 ${href ? 'hover:shadow-md transition-shadow cursor-pointer' : ''} ${urgent ? 'ring-2 ring-orange-300' : ''}`}>
       <div className={`w-10 h-10 ${bg} rounded-lg flex items-center justify-center mb-3`}>
-        <Icon className={color} size={20} />
+        <Icon className={color} size={20} strokeWidth={1.5} />
       </div>
-      <p className="text-2xl font-bold text-warm-900">{value}</p>
-      <p className="text-sm text-warm-500">{label}</p>
-      {subValue && <p className="text-xs text-warm-400 mt-1">{subValue}</p>}
+      <p className="text-2xl font-bold text-brand-800">{value}</p>
+      <p className="text-sm text-gray-500">{label}</p>
+      {subValue && <p className="text-xs text-gray-400 mt-1">{subValue}</p>}
       {href && <span className="text-xs text-brand-600 mt-2 block">확인하기 →</span>}
     </div>
   )
@@ -62,18 +62,18 @@ function MonthPicker({
     <div className="flex items-center gap-2">
       <button
         onClick={handlePrev}
-        className="p-1 rounded hover:bg-warm-100 transition-colors"
+        className="p-1 rounded hover:bg-gray-100 transition-colors"
       >
-        <ChevronLeft size={20} className="text-warm-600" />
+        <ChevronLeft size={20} className="text-gray-600" strokeWidth={1.5} />
       </button>
-      <span className="text-warm-700 font-medium min-w-[100px] text-center">
+      <span className="text-gray-700 font-medium min-w-[100px] text-center">
         {year}년 {month}월
       </span>
       <button
         onClick={handleNext}
-        className="p-1 rounded hover:bg-warm-100 transition-colors"
+        className="p-1 rounded hover:bg-gray-100 transition-colors"
       >
-        <ChevronRight size={20} className="text-warm-600" />
+        <ChevronRight size={20} className="text-gray-600" strokeWidth={1.5} />
       </button>
     </div>
   )
@@ -127,7 +127,7 @@ export default function DashboardClient() {
 
   const getStatusBadge = (status: string, current: number, capacity: number) => {
     if (status === 'closed') {
-      return <span className="px-2 py-0.5 text-xs bg-warm-200 text-warm-600 rounded">마감</span>
+      return <span className="px-2 py-0.5 text-xs bg-gray-200 text-gray-600 rounded">마감</span>
     }
     if (status === 'cancelled') {
       return <span className="px-2 py-0.5 text-xs bg-red-100 text-red-600 rounded">취소됨</span>
@@ -145,7 +145,7 @@ export default function DashboardClient() {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-warm-900">대시보드</h1>
+          <h1 className="text-2xl font-bold text-brand-800">대시보드</h1>
         </div>
         <div className="flex items-center justify-center py-20">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-600" />
@@ -157,7 +157,7 @@ export default function DashboardClient() {
   if (error) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-warm-900">대시보드</h1>
+        <h1 className="text-2xl font-bold text-brand-800">대시보드</h1>
         <div className="card p-6 text-center">
           <p className="text-red-600 mb-4">{error}</p>
           <button
@@ -177,7 +177,7 @@ export default function DashboardClient() {
     <div className="space-y-6">
       {/* 헤더 */}
       <div className="flex items-center justify-between flex-wrap gap-4">
-        <h1 className="text-2xl font-bold text-warm-900">대시보드</h1>
+        <h1 className="text-2xl font-bold text-brand-800">대시보드</h1>
         <MonthPicker value={selectedMonth} onChange={setSelectedMonth} />
       </div>
 
@@ -240,30 +240,30 @@ export default function DashboardClient() {
 
       {/* 세그먼트별 회원 수 */}
       <div className="card p-6">
-        <h2 className="font-semibold text-warm-900 mb-4 flex items-center gap-2">
-          <Users size={18} />
+        <h2 className="font-semibold text-brand-800 mb-4 flex items-center gap-2">
+          <Users size={18} strokeWidth={1.5} />
           회원 세그먼트
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
           <div className="text-center p-3 bg-blue-50 rounded-lg">
             <p className="text-2xl font-bold text-blue-600">{stats.segments.new}</p>
-            <p className="text-sm text-warm-600">신규</p>
+            <p className="text-sm text-gray-600">신규</p>
           </div>
           <div className="text-center p-3 bg-green-50 rounded-lg">
             <p className="text-2xl font-bold text-green-600">{stats.segments.growth}</p>
-            <p className="text-sm text-warm-600">성장</p>
+            <p className="text-sm text-gray-600">성장</p>
           </div>
           <div className="text-center p-3 bg-purple-50 rounded-lg">
             <p className="text-2xl font-bold text-purple-600">{stats.segments.loyal}</p>
-            <p className="text-sm text-warm-600">충성</p>
+            <p className="text-sm text-gray-600">충성</p>
           </div>
           <div className="text-center p-3 bg-orange-50 rounded-lg">
             <p className="text-2xl font-bold text-orange-600">{stats.segments.dormantRisk}</p>
-            <p className="text-sm text-warm-600">이탈위험</p>
+            <p className="text-sm text-gray-600">이탈위험</p>
           </div>
-          <div className="text-center p-3 bg-warm-100 rounded-lg">
-            <p className="text-2xl font-bold text-warm-500">{stats.segments.dormant}</p>
-            <p className="text-sm text-warm-600">휴면</p>
+          <div className="text-center p-3 bg-gray-100 rounded-lg">
+            <p className="text-2xl font-bold text-gray-500">{stats.segments.dormant}</p>
+            <p className="text-sm text-gray-600">휴면</p>
           </div>
         </div>
       </div>
@@ -271,8 +271,8 @@ export default function DashboardClient() {
       {/* 이번 달 모임 현황 */}
       <div className="card p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-semibold text-warm-900 flex items-center gap-2">
-            <Calendar size={18} />
+          <h2 className="font-semibold text-brand-800 flex items-center gap-2">
+            <Calendar size={18} strokeWidth={1.5} />
             모임 현황
           </h2>
           <Link href="/admin/meetings" className="text-sm text-brand-600 hover:underline">
@@ -284,28 +284,28 @@ export default function DashboardClient() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-warm-100">
-                  <th className="text-left py-2 px-3 text-sm font-medium text-warm-500">모임명</th>
-                  <th className="text-left py-2 px-3 text-sm font-medium text-warm-500">일시</th>
-                  <th className="text-center py-2 px-3 text-sm font-medium text-warm-500">참가</th>
-                  <th className="text-center py-2 px-3 text-sm font-medium text-warm-500">상태</th>
+                <tr className="border-b border-gray-100">
+                  <th className="text-left py-2 px-3 text-sm font-medium text-gray-500">모임명</th>
+                  <th className="text-left py-2 px-3 text-sm font-medium text-gray-500">일시</th>
+                  <th className="text-center py-2 px-3 text-sm font-medium text-gray-500">참가</th>
+                  <th className="text-center py-2 px-3 text-sm font-medium text-gray-500">상태</th>
                 </tr>
               </thead>
               <tbody>
                 {stats.meetings.map((meeting) => (
-                  <tr key={meeting.id} className="border-b border-warm-50 hover:bg-warm-50">
+                  <tr key={meeting.id} className="border-b border-gray-50 hover:bg-gray-50">
                     <td className="py-3 px-3">
                       <Link
                         href={`/admin/meetings/${meeting.id}/edit`}
-                        className="text-warm-900 hover:text-brand-600"
+                        className="text-brand-800 hover:text-brand-600"
                       >
                         {meeting.title}
                       </Link>
                     </td>
-                    <td className="py-3 px-3 text-sm text-warm-600">
+                    <td className="py-3 px-3 text-sm text-gray-600">
                       {formatDate(meeting.datetime)}
                     </td>
-                    <td className="py-3 px-3 text-center text-sm font-medium text-warm-700">
+                    <td className="py-3 px-3 text-center text-sm font-medium text-gray-700">
                       {meeting.currentParticipants}/{meeting.capacity}
                     </td>
                     <td className="py-3 px-3 text-center">
@@ -317,7 +317,7 @@ export default function DashboardClient() {
             </table>
           </div>
         ) : (
-          <p className="text-sm text-warm-500 text-center py-4">
+          <p className="text-sm text-gray-500 text-center py-4">
             이번 달 예정된 모임이 없습니다.
           </p>
         )}
@@ -325,35 +325,35 @@ export default function DashboardClient() {
 
       {/* 빠른 작업 */}
       <div className="card p-6">
-        <h2 className="font-semibold text-warm-900 mb-4">빠른 작업</h2>
+        <h2 className="font-semibold text-brand-800 mb-4">빠른 작업</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <Link
             href="/admin/meetings/new"
             className="p-4 bg-brand-50 rounded-xl text-center hover:bg-brand-100 transition-colors"
           >
-            <Calendar className="mx-auto text-brand-600 mb-2" size={24} />
+            <Calendar className="mx-auto text-brand-600 mb-2" size={24} strokeWidth={1.5} />
             <span className="text-sm font-medium text-brand-800">모임 생성</span>
           </Link>
           <Link
             href="/admin/transfers"
             className="p-4 bg-yellow-50 rounded-xl text-center hover:bg-yellow-100 transition-colors"
           >
-            <Clock className="mx-auto text-yellow-600 mb-2" size={24} />
+            <Clock className="mx-auto text-yellow-600 mb-2" size={24} strokeWidth={1.5} />
             <span className="text-sm font-medium text-yellow-800">입금 확인</span>
           </Link>
           <Link
             href="/admin/notifications"
             className="p-4 bg-blue-50 rounded-xl text-center hover:bg-blue-100 transition-colors"
           >
-            <Users className="mx-auto text-blue-600 mb-2" size={24} />
+            <Users className="mx-auto text-blue-600 mb-2" size={24} strokeWidth={1.5} />
             <span className="text-sm font-medium text-blue-800">알림 발송</span>
           </Link>
           <Link
             href="/admin/users"
-            className="p-4 bg-warm-50 rounded-xl text-center hover:bg-warm-100 transition-colors"
+            className="p-4 bg-gray-50 rounded-xl text-center hover:bg-gray-100 transition-colors"
           >
-            <Users className="mx-auto text-warm-600 mb-2" size={24} />
-            <span className="text-sm font-medium text-warm-700">회원 관리</span>
+            <Users className="mx-auto text-gray-600 mb-2" size={24} strokeWidth={1.5} />
+            <span className="text-sm font-medium text-gray-700">회원 관리</span>
           </Link>
         </div>
       </div>

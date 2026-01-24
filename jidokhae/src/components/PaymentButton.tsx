@@ -301,7 +301,7 @@ export default function PaymentButton({
           />
           <div className="relative bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto shadow-xl">
             <div className="p-6">
-              <h2 className="text-lg font-semibold text-warm-900 mb-4">
+              <h2 className="text-lg font-semibold text-brand-800 mb-4">
                 {meeting.title} 신청
               </h2>
               <PaymentMethodSelector

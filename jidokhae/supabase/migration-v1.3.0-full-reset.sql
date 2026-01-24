@@ -1,7 +1,7 @@
 -- =============================================
 -- 지독해 웹서비스 - 전체 스키마 초기화
--- 버전: 1.2.0
--- 실행일: 2026-01-21
+-- 버전: 1.3.0
+-- 실행일: 2026-01-22
 -- =============================================
 -- 주의: 모든 기존 데이터가 삭제됩니다!
 -- =============================================
@@ -33,6 +33,9 @@ DROP FUNCTION IF EXISTS check_and_reserve_capacity(UUID, UUID) CASCADE;
 DROP FUNCTION IF EXISTS public.handle_new_user() CASCADE;
 DROP FUNCTION IF EXISTS public.get_dormant_risk_users(TIMESTAMP WITH TIME ZONE, TIMESTAMP WITH TIME ZONE) CASCADE;
 DROP FUNCTION IF EXISTS public.adjust_waitlist_positions(UUID, INTEGER) CASCADE;
+DROP FUNCTION IF EXISTS public.get_my_role() CASCADE;
+DROP FUNCTION IF EXISTS public.is_admin() CASCADE;
+DROP FUNCTION IF EXISTS public.is_super_admin() CASCADE;
 
 -- =============================================
 -- STEP 2: 새 스키마 생성
@@ -283,98 +286,122 @@ CREATE INDEX idx_payment_logs_payment_id ON payment_logs(payment_id);
 CREATE INDEX idx_payment_logs_idempotency_key ON payment_logs(idempotency_key);
 
 -- =============================================
--- RLS 정책
+-- 역할 확인 헬퍼 함수 (RLS 무한 재귀 방지)
+-- =============================================
+-- SECURITY DEFINER: RLS를 우회하여 실행
+
+CREATE OR REPLACE FUNCTION public.get_my_role()
+RETURNS TEXT AS $$
+  SELECT role FROM public.users WHERE id = auth.uid();
+$$ LANGUAGE sql SECURITY DEFINER STABLE;
+
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS BOOLEAN AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.users
+    WHERE id = auth.uid()
+    AND role IN ('admin', 'super_admin')
+  );
+$$ LANGUAGE sql SECURITY DEFINER STABLE;
+
+CREATE OR REPLACE FUNCTION public.is_super_admin()
+RETURNS BOOLEAN AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.users
+    WHERE id = auth.uid()
+    AND role = 'super_admin'
+  );
+$$ LANGUAGE sql SECURITY DEFINER STABLE;
+
+-- =============================================
+-- RLS 정책 (헬퍼 함수 사용)
 -- =============================================
 
+-- 1. users
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view own profile" ON users FOR SELECT USING (auth.uid() = id);
-CREATE POLICY "Users can update own profile" ON users FOR UPDATE USING (auth.uid() = id);
-CREATE POLICY "Enable insert for signup" ON users FOR INSERT WITH CHECK (true);
-CREATE POLICY "Admins can view all users" ON users FOR SELECT USING (
-  EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
-);
+CREATE POLICY "users_select_own" ON users FOR SELECT USING (auth.uid() = id);
+CREATE POLICY "users_select_admin" ON users FOR SELECT USING (public.is_admin());
+CREATE POLICY "users_update_own" ON users FOR UPDATE USING (auth.uid() = id);
+CREATE POLICY "users_insert_signup" ON users FOR INSERT WITH CHECK (auth.uid() = id);
 
+-- 2. refund_policies
 ALTER TABLE refund_policies ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Anyone can view refund policies" ON refund_policies FOR SELECT USING (true);
-CREATE POLICY "Admins can manage refund policies" ON refund_policies FOR ALL USING (
-  EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
-);
+CREATE POLICY "refund_policies_select_all" ON refund_policies FOR SELECT USING (true);
+CREATE POLICY "refund_policies_admin_all" ON refund_policies FOR ALL USING (public.is_admin());
 
+-- 3. meetings
 ALTER TABLE meetings ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Anyone can view meetings" ON meetings FOR SELECT USING (true);
-CREATE POLICY "Admins can manage meetings" ON meetings FOR ALL USING (
-  EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
-);
+CREATE POLICY "meetings_select_all" ON meetings FOR SELECT USING (true);
+CREATE POLICY "meetings_admin_all" ON meetings FOR ALL USING (public.is_admin());
 
+-- 4. registrations
 ALTER TABLE registrations ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view own registrations" ON registrations FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can create own registrations" ON registrations FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Users can update own registrations" ON registrations FOR UPDATE USING (auth.uid() = user_id);
-CREATE POLICY "Admins can manage all registrations" ON registrations FOR ALL USING (
-  EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
-);
+CREATE POLICY "registrations_select_own" ON registrations FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "registrations_insert_own" ON registrations FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "registrations_update_own" ON registrations FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "registrations_admin_all" ON registrations FOR ALL USING (public.is_admin());
 
+-- 5. waitlists
 ALTER TABLE waitlists ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view own waitlist" ON waitlists FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can join waitlist" ON waitlists FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Users can leave waitlist" ON waitlists FOR DELETE USING (auth.uid() = user_id);
-CREATE POLICY "Admins can manage waitlists" ON waitlists FOR ALL USING (
-  EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
-);
+CREATE POLICY "waitlists_select_own" ON waitlists FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "waitlists_insert_own" ON waitlists FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "waitlists_delete_own" ON waitlists FOR DELETE USING (auth.uid() = user_id);
+CREATE POLICY "waitlists_admin_all" ON waitlists FOR ALL USING (public.is_admin());
 
+-- 6. praises
 ALTER TABLE praises ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view praises" ON praises FOR SELECT USING (true);
-CREATE POLICY "Users can send praise" ON praises FOR INSERT WITH CHECK (auth.uid() = from_user_id);
+CREATE POLICY "praises_select_all" ON praises FOR SELECT USING (true);
+CREATE POLICY "praises_insert_own" ON praises FOR INSERT WITH CHECK (auth.uid() = from_user_id);
 
+-- 7. badges
 ALTER TABLE badges ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Anyone can view badges" ON badges FOR SELECT USING (true);
-CREATE POLICY "System can insert badges" ON badges FOR INSERT WITH CHECK (true);
+CREATE POLICY "badges_select_all" ON badges FOR SELECT USING (true);
+CREATE POLICY "badges_insert_system" ON badges FOR INSERT WITH CHECK (public.is_admin());
 
+-- 8. bookshelf
 ALTER TABLE bookshelf ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view own bookshelf" ON bookshelf FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can manage own bookshelf" ON bookshelf FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "bookshelf_select_own" ON bookshelf FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "bookshelf_insert_own" ON bookshelf FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "bookshelf_update_own" ON bookshelf FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "bookshelf_delete_own" ON bookshelf FOR DELETE USING (auth.uid() = user_id);
 
+-- 9. reviews
 ALTER TABLE reviews ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Anyone can view public reviews" ON reviews FOR SELECT USING (is_public = true OR auth.uid() = user_id);
-CREATE POLICY "Users can create own reviews" ON reviews FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Users can update own reviews" ON reviews FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "reviews_select_public" ON reviews FOR SELECT USING (is_public = true OR auth.uid() = user_id);
+CREATE POLICY "reviews_insert_own" ON reviews FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "reviews_update_own" ON reviews FOR UPDATE USING (auth.uid() = user_id);
 
+-- 10. suggestions
 ALTER TABLE suggestions ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view own suggestions" ON suggestions FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can create suggestions" ON suggestions FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Admins can manage suggestions" ON suggestions FOR ALL USING (
-  EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
-);
+CREATE POLICY "suggestions_select_own" ON suggestions FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "suggestions_insert_own" ON suggestions FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "suggestions_admin_all" ON suggestions FOR ALL USING (public.is_admin());
 
+-- 11. notification_templates
 ALTER TABLE notification_templates ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Admins can manage templates" ON notification_templates FOR ALL USING (
-  EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
-);
+CREATE POLICY "notification_templates_select_all" ON notification_templates FOR SELECT USING (true);
+CREATE POLICY "notification_templates_admin_all" ON notification_templates FOR ALL USING (public.is_admin());
 
+-- 12. notification_logs
 ALTER TABLE notification_logs ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view own logs" ON notification_logs FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Admins can view all logs" ON notification_logs FOR SELECT USING (
-  EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
-);
+CREATE POLICY "notification_logs_select_own" ON notification_logs FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "notification_logs_admin_select" ON notification_logs FOR SELECT USING (public.is_admin());
+CREATE POLICY "notification_logs_insert_admin" ON notification_logs FOR INSERT WITH CHECK (public.is_admin());
 
+-- 13. admin_permissions
 ALTER TABLE admin_permissions ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Admins can view permissions" ON admin_permissions FOR SELECT USING (
-  EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
-);
-CREATE POLICY "Super admins can manage permissions" ON admin_permissions FOR ALL USING (
-  EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'super_admin')
-);
+CREATE POLICY "admin_permissions_select_admin" ON admin_permissions FOR SELECT USING (public.is_admin());
+CREATE POLICY "admin_permissions_super_admin_all" ON admin_permissions FOR ALL USING (public.is_super_admin());
 
+-- 14. banners
 ALTER TABLE banners ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Anyone can view active banners" ON banners FOR SELECT USING (is_active = true);
-CREATE POLICY "Admins can manage banners" ON banners FOR ALL USING (
-  EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
-);
+CREATE POLICY "banners_select_active" ON banners FOR SELECT USING (is_active = true);
+CREATE POLICY "banners_admin_all" ON banners FOR ALL USING (public.is_admin());
 
+-- 15. payment_logs
 ALTER TABLE payment_logs ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Admins can view payment logs" ON payment_logs FOR SELECT USING (
-  EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
-);
+CREATE POLICY "payment_logs_admin_select" ON payment_logs FOR SELECT USING (public.is_admin());
+CREATE POLICY "payment_logs_insert_admin" ON payment_logs FOR INSERT WITH CHECK (public.is_admin());
 
 -- =============================================
 -- 함수
@@ -441,14 +468,19 @@ RETURNS TRIGGER AS $$
 BEGIN
   INSERT INTO public.users (id, email, name, phone, role, is_new_member, created_at, updated_at)
   VALUES (
-    NEW.id, NEW.email,
-    COALESCE(NEW.raw_user_meta_data->>'name', 'Unknown'),
+    NEW.id,
+    NEW.email,
+    COALESCE(NEW.raw_user_meta_data->>'name', '회원'),
     NEW.raw_user_meta_data->>'phone',
-    'member', true, NOW(), NOW()
+    'member',
+    true,
+    NOW(),
+    NOW()
   )
   ON CONFLICT (id) DO UPDATE SET
     email = EXCLUDED.email,
-    name = COALESCE(EXCLUDED.name, users.name),
+    name = COALESCE(NULLIF(EXCLUDED.name, ''), users.name),
+    phone = COALESCE(EXCLUDED.phone, users.phone),
     updated_at = NOW();
   RETURN NEW;
 END;
@@ -651,5 +683,11 @@ ON CONFLICT (code) DO UPDATE SET
 
 -- =============================================
 -- 완료!
--- 스키마 버전: 1.2.0
+-- 스키마 버전: 1.3.0
+-- =============================================
+-- 변경사항 (v1.3.0):
+-- - RLS 무한 재귀 문제 해결
+-- - get_my_role(), is_admin(), is_super_admin() 헬퍼 함수 추가
+-- - 모든 RLS 정책을 헬퍼 함수 사용하도록 변경
+-- - handle_new_user 함수 개선
 -- =============================================

@@ -172,7 +172,7 @@ export default function TransfersClient() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-warm-900">입금 확인</h1>
+        <h1 className="text-2xl font-bold text-brand-800">입금 확인</h1>
         <div className="flex items-center justify-center py-20">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-600" />
         </div>
@@ -184,27 +184,27 @@ export default function TransfersClient() {
     <div className="space-y-6">
       {/* 헤더 */}
       <div className="flex items-center justify-between flex-wrap gap-4">
-        <h1 className="text-2xl font-bold text-warm-900">입금 확인</h1>
+        <h1 className="text-2xl font-bold text-brand-800">입금 확인</h1>
         <button
           onClick={fetchData}
-          className="flex items-center gap-2 px-3 py-2 text-sm text-warm-600 hover:text-warm-900 hover:bg-warm-100 rounded-lg transition-colors"
+          className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-brand-800 hover:bg-gray-100 rounded-lg transition-colors"
         >
-          <RefreshCw size={16} />
+          <RefreshCw size={16} strokeWidth={1.5} />
           새로고침
         </button>
       </div>
 
       {/* 탭 */}
-      <div className="flex gap-2 border-b border-warm-200">
+      <div className="flex gap-2 border-b border-gray-200">
         <button
           onClick={() => setActiveTab('pending')}
           className={`flex items-center gap-2 px-4 py-3 font-medium border-b-2 transition-colors ${
             activeTab === 'pending'
               ? 'text-brand-600 border-brand-600'
-              : 'text-warm-500 border-transparent hover:text-warm-700'
+              : 'text-gray-500 border-transparent hover:text-gray-700'
           }`}
         >
-          <Clock size={18} />
+          <Clock size={18} strokeWidth={1.5} />
           입금대기
           {pendingList.length > 0 && (
             <span className="px-2 py-0.5 text-xs bg-yellow-100 text-yellow-700 rounded-full">
@@ -217,10 +217,10 @@ export default function TransfersClient() {
           className={`flex items-center gap-2 px-4 py-3 font-medium border-b-2 transition-colors ${
             activeTab === 'refund'
               ? 'text-brand-600 border-brand-600'
-              : 'text-warm-500 border-transparent hover:text-warm-700'
+              : 'text-gray-500 border-transparent hover:text-gray-700'
           }`}
         >
-          <CreditCard size={18} />
+          <CreditCard size={18} strokeWidth={1.5} />
           환불대기
           {refundList.length > 0 && (
             <span className="px-2 py-0.5 text-xs bg-red-100 text-red-700 rounded-full">
@@ -232,13 +232,13 @@ export default function TransfersClient() {
 
       {/* 검색 */}
       <div className="relative">
-        <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-warm-400" />
+        <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" strokeWidth={1.5} />
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder={activeTab === 'pending' ? '회원명 또는 입금자명으로 검색' : '회원명 또는 예금주로 검색'}
-          className="w-full pl-10 pr-4 py-3 border border-warm-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+          className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent"
         />
       </div>
 
@@ -255,29 +255,29 @@ export default function TransfersClient() {
           {filteredPendingList.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-warm-50 border-b border-warm-100">
+                <thead className="bg-gray-50 border-b border-gray-100">
                   <tr>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-warm-600">회원명</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-warm-600">입금자명</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-warm-600">모임</th>
-                    <th className="text-right py-3 px-4 text-sm font-medium text-warm-600">금액</th>
-                    <th className="text-center py-3 px-4 text-sm font-medium text-warm-600">기한</th>
-                    <th className="text-center py-3 px-4 text-sm font-medium text-warm-600">액션</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">회원명</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">입금자명</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">모임</th>
+                    <th className="text-right py-3 px-4 text-sm font-medium text-gray-600">금액</th>
+                    <th className="text-center py-3 px-4 text-sm font-medium text-gray-600">기한</th>
+                    <th className="text-center py-3 px-4 text-sm font-medium text-gray-600">액션</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredPendingList.map((reg) => {
                     const deadlineStatus = getDeadlineStatus(reg.transfer_deadline)
                     return (
-                      <tr key={reg.id} className="border-b border-warm-50 hover:bg-warm-50">
+                      <tr key={reg.id} className="border-b border-gray-50 hover:bg-gray-50">
                         <td className="py-3 px-4">
-                          <span className="font-medium text-warm-900">{reg.users.name}</span>
+                          <span className="font-medium text-brand-800">{reg.users.name}</span>
                         </td>
                         <td className="py-3 px-4">
-                          <span className="font-mono text-warm-700">{reg.transfer_sender_name}</span>
+                          <span className="font-mono text-gray-700">{reg.transfer_sender_name}</span>
                         </td>
-                        <td className="py-3 px-4 text-warm-600">{reg.meetings.title}</td>
-                        <td className="py-3 px-4 text-right font-medium text-warm-900">
+                        <td className="py-3 px-4 text-gray-600">{reg.meetings.title}</td>
+                        <td className="py-3 px-4 text-right font-medium text-brand-800">
                           {formatAmount(reg.payment_amount)}
                         </td>
                         <td className="py-3 px-4 text-center">
@@ -287,10 +287,10 @@ export default function TransfersClient() {
                                 ? 'text-red-600'
                                 : deadlineStatus === 'urgent'
                                 ? 'text-orange-600'
-                                : 'text-warm-600'
+                                : 'text-gray-600'
                             }`}
                           >
-                            {deadlineStatus === 'urgent' && <AlertTriangle size={14} />}
+                            {deadlineStatus === 'urgent' && <AlertTriangle size={14} strokeWidth={1.5} />}
                             {getRemainingTime(reg.transfer_deadline)}
                           </span>
                         </td>
@@ -303,7 +303,7 @@ export default function TransfersClient() {
                             {actionLoading === reg.id ? (
                               <span className="animate-spin">⏳</span>
                             ) : (
-                              <Check size={14} />
+                              <Check size={14} strokeWidth={1.5} />
                             )}
                             확인
                           </button>
@@ -315,7 +315,7 @@ export default function TransfersClient() {
               </table>
             </div>
           ) : (
-            <div className="text-center py-12 text-warm-500">
+            <div className="text-center py-12 text-gray-500">
               입금대기 건이 없습니다.
             </div>
           )}
@@ -328,36 +328,36 @@ export default function TransfersClient() {
           {filteredRefundList.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-warm-50 border-b border-warm-100">
+                <thead className="bg-gray-50 border-b border-gray-100">
                   <tr>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-warm-600">회원명</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-warm-600">모임</th>
-                    <th className="text-right py-3 px-4 text-sm font-medium text-warm-600">환불금액</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-warm-600">환불계좌</th>
-                    <th className="text-center py-3 px-4 text-sm font-medium text-warm-600">액션</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">회원명</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">모임</th>
+                    <th className="text-right py-3 px-4 text-sm font-medium text-gray-600">환불금액</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">환불계좌</th>
+                    <th className="text-center py-3 px-4 text-sm font-medium text-gray-600">액션</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredRefundList.map((reg) => (
-                    <tr key={reg.id} className="border-b border-warm-50 hover:bg-warm-50">
+                    <tr key={reg.id} className="border-b border-gray-50 hover:bg-gray-50">
                       <td className="py-3 px-4">
-                        <span className="font-medium text-warm-900">{reg.users.name}</span>
+                        <span className="font-medium text-brand-800">{reg.users.name}</span>
                       </td>
-                      <td className="py-3 px-4 text-warm-600">{reg.meetings.title}</td>
-                      <td className="py-3 px-4 text-right font-medium text-warm-900">
+                      <td className="py-3 px-4 text-gray-600">{reg.meetings.title}</td>
+                      <td className="py-3 px-4 text-right font-medium text-brand-800">
                         {formatAmount(reg.payment_amount)}
                       </td>
                       <td className="py-3 px-4">
                         {reg.refund_info ? (
                           <div className="text-sm">
-                            <p className="text-warm-900">{reg.refund_info.bank}</p>
-                            <p className="text-warm-600 font-mono">
+                            <p className="text-brand-800">{reg.refund_info.bank}</p>
+                            <p className="text-gray-600 font-mono">
                               {maskAccountNumber(reg.refund_info.account)}
                             </p>
-                            <p className="text-warm-500">{reg.refund_info.holder}</p>
+                            <p className="text-gray-500">{reg.refund_info.holder}</p>
                           </div>
                         ) : (
-                          <span className="text-warm-400">정보 없음</span>
+                          <span className="text-gray-400">정보 없음</span>
                         )}
                       </td>
                       <td className="py-3 px-4 text-center">
@@ -380,7 +380,7 @@ export default function TransfersClient() {
               </table>
             </div>
           ) : (
-            <div className="text-center py-12 text-warm-500">
+            <div className="text-center py-12 text-gray-500">
               환불대기 건이 없습니다.
             </div>
           )}
@@ -388,7 +388,7 @@ export default function TransfersClient() {
       )}
 
       {/* 안내 메시지 */}
-      <div className="text-sm text-warm-500 p-4 bg-warm-50 rounded-xl">
+      <div className="text-sm text-gray-500 p-4 bg-gray-50 rounded-xl">
         {activeTab === 'pending' ? (
           <p>• 실제 통장 입금 내역을 확인한 후 [확인] 버튼을 눌러주세요.</p>
         ) : (

@@ -2,9 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ===== CSS Variables ===== */
 :root {
-  --background: #fafaf9;
-  --foreground: #1c1917;
+  --background: #FAFAFA;
+  --foreground: #404040;
+
+  --font-pretendard: 'Pretendard', system-ui, sans-serif;
+  --font-noto-serif: 'Noto Serif KR', Georgia, serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -14,19 +18,98 @@
   }
 }
 
+/* ===== Base Styles ===== */
 @layer base {
   html {
     @apply scroll-smooth;
   }
-  
+
   body {
-    @apply bg-background text-foreground antialiased;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    color: var(--foreground);
+    background: var(--background);
+    font-family: var(--font-pretendard);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.015em;
+  }
+
+  /* 명조체는 자간을 더 좁혀야 단단해 보임 */
+  .font-serif {
+    letter-spacing: -0.02em;
   }
 }
 
+/* ===== Typography Utilities ===== */
+@layer utilities {
+  /* Display - 히어로 섹션 메인 카피 */
+  .text-display {
+    @apply font-serif text-[32px] font-bold text-brand-800 leading-[1.3] tracking-[-0.02em];
+  }
+
+  /* H1 - 페이지 제목 */
+  .text-h1 {
+    @apply font-serif text-[24px] font-bold text-brand-800 leading-[1.4] tracking-[-0.02em];
+  }
+
+  /* H2 - 섹션 제목 */
+  .text-h2 {
+    @apply font-sans text-[20px] font-semibold text-brand-800 leading-[1.4];
+  }
+
+  /* H3 - 카드 제목, 소제목 */
+  .text-h3 {
+    @apply font-sans text-[17px] font-medium text-brand-800 leading-[1.5];
+  }
+
+  /* Body - 본문 */
+  .text-body {
+    @apply font-sans text-[15px] font-normal text-gray-700 leading-[1.65];
+  }
+
+  /* Body Small - 보조 본문 */
+  .text-body-sm {
+    @apply font-sans text-[14px] font-normal text-gray-600 leading-[1.6];
+  }
+
+  /* Caption - 메타 정보 */
+  .text-caption {
+    @apply font-sans text-[13px] font-normal text-gray-500 leading-[1.5];
+  }
+
+  /* Caption Small - 뱃지, 라벨 */
+  .text-caption-sm {
+    @apply font-sans text-[12px] font-normal text-gray-400 leading-[1.4];
+  }
+
+  /* Quote - 인용구, 책 소개 */
+  .text-quote {
+    @apply font-serif text-[18px] font-normal text-brand-600 leading-[1.8] italic
+           border-l-2 border-brand-200 pl-4;
+  }
+
+  /* 텍스트 그라데이션 */
+  .text-gradient {
+    @apply bg-gradient-to-r from-brand-600 to-brand-800 bg-clip-text text-transparent;
+  }
+
+  /* 안전 영역 패딩 (모바일) */
+  .safe-area-inset-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-area-inset-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* M7-002: 부드러운 페이드 펄스 애니메이션 */
+  .animate-pulse-slow {
+    animation: pulse-slow 3s ease-in-out infinite;
+  }
+}
+
+/* ===== Component Base Styles ===== */
 @layer components {
-  /* 버튼 기본 스타일 */
+  /* ===== Button ===== */
   .btn {
     @apply inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200;
     @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
@@ -34,51 +117,104 @@
   }
 
   .btn-primary {
-    @apply btn bg-brand-500 text-white hover:bg-brand-600 focus:ring-brand-500;
+    @apply bg-brand-600 text-white font-semibold rounded-xl px-6 py-4;
+    @apply shadow-button;
+    @apply hover:bg-brand-700 hover:shadow-button-hover hover:-translate-y-[1px];
+    @apply active:scale-[0.98] active:translate-y-0;
+    @apply transition-all duration-200;
+    @apply focus:ring-brand-600;
+    @apply disabled:bg-gray-300 disabled:shadow-none disabled:cursor-not-allowed;
   }
 
   .btn-secondary {
-    @apply btn bg-warm-100 text-warm-700 hover:bg-warm-200 focus:ring-warm-400;
+    @apply bg-white text-brand-700 font-medium rounded-xl px-6 py-4;
+    @apply border border-brand-200;
+    @apply hover:bg-brand-50 hover:border-brand-300;
+    @apply active:scale-[0.98];
+    @apply transition-all duration-200;
+    @apply focus:ring-brand-200;
   }
 
   .btn-ghost {
-    @apply btn bg-transparent text-warm-600 hover:bg-warm-100 focus:ring-warm-400;
+    @apply bg-transparent text-gray-600 font-medium rounded-md px-4 py-2;
+    @apply hover:bg-gray-100 hover:text-gray-900;
+    @apply transition-all duration-150;
+    @apply focus:ring-gray-300;
   }
 
-  /* 인풋 기본 스타일 */
+  .btn-link {
+    @apply bg-transparent text-brand-600 font-medium p-0;
+    @apply hover:text-brand-700 hover:underline;
+    @apply transition-all duration-150;
+  }
+
+  .btn-danger {
+    @apply btn bg-error text-white hover:bg-red-700;
+    @apply focus:ring-error;
+  }
+
+  /* ===== Input ===== */
   .input {
-    @apply w-full rounded-xl border border-warm-200 bg-white px-4 py-3;
-    @apply text-warm-900 placeholder:text-warm-400;
-    @apply focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent;
+    @apply w-full px-4 py-3.5 text-[15px] text-gray-900;
+    @apply bg-gray-50 border border-transparent rounded-xl;
+    @apply placeholder:text-gray-400;
     @apply transition-all duration-200;
+    @apply focus:outline-none focus:bg-white focus:border-brand-600 focus:ring-2 focus:ring-brand-100;
+    @apply disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed;
   }
 
-  /* 카드 기본 스타일 */
+  .input-error {
+    @apply input bg-white border-error focus:ring-red-100;
+  }
+
+  /* ===== Card ===== */
   .card {
     @apply bg-white rounded-2xl shadow-card;
-    @apply transition-shadow duration-200;
-    @apply hover:shadow-card-hover;
+    @apply transition-all duration-300;
   }
 
-  /* 뱃지 스타일 */
+  .card-base {
+    @apply bg-white rounded-2xl p-6 shadow-card transition-all duration-300;
+  }
+
+  .card-hoverable {
+    @apply card-base cursor-pointer;
+    @apply hover:-translate-y-1 hover:shadow-card-hover;
+    @apply active:scale-[0.995];
+  }
+
+  /* ===== Badge ===== */
   .badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+    @apply inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-md;
+    @apply bg-brand-50 text-brand-700;
+  }
+
+  .badge-highlight {
+    @apply badge bg-brand-100 text-brand-800;
+  }
+
+  .badge-urgent {
+    @apply badge bg-accent-50 text-accent-500;
+  }
+
+  .badge-closed {
+    @apply badge bg-gray-100 text-gray-400;
   }
 
   .badge-success {
-    @apply badge bg-green-100 text-green-800;
+    @apply badge bg-green-50 text-success;
   }
 
   .badge-warning {
-    @apply badge bg-orange-100 text-orange-800;
+    @apply badge bg-accent-100 text-accent-700;
   }
 
   .badge-error {
-    @apply badge bg-red-100 text-red-800;
+    @apply badge bg-red-50 text-error;
   }
 
   .badge-info {
-    @apply badge bg-blue-100 text-blue-800;
+    @apply badge bg-blue-50 text-info;
   }
 
   .badge-brand {
@@ -86,28 +222,26 @@
   }
 }
 
-@layer utilities {
-  /* 텍스트 그라데이션 */
-  .text-gradient {
-    @apply bg-gradient-to-r from-brand-500 to-brand-700 bg-clip-text text-transparent;
-  }
-  
-  /* 안전 영역 패딩 (모바일) */
-  .safe-area-inset-top {
-    padding-top: env(safe-area-inset-top);
-  }
-  
-  .safe-area-inset-bottom {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-
-  /* M7-002: 부드러운 페이드 펼스 애니메이션 */
-  .animate-pulse-slow {
-    animation: pulse-slow 3s ease-in-out infinite;
-  }
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-/* M7-002: 펼스 애니메이션 키프레임 */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CED6D0;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B5C1B8;
+}
+
+/* ===== Animations ===== */
 @keyframes pulse-slow {
   0%, 100% {
     opacity: 1;

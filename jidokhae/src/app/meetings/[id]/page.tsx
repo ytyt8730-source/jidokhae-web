@@ -134,15 +134,15 @@ export default async function MeetingDetailPage({ params }: PageProps) {
       {/* 뒤로 가기 */}
       <Link
         href="/meetings"
-        className="inline-flex items-center gap-1.5 text-sm text-warm-500 hover:text-warm-700 mb-6"
+        className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-6"
       >
-        <ArrowLeft size={16} />
+        <ArrowLeft size={16} strokeWidth={1.5} />
         모임 목록으로
       </Link>
 
       <article className="card overflow-hidden">
         {/* 헤더 */}
-        <div className="p-6 sm:p-8 border-b border-warm-100">
+        <div className="p-6 sm:p-8 border-b border-gray-100">
           {/* 뱃지들 */}
           <div className="flex items-center gap-2 flex-wrap mb-4">
             {meetingWithStatus.isThisWeek && (
@@ -153,26 +153,26 @@ export default async function MeetingDetailPage({ params }: PageProps) {
           </div>
 
           {/* 제목 */}
-          <h1 className="text-2xl sm:text-3xl font-bold text-warm-900 mb-4">
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-brand-800 mb-4">
             {meeting.title}
           </h1>
 
           {/* 핵심 정보 */}
           <div className="grid gap-3 sm:grid-cols-2">
-            <div className="flex items-center gap-3 text-warm-700">
-              <Calendar size={20} className="text-brand-500" />
+            <div className="flex items-center gap-3 text-gray-700">
+              <Calendar size={20} className="text-brand-500" strokeWidth={1.5} />
               <span>{formatMeetingDate(meeting.datetime)}</span>
             </div>
-            <div className="flex items-center gap-3 text-warm-700">
-              <MapPin size={20} className="text-brand-500" />
+            <div className="flex items-center gap-3 text-gray-700">
+              <MapPin size={20} className="text-brand-500" strokeWidth={1.5} />
               <span>{meeting.location}</span>
             </div>
-            <div className="flex items-center gap-3 text-warm-700">
-              <Coins size={20} className="text-brand-500" />
+            <div className="flex items-center gap-3 text-gray-700">
+              <Coins size={20} className="text-brand-500" strokeWidth={1.5} />
               <span className="font-medium">{formatFee(meeting.fee)}</span>
             </div>
-            <div className="flex items-center gap-3 text-warm-700">
-              <Users size={20} className="text-brand-500" />
+            <div className="flex items-center gap-3 text-gray-700">
+              <Users size={20} className="text-brand-500" strokeWidth={1.5} />
               <span>{meeting.current_participants}명 참여</span>
             </div>
           </div>
@@ -188,8 +188,8 @@ export default async function MeetingDetailPage({ params }: PageProps) {
           {/* 모임 설명 */}
           {meeting.description && (
             <div>
-              <h2 className="text-lg font-semibold text-warm-900 mb-3">모임 안내</h2>
-              <p className="text-warm-600 whitespace-pre-wrap leading-relaxed">
+              <h2 className="text-lg font-semibold text-brand-800 mb-3">모임 안내</h2>
+              <p className="text-gray-600 whitespace-pre-wrap leading-relaxed">
                 {meeting.description}
               </p>
             </div>
@@ -204,7 +204,7 @@ export default async function MeetingDetailPage({ params }: PageProps) {
           )}
 
           {/* 신청 버튼 (M2-007) */}
-          <div className="pt-4 border-t border-warm-100">
+          <div className="pt-4 border-t border-gray-100">
             {/* M7-002: 첫 방문 벳지 넣지 배너 (신규회원만) */}
             {currentUser?.is_new_member && !alreadyRegistered && meetingWithStatus.displayStatus !== 'closed' && (
               <div className="mb-4 p-3 bg-brand-50 rounded-xl flex items-center gap-3 animate-pulse-slow">

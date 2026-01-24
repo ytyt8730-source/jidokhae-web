@@ -1,7 +1,13 @@
 # 지독해 프로젝트 전체용 .gitignore
 
-# ===== Claude Code 로컬 설정 =====
-.claude/
+# ===== Claude Code =====
+# 개인 설정 (절대 커밋 금지)
+.claude/settings.local.json
+.claude/CLAUDE.local.md
+.claude/*.local.*
+# 자동 생성 파일
+.claude/state/
+.claude/cache/
 
 # ===== OS 파일 =====
 .DS_Store

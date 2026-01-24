@@ -43,17 +43,17 @@ export default async function NotificationsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-warm-900">알림 발송</h1>
+      <h1 className="text-2xl font-bold text-brand-800">알림 발송</h1>
 
       {/* 알림 발송 폼 */}
       <div className="card p-6">
-        <h2 className="font-semibold text-warm-900 mb-4">수동 알림 발송</h2>
+        <h2 className="font-semibold text-brand-800 mb-4">수동 알림 발송</h2>
         <NotificationForm meetings={meetings || []} />
       </div>
 
       {/* 발송 이력 */}
       <div className="card p-6">
-        <h2 className="font-semibold text-warm-900 mb-4">발송 이력</h2>
+        <h2 className="font-semibold text-brand-800 mb-4">발송 이력</h2>
         <NotificationLogs />
       </div>
     </div>

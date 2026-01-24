@@ -70,18 +70,18 @@ export default async function PraisePage({ params }: PageProps) {
     return (
       <div className="max-w-lg mx-auto px-4 py-12 text-center">
         <div className="card p-8">
-          <Heart size={48} className="mx-auto text-warm-400 mb-4" />
-          <h1 className="text-xl font-bold text-warm-900 mb-2">
+          <Heart size={48} strokeWidth={1.5} className="mx-auto text-gray-400 mb-4" />
+          <h1 className="text-xl font-bold font-serif text-brand-800 mb-2">
             참여 기록이 없습니다
           </h1>
-          <p className="text-warm-600 mb-6">
+          <p className="text-gray-600 mb-6">
             해당 모임에 참가 신청 내역이 없습니다.
           </p>
           <Link
             href="/meetings"
             className="inline-flex items-center gap-2 text-brand-600 hover:text-brand-700"
           >
-            <ArrowLeft size={16} />
+            <ArrowLeft size={16} strokeWidth={1.5} />
             모임 목록으로
           </Link>
         </div>
@@ -126,12 +126,12 @@ export default async function PraisePage({ params }: PageProps) {
       <div className="max-w-lg mx-auto px-4 py-12 text-center">
         <div className="card p-8">
           <div className="w-16 h-16 mx-auto rounded-full bg-yellow-100 flex items-center justify-center mb-6">
-            <Heart size={32} className="text-yellow-600" />
+            <Heart size={32} strokeWidth={1.5} className="text-yellow-600" />
           </div>
-          <h1 className="text-xl font-bold text-warm-900 mb-2">
+          <h1 className="text-xl font-bold font-serif text-brand-800 mb-2">
             이미 칭찬했어요
           </h1>
-          <p className="text-warm-600 mb-6">
+          <p className="text-gray-600 mb-6">
             {praiseReceiver?.name || '참가자'}님에게<br />
             따뜻한 마음을 전달했습니다.
           </p>
@@ -151,22 +151,22 @@ export default async function PraisePage({ params }: PageProps) {
       {/* 뒤로 가기 */}
       <Link
         href={`/meetings/${meeting.id}/feedback`}
-        className="inline-flex items-center gap-1.5 text-sm text-warm-500 hover:text-warm-700 mb-6"
+        className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-6"
       >
-        <ArrowLeft size={16} />
+        <ArrowLeft size={16} strokeWidth={1.5} />
         뒤로
       </Link>
 
       <div className="card overflow-hidden">
         {/* 헤더 */}
-        <div className="p-6 sm:p-8 border-b border-warm-100 text-center">
+        <div className="p-6 sm:p-8 border-b border-gray-100 text-center">
           <div className="w-12 h-12 mx-auto rounded-full bg-yellow-100 flex items-center justify-center mb-4">
-            <Heart size={24} className="text-yellow-600" />
+            <Heart size={24} strokeWidth={1.5} className="text-yellow-600" />
           </div>
-          <h1 className="text-xl sm:text-2xl font-bold text-warm-900 mb-2">
+          <h1 className="text-xl sm:text-2xl font-bold font-serif text-brand-800 mb-2">
             누구에게 칭찬을 전할까요?
           </h1>
-          <p className="text-warm-600 text-sm">
+          <p className="text-gray-600 text-sm">
             익명으로 전달됩니다
           </p>
         </div>
@@ -174,7 +174,7 @@ export default async function PraisePage({ params }: PageProps) {
         {/* 칭찬 폼 */}
         {participantList.length === 0 ? (
           <div className="p-6 sm:p-8 text-center">
-            <p className="text-warm-600">
+            <p className="text-gray-600">
               다른 참가자가 없습니다.
             </p>
           </div>

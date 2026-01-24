@@ -37,16 +37,16 @@ export default function MeetingPreviewSection({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.1 }}
-      className="mb-6 p-4 bg-warm-50 rounded-xl border border-warm-100"
+      className="mb-6 p-4 bg-gray-50 rounded-xl border border-gray-100"
     >
       {/* 헤더 */}
       <div className="flex items-center gap-2 mb-3">
         <MessageCircle size={16} className="text-brand-500" />
-        <h3 className="text-sm font-medium text-warm-700">
+        <h3 className="text-sm font-medium text-gray-700">
           💬 지난 모임의 분위기
         </h3>
       </div>
-      
+
       {/* 후기 목록 */}
       <div className="space-y-2 mb-3">
         {displayReviews.map((review, index) => (
@@ -55,7 +55,7 @@ export default function MeetingPreviewSection({
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3, delay: 0.1 + index * 0.1 }}
-            className="text-sm text-warm-600 italic pl-3 border-l-2 border-brand-200"
+            className="text-sm text-gray-600 italic pl-3 border-l-2 border-brand-200"
           >
             &ldquo;{review.content.length > 60 
               ? `${review.content.slice(0, 60)}...` 

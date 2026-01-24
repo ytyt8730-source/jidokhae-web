@@ -61,35 +61,35 @@ export default function TransferInfo({
   return (
     <div className="space-y-6">
       {/* 안내 메시지 */}
-      <div className="flex items-center gap-2 text-warm-700">
-        <CreditCard size={20} className="text-brand-500" />
+      <div className="flex items-center gap-2 text-gray-700">
+        <CreditCard size={20} strokeWidth={1.5} className="text-brand-500" />
         <span className="font-medium">{TRANSFER_MESSAGES.PENDING_INFO}</span>
       </div>
 
       {/* 계좌 정보 카드 */}
-      <div className="bg-warm-50 rounded-xl p-5 space-y-4">
+      <div className="bg-gray-50 rounded-xl p-5 space-y-4">
         {/* 은행명 */}
         <div className="flex justify-between items-center">
-          <span className="text-warm-500 text-sm">은행</span>
-          <span className="font-medium text-warm-900">{TRANSFER_BANK_NAME}</span>
+          <span className="text-gray-500 text-sm">은행</span>
+          <span className="font-medium text-brand-800">{TRANSFER_BANK_NAME}</span>
         </div>
 
         {/* 계좌번호 */}
         <div className="flex justify-between items-center">
-          <span className="text-warm-500 text-sm">계좌번호</span>
+          <span className="text-gray-500 text-sm">계좌번호</span>
           <div className="flex items-center gap-2">
-            <span className="font-medium text-warm-900 font-mono">
+            <span className="font-medium text-brand-800 font-mono">
               {TRANSFER_ACCOUNT_NUMBER}
             </span>
             <button
               onClick={() => handleCopy(TRANSFER_ACCOUNT_NUMBER, 'account')}
-              className="p-1.5 rounded-lg bg-warm-100 hover:bg-warm-200 transition-colors"
+              className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
               title="계좌번호 복사"
             >
               {copiedField === 'account' ? (
-                <Check size={16} className="text-green-500" />
+                <Check size={16} strokeWidth={1.5} className="text-green-500" />
               ) : (
-                <Copy size={16} className="text-warm-500" />
+                <Copy size={16} strokeWidth={1.5} className="text-gray-500" />
               )}
             </button>
           </div>
@@ -97,16 +97,16 @@ export default function TransferInfo({
 
         {/* 예금주 */}
         <div className="flex justify-between items-center">
-          <span className="text-warm-500 text-sm">예금주</span>
-          <span className="font-medium text-warm-900">{TRANSFER_ACCOUNT_HOLDER}</span>
+          <span className="text-gray-500 text-sm">예금주</span>
+          <span className="font-medium text-brand-800">{TRANSFER_ACCOUNT_HOLDER}</span>
         </div>
 
         {/* 구분선 */}
-        <hr className="border-warm-200" />
+        <hr className="border-gray-200" />
 
         {/* 입금자명 (중요) */}
         <div className="flex justify-between items-center">
-          <span className="text-warm-500 text-sm">입금자명</span>
+          <span className="text-gray-500 text-sm">입금자명</span>
           <div className="flex items-center gap-2">
             <span className="font-bold text-brand-600 font-mono text-lg">
               {senderName}
@@ -117,9 +117,9 @@ export default function TransferInfo({
               title="입금자명 복사"
             >
               {copiedField === 'sender' ? (
-                <Check size={16} className="text-green-500" />
+                <Check size={16} strokeWidth={1.5} className="text-green-500" />
               ) : (
-                <Copy size={16} className="text-brand-500" />
+                <Copy size={16} strokeWidth={1.5} className="text-brand-500" />
               )}
             </button>
           </div>
@@ -127,8 +127,8 @@ export default function TransferInfo({
 
         {/* 입금 금액 */}
         <div className="flex justify-between items-center">
-          <span className="text-warm-500 text-sm">입금 금액</span>
-          <span className="font-bold text-warm-900 text-lg">
+          <span className="text-gray-500 text-sm">입금 금액</span>
+          <span className="font-bold text-brand-800 text-lg">
             {formatAmount(amount)}
           </span>
         </div>
@@ -136,7 +136,7 @@ export default function TransferInfo({
 
       {/* 입금 기한 */}
       <div className="flex items-center gap-2 p-3 bg-orange-50 rounded-lg">
-        <AlertCircle size={18} className="text-orange-500 flex-shrink-0" />
+        <AlertCircle size={18} strokeWidth={1.5} className="text-orange-500 flex-shrink-0" />
         <div className="text-sm">
           <p className="text-orange-800">
             <span className="font-medium">입금 기한:</span> {formatTransferDeadline(deadline)}
@@ -148,7 +148,7 @@ export default function TransferInfo({
       </div>
 
       {/* 주의사항 */}
-      <div className="text-xs text-warm-500 space-y-1">
+      <div className="text-xs text-gray-500 space-y-1">
         <p>• 입금자명을 반드시 위와 같이 입력해주세요.</p>
         <p>• 입금자명이 다를 경우 확인이 지연될 수 있습니다.</p>
         <p>• 입금 확인 후 참가가 확정됩니다.</p>

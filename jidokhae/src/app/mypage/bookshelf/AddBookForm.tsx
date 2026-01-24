@@ -65,10 +65,10 @@ export default function AddBookForm() {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="w-full card p-4 border-2 border-dashed border-warm-300 hover:border-brand-400 hover:bg-brand-50/50 transition-all duration-200 text-center group"
+        className="w-full card p-4 border-2 border-dashed border-gray-300 hover:border-brand-400 hover:bg-brand-50/50 transition-all duration-200 text-center group"
       >
-        <div className="flex items-center justify-center gap-2 text-warm-500 group-hover:text-brand-600">
-          <Plus size={20} />
+        <div className="flex items-center justify-center gap-2 text-gray-500 group-hover:text-brand-600">
+          <Plus size={20} strokeWidth={1.5} />
           <span className="font-medium">책 등록하기</span>
         </div>
       </button>
@@ -78,14 +78,14 @@ export default function AddBookForm() {
   return (
     <div className="card p-6">
       <div className="flex items-center gap-2 mb-4">
-        <BookOpen size={20} className="text-brand-500" />
-        <h3 className="font-semibold text-warm-900">새 책 등록</h3>
+        <BookOpen size={20} strokeWidth={1.5} className="text-brand-500" />
+        <h3 className="font-semibold text-brand-800">새 책 등록</h3>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* 책 제목 */}
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-warm-700 mb-1">
+          <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
             책 제목 <span className="text-red-500">*</span>
           </label>
           <input
@@ -96,13 +96,13 @@ export default function AddBookForm() {
             placeholder="책 제목을 입력하세요"
             maxLength={200}
             disabled={isSubmitting}
-            className="w-full px-4 py-2.5 rounded-xl border-2 border-warm-200 focus:border-brand-500 focus:ring-0 text-warm-800 placeholder-warm-400 disabled:opacity-50"
+            className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-brand-500 focus:ring-0 text-brand-800 placeholder-gray-400 disabled:opacity-50"
           />
         </div>
 
         {/* 저자 */}
         <div>
-          <label htmlFor="author" className="block text-sm font-medium text-warm-700 mb-1">
+          <label htmlFor="author" className="block text-sm font-medium text-gray-700 mb-1">
             저자
           </label>
           <input
@@ -113,13 +113,13 @@ export default function AddBookForm() {
             placeholder="저자를 입력하세요 (선택)"
             maxLength={100}
             disabled={isSubmitting}
-            className="w-full px-4 py-2.5 rounded-xl border-2 border-warm-200 focus:border-brand-500 focus:ring-0 text-warm-800 placeholder-warm-400 disabled:opacity-50"
+            className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-brand-500 focus:ring-0 text-brand-800 placeholder-gray-400 disabled:opacity-50"
           />
         </div>
 
         {/* 한 문장 기록 (M7-012: 플레이스홀더 개선) */}
         <div>
-          <label htmlFor="oneLine" className="block text-sm font-medium text-warm-700 mb-1">
+          <label htmlFor="oneLine" className="block text-sm font-medium text-gray-700 mb-1">
             한 문장 기록
           </label>
           <input
@@ -130,7 +130,7 @@ export default function AddBookForm() {
             placeholder='예: "결국 우리는 모두 이야기가 되어간다" (선택)'
             maxLength={200}
             disabled={isSubmitting}
-            className="w-full px-4 py-2.5 rounded-xl border-2 border-warm-200 focus:border-brand-500 focus:ring-0 text-warm-800 placeholder-warm-400 disabled:opacity-50"
+            className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-brand-500 focus:ring-0 text-brand-800 placeholder-gray-400 disabled:opacity-50"
           />
         </div>
 
@@ -162,7 +162,7 @@ export default function AddBookForm() {
           >
             {isSubmitting ? (
               <>
-                <Loader2 size={16} className="mr-2 animate-spin" />
+                <Loader2 size={16} strokeWidth={1.5} className="mr-2 animate-spin" />
                 등록 중...
               </>
             ) : (

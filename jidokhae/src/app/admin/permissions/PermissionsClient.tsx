@@ -151,7 +151,7 @@ export function PermissionsClient() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-6 h-6 animate-spin text-brand-500" />
+        <Loader2 className="w-6 h-6 animate-spin text-brand-500" strokeWidth={1.5} />
       </div>
     )
   }
@@ -164,7 +164,7 @@ export function PermissionsClient() {
           onClick={() => setShowAddModal(true)}
           className="btn-primary flex items-center gap-2"
         >
-          <UserPlus size={18} />
+          <UserPlus size={18} strokeWidth={1.5} />
           운영자 추가
         </button>
       </div>
@@ -184,23 +184,24 @@ export function PermissionsClient() {
                 <div className="w-10 h-10 rounded-full bg-brand-100 flex items-center justify-center">
                   <Shield
                     size={20}
-                    className={admin.role === 'super_admin' ? 'text-brand-600' : 'text-warm-500'}
+                    strokeWidth={1.5}
+                    className={admin.role === 'super_admin' ? 'text-brand-600' : 'text-gray-500'}
                   />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-warm-900">{admin.name}</span>
+                    <span className="font-semibold text-brand-800">{admin.name}</span>
                     <span
                       className={`text-xs px-2 py-0.5 rounded-full ${
                         admin.role === 'super_admin'
                           ? 'bg-brand-100 text-brand-700'
-                          : 'bg-warm-100 text-warm-600'
+                          : 'bg-gray-100 text-gray-600'
                       }`}
                     >
                       {admin.role === 'super_admin' ? '최고 관리자' : '운영자'}
                     </span>
                   </div>
-                  <span className="text-sm text-warm-500">{admin.email}</span>
+                  <span className="text-sm text-gray-500">{admin.email}</span>
                 </div>
               </div>
               {admin.role !== 'super_admin' && (
@@ -210,9 +211,9 @@ export function PermissionsClient() {
                   className="text-sm text-red-500 hover:text-red-600 flex items-center gap-1"
                 >
                   {removingUserId === admin.id ? (
-                    <Loader2 size={14} className="animate-spin" />
+                    <Loader2 size={14} strokeWidth={1.5} className="animate-spin" />
                   ) : (
-                    <UserMinus size={14} />
+                    <UserMinus size={14} strokeWidth={1.5} />
                   )}
                   해제
                 </button>
@@ -221,7 +222,7 @@ export function PermissionsClient() {
 
             {/* 권한 체크박스 */}
             {admin.role === 'super_admin' ? (
-              <p className="text-sm text-warm-500">모든 권한을 보유하고 있습니다.</p>
+              <p className="text-sm text-gray-500">모든 권한을 보유하고 있습니다.</p>
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 {ALL_PERMISSIONS.map((permission) => (
@@ -230,7 +231,7 @@ export function PermissionsClient() {
                     className={`flex items-center gap-2 p-2 rounded-lg border cursor-pointer transition-colors ${
                       admin.permissions.includes(permission)
                         ? 'bg-brand-50 border-brand-200'
-                        : 'bg-white border-warm-200 hover:border-warm-300'
+                        : 'bg-white border-gray-200 hover:border-gray-300'
                     } ${savingId === admin.id ? 'opacity-50 pointer-events-none' : ''}`}
                   >
                     <input
@@ -243,12 +244,12 @@ export function PermissionsClient() {
                       className={`w-5 h-5 rounded flex items-center justify-center ${
                         admin.permissions.includes(permission)
                           ? 'bg-brand-500 text-white'
-                          : 'border-2 border-warm-300'
+                          : 'border-2 border-gray-300'
                       }`}
                     >
-                      {admin.permissions.includes(permission) && <Check size={14} />}
+                      {admin.permissions.includes(permission) && <Check size={14} strokeWidth={1.5} />}
                     </div>
-                    <span className="text-sm text-warm-700">
+                    <span className="text-sm text-gray-700">
                       {PERMISSION_LABELS[permission]}
                     </span>
                   </label>
@@ -268,22 +269,22 @@ export function PermissionsClient() {
             className="bg-white rounded-2xl w-full max-w-md p-6"
           >
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-warm-900">운영자 추가</h2>
+              <h2 className="text-xl font-bold text-brand-800">운영자 추가</h2>
               <button
                 onClick={() => {
                   setShowAddModal(false)
                   setSearchQuery('')
                   setSearchResults([])
                 }}
-                className="text-warm-400 hover:text-warm-600"
+                className="text-gray-400 hover:text-gray-600"
               >
-                <X size={24} />
+                <X size={24} strokeWidth={1.5} />
               </button>
             </div>
 
             {/* 검색 입력 */}
             <div className="relative mb-4">
-              <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-warm-400" />
+              <Search size={18} strokeWidth={1.5} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
                 value={searchQuery}
@@ -300,18 +301,18 @@ export function PermissionsClient() {
             <div className="max-h-64 overflow-y-auto">
               {searching ? (
                 <div className="flex items-center justify-center py-8">
-                  <Loader2 className="w-5 h-5 animate-spin text-warm-400" />
+                  <Loader2 className="w-5 h-5 animate-spin text-gray-400" strokeWidth={1.5} />
                 </div>
               ) : searchResults.length > 0 ? (
                 <div className="space-y-2">
                   {searchResults.map((member) => (
                     <div
                       key={member.id}
-                      className="flex items-center justify-between p-3 rounded-lg border border-warm-200 hover:border-brand-200 hover:bg-brand-50 transition-colors"
+                      className="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:border-brand-200 hover:bg-brand-50 transition-colors"
                     >
                       <div>
-                        <div className="font-medium text-warm-900">{member.name}</div>
-                        <div className="text-sm text-warm-500">{member.email}</div>
+                        <div className="font-medium text-brand-800">{member.name}</div>
+                        <div className="text-sm text-gray-500">{member.email}</div>
                       </div>
                       <button
                         onClick={() => addAdmin(member.id)}
@@ -319,7 +320,7 @@ export function PermissionsClient() {
                         className="btn-secondary text-sm py-1.5 px-3"
                       >
                         {addingUserId === member.id ? (
-                          <Loader2 size={14} className="animate-spin" />
+                          <Loader2 size={14} strokeWidth={1.5} className="animate-spin" />
                         ) : (
                           '추가'
                         )}
@@ -328,9 +329,9 @@ export function PermissionsClient() {
                   ))}
                 </div>
               ) : searchQuery.length >= 2 ? (
-                <p className="text-center text-warm-500 py-8">검색 결과가 없습니다</p>
+                <p className="text-center text-gray-500 py-8">검색 결과가 없습니다</p>
               ) : (
-                <p className="text-center text-warm-500 py-8">
+                <p className="text-center text-gray-500 py-8">
                   2글자 이상 입력하여 검색하세요
                 </p>
               )}

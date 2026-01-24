@@ -29,15 +29,15 @@ export default function EmailConfirmedPage() {
       <div className="max-w-md w-full text-center space-y-6">
         <div className="flex justify-center">
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
-            <CheckCircle className="w-12 h-12 text-green-600" />
+            <CheckCircle className="w-12 h-12 text-green-600" strokeWidth={1.5} />
           </div>
         </div>
 
         <div className="space-y-2">
-          <h1 className="text-2xl font-bold text-warm-900">
+          <h1 className="text-2xl font-bold font-serif text-brand-800">
             이메일 확인 완료!
           </h1>
-          <p className="text-warm-600">
+          <p className="text-gray-600">
             이메일 인증이 성공적으로 완료되었습니다.
             <br />
             이제 로그인하실 수 있습니다.
@@ -45,7 +45,7 @@ export default function EmailConfirmedPage() {
         </div>
 
         <div className="space-y-4">
-          <p className="text-sm text-warm-500">
+          <p className="text-sm text-gray-500">
             {countdown}초 후 로그인 페이지로 이동합니다...
           </p>
           
