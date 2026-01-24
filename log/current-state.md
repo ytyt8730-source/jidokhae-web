@@ -1,7 +1,7 @@
 # 현재 작업 상태 (AI 에이전트용)
 
-> **마지막 업데이트**: 2026-01-24
-> **버전**: 2.6
+> **마지막 업데이트**: 2026-01-25
+> **버전**: 2.7
 
 ---
 
@@ -10,17 +10,17 @@
 | 항목 | 값 |
 |------|-----|
 | 현재 브랜치 | feature/design-system-v2.1 |
-| 진행 중 WP | M7 (디자인 시스템 v2.1 마이그레이션) |
-| 완료 Phase | 디자인 시스템 마이그레이션 완료 |
+| 진행 중 WP | M7 (5-star 품질 인프라) |
+| 완료 Phase | 테스트 프레임워크 + 환경변수 관리 |
 | 다음 Phase | main 머지 또는 추가 검토 |
 
 ---
 
 ## 마지막 완료 작업
 
-- [M7] style: 디자인 시스템 v2.1 마이그레이션 (Deep Forest Green)
-- 커밋: 2bc4007
-- 시간: 2026-01-24
+- [M7] feat: 5-star 품질 인프라 구축 (테스트, 환경변수)
+- 커밋: 7c576af
+- 시간: 2026-01-25
 - 푸시: feature/design-system-v2.1 -> origin
 
 ---
@@ -44,6 +44,16 @@
 - `src/app/mockup/` - 디자인 미리보기 페이지
 - `supabase/migration-v1.3.0-fix-rls.sql`
 - `supabase/migration-v1.3.0-full-reset.sql`
+
+### 5-star 품질 인프라 (2026-01-25)
+- `vitest.config.ts` - 테스트 설정
+- `src/__tests__/setup.ts` - Testing Library 설정
+- `src/__tests__/lib/utils.test.ts` - 유틸 테스트 (18개)
+- `src/__tests__/lib/errors.test.ts` - 에러 테스트 (20개)
+- `src/__tests__/lib/api.test.ts` - API 테스트 (16개)
+- `src/__tests__/components/ui/Badge.test.tsx` - Badge 테스트 (12개)
+- `src/lib/env.ts` - 타입 안전 환경변수
+- `.env.example` - 완전 문서화
 
 ---
 
