@@ -118,12 +118,15 @@
 
   .btn-primary {
     @apply bg-brand-600 text-white font-semibold rounded-xl px-6 py-4;
-    @apply shadow-button;
-    @apply hover:bg-brand-700 hover:shadow-button-hover hover:-translate-y-[1px];
+    box-shadow: 0 2px 8px rgba(53, 94, 59, 0.25);
+    @apply hover:bg-brand-700 hover:-translate-y-[1px];
     @apply active:scale-[0.98] active:translate-y-0;
     @apply transition-all duration-200;
     @apply focus:ring-brand-600;
     @apply disabled:bg-gray-300 disabled:shadow-none disabled:cursor-not-allowed;
+  }
+  .btn-primary:hover {
+    box-shadow: 0 4px 14px rgba(53, 94, 59, 0.35);
   }
 
   .btn-secondary {
