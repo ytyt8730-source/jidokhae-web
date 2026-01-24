@@ -5,6 +5,7 @@ import Script from 'next/script'
 import './globals.css'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
+import AuthProvider from '@/components/providers/AuthProvider'
 import { createClient } from '@/lib/supabase/server'
 
 // Pretendard - 본문 및 UI용 (로컬 폰트)
@@ -57,13 +58,15 @@ export default async function RootLayout({
     <html lang="ko" className={`${pretendard.variable} ${notoSerifKR.variable}`}>
       {/* M7-030: 레터박스 UI - 데스크톱에서 모바일 앱 감성 유지 */}
       <body className="font-sans min-h-screen bg-gray-100">
-        <div className="max-w-[480px] mx-auto bg-white min-h-screen shadow-xl flex flex-col">
-          <Header user={user} />
-          <main className="flex-1">
-            {children}
-          </main>
-          <Footer />
-        </div>
+        <AuthProvider>
+          <div className="max-w-[480px] mx-auto bg-white min-h-screen shadow-xl flex flex-col">
+            <Header user={user} />
+            <main className="flex-1">
+              {children}
+            </main>
+            <Footer />
+          </div>
+        </AuthProvider>
         {/* 포트원 결제 SDK (M2-013) */}
         <Script
           src="https://cdn.portone.io/v2/browser-sdk.js"
