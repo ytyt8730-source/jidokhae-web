@@ -2,7 +2,7 @@ import MeetingList from '@/components/MeetingList'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { calculateMeetingStatus, formatMeetingDate } from '@/lib/utils'
 import { getDday } from '@/lib/payment'
-import { CalendarDays, ArrowRight, CheckCircle } from 'lucide-react'
+import { CalendarDays, ArrowRight, CheckCircle, Sparkles, Users } from 'lucide-react'
 import Link from 'next/link'
 import Badge from '@/components/ui/Badge'
 import { BannerSlide } from '@/components/BannerSlide'
@@ -14,7 +14,7 @@ export default async function HomePage() {
   // 현재 로그인 사용자 조회
   const { data: { user: authUser } } = await supabase.auth.getUser()
 
-  // 로그인한 사용자의 신청 모임 조회 (M2-048)
+  // 로그인한 사용자의 신청 모임 조회
   let myRegistrations: (Registration & { meetings: Meeting })[] = []
   if (authUser) {
     const { data: regs } = await supabase
@@ -36,7 +36,7 @@ export default async function HomePage() {
     .gte('datetime', new Date().toISOString())
     .eq('status', 'open')
     .order('datetime', { ascending: true })
-    .limit(6) as { data: Meeting[] | null }
+    .limit(9) as { data: Meeting[] | null }
 
   // 활성 배너 조회
   const serviceClient = await createServiceClient()
@@ -56,111 +56,155 @@ export default async function HomePage() {
   const upcomingMeetings = meetingsWithStatus.filter(m => !m.isThisWeek)
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 space-y-12">
+    <div className="min-h-screen">
+      {/* 히어로 섹션 */}
+      <section className="bg-white border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+          <div className="max-w-3xl">
+            <h1 className="font-serif text-4xl lg:text-5xl font-bold text-brand-800 leading-tight tracking-tight">
+              깊은 사유,
+              <br />
+              새로운 관점
+            </h1>
+            <p className="mt-6 text-lg lg:text-xl text-gray-600 leading-relaxed max-w-2xl">
+              경주와 포항에서 매주 열리는 프라이빗 독서 클럽.
+              <br className="hidden sm:block" />
+              책을 통해 인사이트를 나누고, 사유를 확장합니다.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-4">
+              <Link href="/meetings" className="btn-primary">
+                모임 일정 보기
+              </Link>
+              <Link href="/about" className="btn-secondary">
+                멤버십 안내
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 배너 슬라이드 */}
       {banners && banners.length > 0 && (
-        <section>
-          <BannerSlide banners={banners} />
+        <section className="bg-white border-b border-gray-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <BannerSlide banners={banners} />
+          </div>
         </section>
       )}
 
-      {/* 히어로 섹션 */}
-      <section className="text-center py-12 space-y-4">
-        <h1 className="text-3xl sm:text-4xl font-bold font-serif text-brand-800">
-          <span className="text-gradient">지독해</span>와 함께하는
-          <br />
-          따뜻한 독서 시간
-        </h1>
-        <p className="text-gray-600 text-lg max-w-xl mx-auto">
-          경주와 포항에서 매주 열리는 독서모임입니다.
-          <br className="hidden sm:block" />
-          함께 책을 읽고, 생각을 나눠요.
-        </p>
-      </section>
-
-      {/* 내 신청 모임 (M2-048) - 로그인 사용자만 표시 */}
+      {/* 내 신청 모임 - 로그인 사용자만 표시 */}
       {authUser && myRegistrations.length > 0 && (
-        <section className="card bg-gradient-to-r from-brand-50 to-brand-100/50 p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="flex items-center gap-2 text-lg font-semibold text-brand-800">
-              <CheckCircle className="text-brand-500" size={20} strokeWidth={1.5} />
-              내 신청 모임
-            </h2>
-            <Link
-              href="/mypage"
-              className="text-sm text-brand-600 hover:text-brand-700 font-medium"
-            >
-              전체 보기
-            </Link>
-          </div>
-          <div className="space-y-3">
-            {myRegistrations.map((reg) => (
-              <Link
-                key={reg.id}
-                href={`/meetings/${reg.meeting_id}`}
-                className="flex items-center justify-between p-3 bg-white/80 rounded-xl hover:bg-white transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <Badge variant="success">{getDday(reg.meetings.datetime)}</Badge>
-                  <span className="font-medium text-brand-800">{reg.meetings.title}</span>
-                </div>
-                <span className="text-sm text-gray-500">
-                  {formatMeetingDate(reg.meetings.datetime)}
-                </span>
-              </Link>
-            ))}
+        <section className="bg-white border-b border-gray-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="bg-gradient-to-r from-brand-50 to-brand-100/30 rounded-2xl p-6 lg:p-8">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="flex items-center gap-2 text-lg font-semibold text-brand-800">
+                  <CheckCircle className="text-brand-600" size={20} strokeWidth={1.5} />
+                  예정된 참여 일정
+                </h2>
+                <Link
+                  href="/mypage"
+                  className="text-sm text-brand-600 hover:text-brand-700 font-medium"
+                >
+                  전체 보기
+                </Link>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {myRegistrations.map((reg) => (
+                  <Link
+                    key={reg.id}
+                    href={`/meetings/${reg.meeting_id}`}
+                    className="flex items-center justify-between p-4 bg-white rounded-xl hover:shadow-card transition-all duration-200"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <Badge variant="success">{getDday(reg.meetings.datetime)}</Badge>
+                      <span className="font-medium text-brand-800 truncate">{reg.meetings.title}</span>
+                    </div>
+                    <span className="text-sm text-gray-500 flex-shrink-0 ml-2">
+                      {formatMeetingDate(reg.meetings.datetime)}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
       )}
 
       {/* 이번 주 모임 */}
       {thisWeekMeetings.length > 0 && (
-        <section>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="flex items-center gap-2 text-xl font-semibold text-brand-800">
-              <CalendarDays className="text-brand-500" size={24} strokeWidth={1.5} />
-              이번 주 모임
-            </h2>
+        <section className="bg-white border-b border-gray-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-brand-100 rounded-xl flex items-center justify-center">
+                  <CalendarDays className="text-brand-600" size={20} strokeWidth={1.5} />
+                </div>
+                <div>
+                  <h2 className="text-xl font-semibold text-brand-800">이번 주 모임</h2>
+                  <p className="text-sm text-gray-500">곧 시작되는 세션</p>
+                </div>
+              </div>
+            </div>
+            <MeetingList meetings={thisWeekMeetings} />
           </div>
-          <MeetingList meetings={thisWeekMeetings} />
         </section>
       )}
 
       {/* 다가오는 모임 */}
-      <section>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-brand-800">
-            {thisWeekMeetings.length > 0 ? '다가오는 모임' : '모임 일정'}
-          </h2>
-          <Link
-            href="/meetings"
-            className="flex items-center gap-1 text-sm text-brand-600 hover:text-brand-700 font-medium"
-          >
-            전체 보기
-            <ArrowRight size={16} strokeWidth={1.5} />
-          </Link>
-        </div>
-
-        {upcomingMeetings.length > 0 ? (
-          <MeetingList meetings={upcomingMeetings} />
-        ) : thisWeekMeetings.length === 0 ? (
-          <div className="card p-12 text-center">
-            <p className="text-gray-500">등록된 모임이 없습니다.</p>
+      <section className="bg-[#FAFAF9]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm">
+                <Sparkles className="text-brand-600" size={20} strokeWidth={1.5} />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-brand-800">
+                  {thisWeekMeetings.length > 0 ? '다가오는 모임' : '모임 일정'}
+                </h2>
+                <p className="text-sm text-gray-500">큐레이션된 독서 경험</p>
+              </div>
+            </div>
+            <Link
+              href="/meetings"
+              className="flex items-center gap-1 text-sm text-brand-600 hover:text-brand-700 font-medium"
+            >
+              전체 일정
+              <ArrowRight size={16} strokeWidth={1.5} />
+            </Link>
           </div>
-        ) : null}
+
+          {upcomingMeetings.length > 0 ? (
+            <MeetingList meetings={upcomingMeetings} />
+          ) : thisWeekMeetings.length === 0 ? (
+            <div className="bg-white rounded-2xl p-12 text-center shadow-sm">
+              <p className="text-gray-500">현재 예정된 모임이 없습니다.</p>
+            </div>
+          ) : null}
+        </div>
       </section>
 
       {/* CTA 섹션 */}
-      <section className="card bg-gradient-to-br from-brand-50 to-brand-100 p-8 text-center">
-        <h3 className="text-xl font-semibold text-brand-800 mb-2">
-          지독해가 처음이신가요?
-        </h3>
-        <p className="text-gray-600 mb-6">
-          독서모임이 어떤 곳인지 궁금하다면 소개 페이지를 확인해보세요.
-        </p>
-        <Link href="/about" className="btn-primary">
-          지독해 알아보기
-        </Link>
+      <section className="bg-white border-t border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="w-16 h-16 bg-brand-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <Users className="text-brand-600" size={28} strokeWidth={1.5} />
+            </div>
+            <h3 className="font-serif text-2xl lg:text-3xl font-bold text-brand-800 mb-4">
+              지독해 멤버십
+            </h3>
+            <p className="text-gray-600 text-lg mb-8 leading-relaxed">
+              지적인 대화와 깊은 사유를 추구하는 분들을 위한 공간입니다.
+              <br className="hidden sm:block" />
+              멤버십에 대해 더 알아보세요.
+            </p>
+            <Link href="/about" className="btn-primary">
+              멤버십 안내
+            </Link>
+          </div>
+        </div>
       </section>
     </div>
   )

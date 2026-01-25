@@ -4,6 +4,7 @@ import localFont from 'next/font/local'
 import Script from 'next/script'
 import './globals.css'
 import Header from '@/components/layout/Header'
+import Sidebar from '@/components/layout/Sidebar'
 import Footer from '@/components/layout/Footer'
 import AuthProvider from '@/components/providers/AuthProvider'
 import { createClient } from '@/lib/supabase/server'
@@ -16,7 +17,6 @@ const pretendard = localFont({
 })
 
 // Noto Serif KR - 제목, 인용문, 책 제목용 (Google Fonts)
-// 한국어 폰트이므로 한글은 기본 포함, latin subset 추가
 const notoSerifKR = Noto_Serif_KR({
   subsets: ['latin'],
   weight: ['400', '500', '700'],
@@ -25,12 +25,12 @@ const notoSerifKR = Noto_Serif_KR({
 })
 
 export const metadata: Metadata = {
-  title: '지독해 - 경주·포항 독서모임',
-  description: '따뜻하고 편안한 독서모임, 지독해에서 함께 책을 읽어요.',
-  keywords: ['독서모임', '경주', '포항', '지독해', '책읽기'],
+  title: '지독해 - 경주·포항 프라이빗 독서 클럽',
+  description: '지적인 사유와 깊은 대화가 있는 곳. 지독해 멤버십에서 새로운 관점을 만나세요.',
+  keywords: ['독서모임', '경주', '포항', '지독해', '북클럽', '멤버십'],
   openGraph: {
-    title: '지독해 - 경주·포항 독서모임',
-    description: '따뜻하고 편안한 독서모임, 지독해에서 함께 책을 읽어요.',
+    title: '지독해 - 경주·포항 프라이빗 독서 클럽',
+    description: '지적인 사유와 깊은 대화가 있는 곳. 지독해 멤버십에서 새로운 관점을 만나세요.',
     type: 'website',
   },
 }
@@ -41,9 +41,9 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   const supabase = await createClient()
-  
+
   const { data: { user: authUser } } = await supabase.auth.getUser()
-  
+
   let user = null
   if (authUser) {
     const { data } = await supabase
@@ -56,18 +56,29 @@ export default async function RootLayout({
 
   return (
     <html lang="ko" className={`${pretendard.variable} ${notoSerifKR.variable}`}>
-      {/* M7-030: 레터박스 UI - 데스크톱에서 모바일 앱 감성 유지 */}
-      <body className="font-sans min-h-screen bg-gray-100">
+      <body className="font-sans min-h-screen bg-[#FAFAF9]">
         <AuthProvider>
-          <div className="max-w-[480px] mx-auto bg-white min-h-screen shadow-xl flex flex-col">
-            <Header user={user} />
-            <main className="flex-1">
-              {children}
-            </main>
-            <Footer />
+          {/* 데스크톱: 사이드바 + 콘텐츠 영역 */}
+          <div className="lg:flex">
+            {/* 고정 사이드바 (데스크톱 전용) */}
+            <Sidebar user={user} />
+
+            {/* 메인 콘텐츠 영역 */}
+            <div className="lg:ml-64 flex-1 min-h-screen flex flex-col">
+              {/* 모바일/태블릿 헤더 */}
+              <div className="lg:hidden">
+                <Header user={user} />
+              </div>
+
+              <main className="flex-1">
+                {children}
+              </main>
+
+              <Footer />
+            </div>
           </div>
         </AuthProvider>
-        {/* 포트원 결제 SDK (M2-013) */}
+        {/* 포트원 결제 SDK */}
         <Script
           src="https://cdn.portone.io/v2/browser-sdk.js"
           strategy="lazyOnload"
