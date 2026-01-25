@@ -2,9 +2,10 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Calendar, User, BookOpen, LogOut, Settings } from 'lucide-react'
+import { Home, Calendar, BookOpen, User, Settings, LogOut, Zap, Coffee } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
+import { useTheme } from '@/providers/ThemeProvider'
 import type { User as UserType } from '@/types/database'
 
 interface SidebarProps {
@@ -14,6 +15,7 @@ interface SidebarProps {
 export default function Sidebar({ user }: SidebarProps) {
   const pathname = usePathname()
   const supabase = createClient()
+  const { theme, toggleTheme } = useTheme()
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
@@ -23,45 +25,49 @@ export default function Sidebar({ user }: SidebarProps) {
   const isAdmin = user?.role === 'admin' || user?.role === 'super_admin'
 
   const navItems = [
-    { href: '/', label: '홈', icon: Home },
-    { href: '/meetings', label: '모임 일정', icon: Calendar },
-    { href: '/about', label: '소개', icon: BookOpen },
+    { href: '/', label: 'HOME', icon: Home },
+    { href: '/meetings', label: 'SESSIONS', icon: Calendar },
+    { href: '/about', label: 'ABOUT', icon: BookOpen },
   ]
 
   const userItems = user
     ? [
-        { href: '/mypage', label: '마이페이지', icon: User },
-        ...(isAdmin ? [{ href: '/admin', label: '관리자', icon: Settings }] : []),
+        { href: '/mypage', label: 'MY PAGE', icon: User },
+        ...(isAdmin ? [{ href: '/admin', label: 'ADMIN', icon: Settings }] : []),
       ]
     : []
 
   return (
-    <aside className="hidden lg:flex flex-col w-64 min-h-screen bg-white border-r border-gray-100 fixed left-0 top-0">
+    <aside className="hidden lg:flex flex-col w-64 min-h-screen bg-bg-surface border-r border-[var(--border)] fixed left-0 top-0 z-sticky">
       {/* 로고 */}
-      <div className="p-8 border-b border-gray-100">
-        <Link href="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center">
-            <BookOpen className="text-white" size={20} strokeWidth={1.5} />
-          </div>
-          <div>
-            <span className="font-serif font-bold text-xl text-brand-800 block">지독해</span>
-            <span className="text-xs text-gray-400 tracking-wide">JIDOKHAE</span>
-          </div>
+      <div className="p-6 border-b border-[var(--border)]">
+        <Link href="/" className="block">
+          {theme === 'electric' ? (
+            <div className="font-display font-extrabold text-2xl text-text flex items-center">
+              JIDOKHAE
+              <span className="w-2 h-2 bg-accent rounded-full ml-1" />
+            </div>
+          ) : (
+            <div>
+              <span className="font-serif font-bold text-2xl text-text">지독해.</span>
+              <span className="block text-[9px] text-text-muted uppercase tracking-widest mt-0.5">
+                Intellectual Ritual
+              </span>
+            </div>
+          )}
         </Link>
       </div>
 
       {/* 메인 네비게이션 */}
-      <nav className="flex-1 p-6">
+      <nav className="flex-1 p-4">
         <div className="space-y-1">
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
-                'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200',
-                pathname === item.href
-                  ? 'bg-brand-50 text-brand-700'
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                'nav-item',
+                pathname === item.href && 'active'
               )}
             >
               <item.icon size={18} strokeWidth={1.5} />
@@ -73,17 +79,15 @@ export default function Sidebar({ user }: SidebarProps) {
         {/* 구분선 */}
         {user && (
           <>
-            <div className="my-6 border-t border-gray-100" />
+            <div className="my-4 border-t border-[var(--border)]" />
             <div className="space-y-1">
               {userItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200',
-                    pathname === item.href
-                      ? 'bg-brand-50 text-brand-700'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    'nav-item',
+                    pathname === item.href && 'active'
                   )}
                 >
                   <item.icon size={18} strokeWidth={1.5} />
@@ -96,25 +100,50 @@ export default function Sidebar({ user }: SidebarProps) {
       </nav>
 
       {/* 하단 영역 */}
-      <div className="p-6 border-t border-gray-100">
+      <div className="p-4 border-t border-[var(--border)] space-y-4">
+        {/* 테마 토글 */}
+        <button
+          onClick={toggleTheme}
+          className="w-full flex items-center justify-center gap-2 p-3 bg-bg-base border border-[var(--border)] rounded-xl text-sm font-semibold transition-all hover:shadow-sm"
+          aria-label={theme === 'electric' ? 'Warm 모드로 전환' : 'Electric 모드로 전환'}
+        >
+          {theme === 'electric' ? (
+            <>
+              <Coffee size={16} strokeWidth={1.5} />
+              <span>Warm Mode</span>
+            </>
+          ) : (
+            <>
+              <Zap size={16} strokeWidth={1.5} />
+              <span>Electric Mode</span>
+            </>
+          )}
+        </button>
+
+        {/* 유저 정보 */}
         {user ? (
-          <div className="space-y-4">
-            <div className="px-4">
-              <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
-              <p className="text-xs text-gray-400 truncate">{user.email}</p>
+          <div className="space-y-3">
+            <div className="flex items-center gap-3 px-2">
+              <div className="w-9 h-9 rounded-xl bg-primary text-white flex items-center justify-center font-bold text-sm">
+                {user.name?.charAt(0) || 'U'}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-bold text-text truncate">{user.name}</div>
+                <span className="user-level">Lv.2 열정멤버</span>
+              </div>
             </div>
             <button
               onClick={handleLogout}
-              className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition-all duration-200"
+              className="nav-item w-full justify-center"
             >
-              <LogOut size={18} strokeWidth={1.5} />
+              <LogOut size={16} strokeWidth={1.5} />
               로그아웃
             </button>
           </div>
         ) : (
           <Link
             href="/auth/login"
-            className="flex items-center justify-center w-full px-4 py-3 bg-brand-600 text-white rounded-xl text-sm font-semibold hover:bg-brand-700 transition-colors"
+            className="btn-primary w-full text-center text-sm"
           >
             멤버십 입장
           </Link>
