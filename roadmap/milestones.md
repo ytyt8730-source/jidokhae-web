@@ -596,4 +596,558 @@ M6    │     │           │        │           │████████
 | 2026-01-20 | 1.3 | M2에 계좌이체 결제 산출물/검증포인트 추가 |
 | 2026-01-20 | 1.4 | 계좌이체를 M2에서 M5로 이동 (운영자 확인 필수 기능) - 총 26 Phase |
 | 2026-01-22 | 1.5 | M7 (Polish & Growth) 마일스톤 추가 - 총 30 Phase |
+| 2026-01-26 | 2.0 | Experience Enhancement 마일스톤 (M8~M12) 추가 - 총 48 Phase |
+
+---
+
+# Part 2: Experience Enhancement Milestones (M8~M12)
+
+---
+
+## 12. Experience Enhancement 개요
+
+이 섹션은 MVP 출시(M6) 및 초기 성장(M7) 이후, **"예약 시스템"에서 "지독한 소속감을 주는 커뮤니티 플랫폼"**으로 승격시키기 위한 Experience Enhancement 마일스톤을 정의합니다.
+
+**관련 문서:** Design System v3.5 / Product Experience 최종 설계서 v1.0
+
+**핵심 전환:**
+```
+[Before] 트랜잭션 중심 → [After] 리추얼(Ritual) 중심
+[Before] 기능적 완료 → [After] 감성적 경험
+[Before] 관리자 도구 → [After] 큐레이터 허브
+```
+
+**예상 기간:** 약 8~10주  
+**선행 조건:** M6 완료 (정식 출시) 권장, M7과 병행 가능
+
+---
+
+## 13. Experience Enhancement Milestone 구조
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│              Experience Enhancement Milestones                       │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  [M6 완료: 정식 출시]                                                │
+│          ↓                                                          │
+│  M7: Polish & Growth (기존)                                          │
+│      └── 전환율/리텐션 개선, 바이럴                                   │
+│          ↓                                                          │
+│  M8: Ritual Foundation ⭐ NEW                                        │
+│      └── Micro-copy, No-Emoji, Sound/Haptic 기반                     │
+│          ↓                                                          │
+│  M9: Commitment Ritual ⭐ NEW                                        │
+│      └── 티켓 발권, 콩 물성, 확정 Celebration                         │
+│          ↓                                                          │
+│  M10: Connection & Memory ⭐ NEW                                      │
+│      └── 봉인된 칭찬, 기록 카드, 지난 모임 아카이브                    │
+│          ↓                                                          │
+│  M11: Community Hub ⭐ NEW                                           │
+│      └── 공유 책장, 멤버 프로필 확장, 활동 피드                        │
+│          ↓                                                          │
+│  M12: Admin Evolution ⭐ NEW                                         │
+│      └── 커뮤니티 온도계, 건강 지표, One-Click Action                 │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 14. Experience Enhancement Milestone 상세
+
+### M8: Ritual Foundation (리추얼 기반)
+
+**목표:** Design System v3.5 적용, 모든 터치포인트의 톤앵매너 통일  
+**📋 Work Package:** [WP-M8-Ritual-Foundation.md](./work-packages/WP-M8-Ritual-Foundation.md)
+
+| 항목 | 내용 |
+|------|------|
+| **기간** | 1~2주 |
+| **선행 조건** | M6 완료 (M7과 병행 가능) |
+| **핵심 가치** | 브랜드 감성, 일관성 |
+
+#### 산출물
+
+| 구분 | 산출물 |
+|------|--------|
+| **Micro-Copy** | 전체 버튼 텍스트 교체 (신청하기→함께 읽기, 취소하기→다음 기회에 등) |
+| | 상태 메시지 감성화 (결제 완료→자리가 준비되었습니다) |
+| | 에러 메시지 감성화 (오류 발생→잠시 문제가 생겼어요) |
+| | 폼 검증 메시지 교체 |
+| **No-Emoji Policy** | 모든 이모지 제거 |
+| | Lucide React 아이콘으로 대체 |
+| | Custom SVG 아이콘 정의 (KongIcon, LeafIcon 등) |
+| **Sound Assets** | beans-pour.mp3 (콩 쏟아지는 소리) |
+| | printer-whir.mp3 (티켓 인쇄) |
+| | typewriter.mp3 (타자 효과) |
+| | paper-tear.mp3 (절취선/봉인) |
+| | stamp-thud.mp3 (도장) |
+| | whoosh.mp3 (전송) |
+| **Haptic System** | useFeedback 훅 구현 |
+| | Light/Heavy/Success/Tick 패턴 정의 |
+| | 모바일 진동 API 연동 |
+| **Sound Toggle** | 사용자 설정: 사운드 on/off |
+| | localStorage 저장 |
+
+#### 검증 포인트
+
+- [ ] 모든 버튼 텍스트가 새 Micro-copy로 표시됨
+- [ ] 이모지가 전체 서비스에서 제거됨
+- [ ] Lucide 아이콘이 일관되게 적용됨
+- [ ] 사운드 파일이 정상 로드됨
+- [ ] 모바일에서 Haptic 진동이 동작함
+- [ ] 사운드 on/off 설정이 저장됨
+
+#### 의존성 다이어그램
+
+```
+[M6 완료]
+    ↓
+[M8 완료] → M9, M12 시작 가능
+```
+
+---
+
+### M9: Commitment Ritual (결심 리추얼)
+
+**목표:** "신청 → 결제 → 확정" 과정을 특별한 리추얼로 전환  
+**📋 Work Package:** [WP-M9-Commitment-Ritual.md](./work-packages/WP-M9-Commitment-Ritual.md)
+
+| 항목 | 내용 |
+|------|------|
+| **기간** | 2~3주 |
+| **선행 조건** | M8 완료 |
+| **핵심 가치** | 결심의 특별함, 기대감 |
+
+#### 산출물
+
+| 구분 | 산출물 |
+|------|--------|
+| **티켓 발권 시스템** | Ticket 컴포넌트 (디자인 시스템) |
+| | 티켓 데이터 모델 (registrations 확장) |
+| | Seat No. 자동 부여 로직 |
+| | "나의 N번째 지독해" 계산 |
+| **발권 애니메이션** | 슬릿(Slit) 등장 효과 |
+| | 티켓 인쇄 (위→아래) 애니메이션 |
+| | 텍스트 타자 효과 (Typewriter) |
+| | Sound 연동 (지이잉 + 타닥) |
+| | Haptic 연동 (Tick-Tick + Success) |
+| **절취선 인터랙션** | 드래그 제스처 감지 |
+| | 찢어지는 애니메이션 |
+| | Stub이 보관함으로 이동하는 효과 |
+| | Sound 연동 (찌익) |
+| **콩(Kong) 물성** | KongIcon 리디자인 (Gold/Brown 그라데이션) |
+| | Idle 흔들림 애니메이션 |
+| | 결제 시 쏟아지는 효과 |
+| | Sound 연동 (짤랑) |
+| | Haptic 연동 (Heavy) |
+| **입금 대기 상태** | 티켓 Pending 스탬프 (50% opacity) |
+| | "확인을 기다리는 중" 상태 표시 |
+| **확정 Celebration** | Confetti 효과 |
+| | CONFIRMED 도장 찍히는 애니메이션 |
+| | Sound 연동 (쯑) |
+| | Haptic 연동 (Success) |
+| | 자동 모달 (접속 시 상태 변화 감지) |
+| **티켓 보관함** | 마이페이지 > 티켓 보관함 UI |
+| | 티켓 목록 (예정/완료 분리) |
+| | 이미지 저장 기능 |
+| | 캘린더 추가 기능 |
+| **취소 Flow 개선** | Bottom Sheet UI (팝업 대신) |
+| | 긍정적 리마인더 (죄책감 유발 제거) |
+| | 모임 한 문장 표시 (선택적) |
+| | 부드러운 작별 화면 |
+
+#### DB 스키마 변경
+
+```sql
+-- registrations 테이블 확장
+ALTER TABLE registrations ADD COLUMN seat_number INTEGER;
+ALTER TABLE registrations ADD COLUMN participation_count INTEGER;
+```
+
+#### 검증 포인트
+
+- [ ] 결제 완료 시 티켓 발권 애니메이션 재생됨
+- [ ] 티켓에 Seat No., 이름, 참여 횟수 표시됨
+- [ ] 절취선 드래그 시 찢어지는 효과 + 소리 재생
+- [ ] 콩 결제 시 쏟아지는 애니메이션 + 소리 재생
+- [ ] 입금 대기 상태에서 티켓이 흐릿하게 표시됨
+- [ ] 확정 시 Confetti + 도장 효과 재생
+- [ ] 티켓 보관함에서 이미지 저장 가능
+- [ ] 취소 시 긍정적 리마인더 표시 (Facepile 없음)
+
+#### 의존성 다이어그램
+
+```
+[M8 완료]
+    ↓
+[M9 완료] → M10 시작 가능
+```
+
+---
+
+### M10: Connection & Memory (연결과 기억)
+
+**목표:** 회원 간 연결 강화, 모임의 기억을 자산화  
+**📋 Work Package:** [WP-M10-Connection-Memory.md](./work-packages/WP-M10-Connection-Memory.md)
+
+| 항목 | 내용 |
+|------|------|
+| **기간** | 2~3주 |
+| **선행 조건** | M9 완료, M4 완료 (칭찬 시스템) |
+| **핵심 가치** | 연결, 기억 |
+
+#### 산출물
+
+| 구분 | 산출물 |
+|------|--------|
+| **봉인된 칭찬** | 밀랍 봉인 아이콘 디자인 |
+| | 알림 UI ("누군가의 따뜻한 마음이 도착했습니다") |
+| | 3초 딜레이 (기대감 형성) |
+| | 봉인 뜪기 애니메이션 |
+| | Sound 연동 (찌익) |
+| | 편지 펼쳐지는 효과 |
+| **칭찬 전송 개선** | 칭찬 유형 아이콘화 (이모지 → Lucide) |
+| | 전송 애니메이션 (종이비행기) |
+| | Sound 연동 (whoosh) |
+| | 완료 메시지 감성화 |
+| **기록 카드** | 완료 티켓 → 기록 카드 변환 로직 |
+| | 앞면/뒷면 디자인 |
+| | 카드 뒤집기 애니메이션 (3D Flip) |
+| | 뒷면: 소개한 책 + 남긴 기억 + 받은 칭찬 |
+| **지난 모임 아카이브** | /meetings/archive 페이지 |
+| | 연도/지역/유형 필터 |
+| | 모임별 상세 (참가자, 이야기된 책, 후기) |
+| | 사진 갤러리 (운영자 업로드) |
+| **모임 상세 Social Proof** | 참가자 Facepile (확정자만) |
+| | "O명이 함께하고 있어요" |
+| | 모임 전 대화 영역 (선택적) |
+
+#### DB 스키마 변경
+
+```sql
+-- 기록 카드용 확장
+ALTER TABLE registrations ADD COLUMN book_introduced TEXT;
+ALTER TABLE registrations ADD COLUMN memory_note TEXT;
+
+-- 모임 사진
+CREATE TABLE meeting_photos (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  meeting_id UUID REFERENCES meetings(id),
+  photo_url TEXT NOT NULL,
+  uploaded_by UUID REFERENCES users(id),
+  created_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+#### 검증 포인트
+
+- [ ] 칭찬 도착 시 봉인 아이콘 표시
+- [ ] "봉인 열기" 클릭 시 3초 후 내용 공개
+- [ ] 봉인 뜪기 애니메이션 + 소리 재생
+- [ ] 칭찬 전송 시 종이비행기 애니메이션 재생
+- [ ] 완료된 모임 티켓이 기록 카드로 변환됨
+- [ ] 기록 카드 뒤집기 시 3D 효과 적용
+- [ ] 지난 모임 아카이브에서 과거 모임 탐색 가능
+- [ ] 모임 상세에서 참가자 Facepile 표시
+
+#### 의존성 다이어그램
+
+```
+[M9 완료] + [M4 완료]
+    ↓
+[M10 완료] → M11 시작 가능
+```
+
+---
+
+### M11: Community Hub (커뮤니티 허브)
+
+**목표:** 모임 외 시간에도 연결되는 공간, 콘텐츠 허브 구축  
+**📋 Work Package:** [WP-M11-Community-Hub.md](./work-packages/WP-M11-Community-Hub.md)
+
+| 항목 | 내용 |
+|------|------|
+| **기간** | 3~4주 |
+| **선행 조건** | M10 완료 |
+| **핵심 가치** | 소속감, 정체성, 연결 |
+
+#### 산출물
+
+| 구분 | 산출물 |
+|------|--------|
+| **공유 책장** | /bookshelf 페이지 |
+| | 책 목록 (장르별/최근 추가/인기순) |
+| | 책 상세 (읽은 멤버, 모임에서 나온 인사이트) |
+| | "나도 읽었어요" 버튼 |
+| | "읽고 싶어요" 버튼 (위시리스트) |
+| | 책 기반 연결 ("이 책을 좋아하는 멤버 5명") |
+| **멤버 프로필 확장** | 독서 DNA (장르 비율 차트) |
+| | 독서 스타일 (열정형/꾸준형 등) |
+| | 나의 한 줄 소개 |
+| | 함께한 사람들 (자주 만난 멤버) |
+| | 공통으로 읽은 책 |
+| **멤버 디렉토리** | /members 페이지 |
+| | 이름/관심 장르 검색 |
+| | 지역 필터 (경주/포항) |
+| | "나와 취향 비슷한" 필터 |
+| **활동 피드** | 홈 > 최근 활동 섹션 |
+| | 책 추가, 후기, 새 멤버 합류 등 |
+| | 피드 아이템 컴포넌트 |
+| **이번 주 화제의 책** | 홈 > 화제의 책 섹션 |
+| | 최근 모임에서 가장 많이 소개된 책 |
+| | 대표 인용구 표시 |
+
+#### DB 스키마 변경
+
+```sql
+-- 멤버 프로필 확장
+ALTER TABLE users ADD COLUMN bio TEXT;
+ALTER TABLE users ADD COLUMN reading_style VARCHAR(50);
+
+-- 책 상호작용
+CREATE TABLE book_interactions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES users(id),
+  book_id UUID REFERENCES bookshelf(id),
+  interaction_type VARCHAR(20) NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW(),
+  UNIQUE(user_id, book_id, interaction_type)
+);
+
+-- 활동 피드
+CREATE TABLE activity_feed (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES users(id),
+  activity_type VARCHAR(50) NOT NULL,
+  reference_id UUID,
+  metadata JSONB,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+#### 검증 포인트
+
+- [ ] 공유 책장에서 장르별 책 탐색 가능
+- [ ] "나도 읽었어요" 클릭 시 읽은 멤버에 추가됨
+- [ ] 책 상세에서 "이 책을 좋아하는 멤버" 표시
+- [ ] 멤버 프로필에 독서 DNA 차트 표시
+- [ ] 멤버 디렉토리에서 취향 기반 필터 동작
+- [ ] 홈 피드에 최근 활동이 표시됨
+- [ ] 이번 주 화제의 책이 동적으로 계산됨
+
+#### 의존성 다이어그램
+
+```
+[M10 완료]
+    ↓
+[M11 완료] → 커뮤니티 플랫폼 완성
+```
+
+---
+
+### M12: Admin Evolution (운영 진화)
+
+**목표:** 관리자를 "큐레이터"로, 데이터 기반 커뮤니티 케어  
+**📋 Work Package:** [WP-M12-Admin-Evolution.md](./work-packages/WP-M12-Admin-Evolution.md)
+
+| 항목 | 내용 |
+|------|------|
+| **기간** | 2주 |
+| **선행 조건** | M8 완료 (M9~M11과 병행 가능) |
+| **핵심 가치** | 운영 품질, 효율 |
+
+#### 산출물
+
+| 구분 | 산출물 |
+|------|--------|
+| **커뮤니티 온도계** | 종합 건강 점수 계산 로직 |
+| | 온도 시각화 (37.5°C 스타일) |
+| | 신청률, 출석률, 칭찬 빈도 종합 |
+| | 전월 대비 변화 표시 |
+| **건강 지표 위젯** | 관심 필요 멤버 (2회 연속 취소/3일 무활동) |
+| | 떠오르는 샛별 (첫 모임 후 칭찬 3개+) |
+| | 휴면 위험 (60일+ 미활동) |
+| | 기념일 (1주년, 100회 참여 등) |
+| **One-Click Action** | 카톡 안부 묻기 (템플릿) |
+| | 카톡 축하하기 (템플릿) |
+| | 바로 연결 버튼 |
+| **대시보드 재배치** | 지금 해야 할 일 → 최상단 |
+| | 통계 → 하단 배치 |
+| | 모임 현황 → 중단 배치 |
+| **모임 생성 확장** | 모임 한 문장(quote) 필드 추가 (optional) |
+| | quote_source 필드 (선택) |
+
+#### DB 스키마 변경
+
+```sql
+-- 모임 한 문장 (optional)
+ALTER TABLE meetings ADD COLUMN quote TEXT;
+ALTER TABLE meetings ADD COLUMN quote_source TEXT;
+
+-- 커뮤니티 건강 로그
+CREATE TABLE community_health_logs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  month VARCHAR(7) NOT NULL,
+  temperature DECIMAL(3,1),
+  signup_rate DECIMAL(5,2),
+  attendance_rate DECIMAL(5,2),
+  praise_frequency DECIMAL(5,2),
+  created_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+#### 검증 포인트
+
+- [ ] 대시보드 최상단에 "지금 해야 할 일" 위젯 표시
+- [ ] 커뮤니티 온도가 숫자로 표시됨
+- [ ] 관심 필요 멤버 클릭 시 카톡 템플릿 연결
+- [ ] 떠오르는 샛별 클릭 시 축하 템플릿 연결
+- [ ] 모임 생성 시 "한 문장" 입력 가능 (선택)
+- [ ] 통계가 하단에 배치됨
+
+#### 의존성 다이어그램
+
+```
+[M8 완료]
+    ↓
+[M12 완료] → 큐레이터 허브 완성
+    (M9~M11과 병행 가능)
+```
+
+---
+
+## 15. Experience Enhancement 타임라인
+
+```
+Week  1  2  3  4  5  6  7  8  9  10
+      ├──────┼───────────┼────────┼───────────┼────────┤
+M7    ██████│           │        │           │        │ Polish & Growth
+      │     │           │        │           │        │
+M8    ██████│           │        │           │        │ Ritual Foundation
+      │     │           │        │           │        │
+M9    │     │███████████│        │           │        │ Commitment Ritual
+      │     │           │        │           │        │
+M10   │     │           │████████│███████████│        │ Connection & Memory
+      │     │           │        │           │        │
+M11   │     │           │        │███████████│████████│ Community Hub
+      │     │           │        │           │        │
+M12   │     │███████████│████████│           │        │ Admin Evolution
+      │     │           │        │           │        │ (병행)
+```
+
+| Milestone | 기간 | 누적 | 병행 가능 |
+|-----------|------|------|----------|
+| M7 | 1~2주 | 2주 | M8과 병행 |
+| M8 | 1~2주 | 2주 | M7과 병행 |
+| M9 | 2~3주 | 5주 | M12와 병행 |
+| M10 | 2~3주 | 8주 | - |
+| M11 | 3~4주 | 12주 | - |
+| M12 | 2주 | 5주 | M9~M10과 병행 |
+
+---
+
+## 16. 확장된 의존성 매트릭스
+
+| Milestone | 선행 조건 | 후속 가능 | 병행 가능 |
+|-----------|----------|----------|----------|
+| M1~M6 | (기존) | M7 | - |
+| M7 | M6 | M8 | M8 |
+| **M8** | M6 | M9, M12 | M7 |
+| **M9** | M8 | M10 | M12 |
+| **M10** | M9, M4 | M11 | - |
+| **M11** | M10 | 완성 | - |
+| **M12** | M8 | 완성 | M9, M10 |
+
+---
+
+## 17. 핵심 가치별 Milestone 매핑 (확장)
+
+| 핵심 가치 | 기존 Milestone | 신규 Milestone | 완성 시점 |
+|----------|---------------|---------------|----------|
+| **쉬운 연결** | M1, M2 | - | M2 완료 |
+| **잊지 않게** | M3 | - | M3 완료 |
+| **소속감** | M4 | M10, M11 | M11 완료 |
+| **신뢰** | M2, M5 | - | M5 완료 |
+| **성장** | M7 | - | M7 완료 |
+| **⭐ 리추얼** | - | M8, M9 | M9 완료 |
+| **⭐ 정체성** | - | M11 | M11 완료 |
+| **⭐ 연결** | - | M10, M11 | M11 완료 |
+| **⭐ 기억** | - | M10 | M10 완료 |
+| **⭐ 큐레이션** | - | M12 | M12 완료 |
+
+---
+
+## 18. Experience Enhancement 위험 관리
+
+| Milestone | 주요 위험 | 대응 방안 |
+|-----------|----------|----------|
+| M8 | 사운드 파일 용량 | 압축 최적화, Lazy Loading |
+| M9 | 티켓 애니메이션 성능 | Framer Motion 최적화, will-change 활용 |
+| M9 | 3D 효과 모바일 호환 | CSS 3D Transform fallback |
+| M10 | 아카이브 데이터 마이그레이션 | 기존 모임 데이터 정리 선행 |
+| M11 | 피드 쿼리 성능 | 인덱스 최적화, 페이지네이션 |
+| M11 | 공유 책장 중복 관리 | ISBN 기반 통합 검토 |
+| M12 | 건강 지표 계산 복잡도 | 배치 처리, 캐싱 |
+
+---
+
+## 19. Experience Enhancement 성공 기준
+
+### 완료 시 달성 지표
+
+| 지표 | 목표 |
+|------|------|
+| 신청 완료 화면 | 티켓 발권 리추얼로 전환 |
+| 이모지 사용 | 0개 (No-Emoji Policy) |
+| Micro-copy 적용 | 100% |
+| 사운드/항틱 | 핵심 5개 터치포인트 적용 |
+
+### 출시 후 측정 지표
+
+| 지표 | 현재 | 목표 |
+|------|------|------|
+| 티켓 이미지 저장률 | - | 30% 이상 |
+| 칭찬 전송 완료율 | 측정 중 | 20% 상승 |
+| 공유 책장 등록 책 | - | 월 50권 |
+| 피드 조회수 | - | 일 100회 |
+| 운영자 카톡 발송 | 수동 | One-Click 70% |
+
+---
+
+## 20. AI 에이전트 개발 가이드 (Experience Enhancement)
+
+### 20.1 Milestone별 주의사항
+
+| Milestone | AI 에이전트 주의사항 |
+|-----------|---------------------|
+| M8 | Micro-copy 상수 파일 분리, Sound/Haptic 훅 재사용성 |
+| M9 | Framer Motion variants 정리, 티켓 컴포넌트 모듈화 |
+| M10 | 3초 딜레이는 Promise.delay로 구현, 카드 뒤집기 CSS preserve-3d |
+| M11 | 피드 무한스크롤, 책 검색 debounce |
+| M12 | 건강 지표 계산 함수 분리, 카톡 API 추상화 |
+
+### 20.2 공통 원칙
+
+1. **애니메이션 일관성:** Framer Motion variants를 `/lib/animations.ts`에 중앙 관리
+2. **사운드 관리:** `/public/sounds/` 폴더에 mp3 저장, `useFeedback` 훅 사용
+3. **No-Emoji:** 모든 감정 표현은 Lucide 아이콘으로
+4. **성능:** 애니메이션에 `will-change` 적용, 불필요한 리렌더 방지
+
+---
+
+## 21. Work Packages (Experience Enhancement)
+
+📂 **[work-packages/](./work-packages/)** 폴더 참조
+
+| Milestone | Work Package | Phase 수 |
+|-----------|--------------|----------|
+| M8 | [WP-M8-Ritual-Foundation.md](./work-packages/WP-M8-Ritual-Foundation.md) | 4 |
+| M9 | [WP-M9-Commitment-Ritual.md](./work-packages/WP-M9-Commitment-Ritual.md) | 4 |
+| M10 | [WP-M10-Connection-Memory.md](./work-packages/WP-M10-Connection-Memory.md) | 4 |
+| M11 | [WP-M11-Community-Hub.md](./work-packages/WP-M11-Community-Hub.md) | 4 |
+| M12 | [WP-M12-Admin-Evolution.md](./work-packages/WP-M12-Admin-Evolution.md) | 2 |
+
+**총 18개 Phase 추가** | 기존 30 Phase + 18 Phase = **총 48 Phase**
 
