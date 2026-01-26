@@ -153,7 +153,7 @@ export default async function MeetingDetailPage({ params }: PageProps) {
           </div>
 
           {/* 제목 */}
-          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-brand-800 mb-4">
+          <h1 className="text-2xl sm:text-3xl font-bold heading-themed text-brand-800 mb-4">
             {meeting.title}
           </h1>
 

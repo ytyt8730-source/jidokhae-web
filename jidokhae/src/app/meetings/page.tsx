@@ -26,7 +26,7 @@ export default async function MeetingsPage() {
     <div className="max-w-5xl mx-auto px-4 py-8">
       {/* 페이지 헤더 */}
       <div className="mb-8">
-        <h1 className="flex items-center gap-3 text-2xl font-bold font-serif text-brand-800 mb-2">
+        <h1 className="flex items-center gap-3 text-2xl font-bold heading-themed text-brand-800 mb-2">
           <CalendarDays className="text-brand-500" size={28} strokeWidth={1.5} />
           모임 일정
         </h1>

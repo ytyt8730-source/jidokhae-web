@@ -34,7 +34,7 @@ export default function EmailConfirmedPage() {
         </div>
 
         <div className="space-y-2">
-          <h1 className="text-2xl font-bold font-serif text-brand-800">
+          <h1 className="text-2xl font-bold heading-themed text-brand-800">
             이메일 확인 완료!
           </h1>
           <p className="text-gray-600">

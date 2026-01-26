@@ -131,7 +131,7 @@ export default function SignupPage() {
           <div className="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
             <CheckCircle className="text-green-600" size={32} strokeWidth={1.5} />
           </div>
-          <h2 className="text-xl font-semibold font-serif text-brand-800 mb-2">회원가입 완료!</h2>
+          <h2 className="text-xl font-semibold heading-themed text-brand-800 mb-2">회원가입 완료!</h2>
           <p className="text-gray-600">
             잠시 후 로그인 페이지로 이동합니다.
           </p>
@@ -145,7 +145,7 @@ export default function SignupPage() {
       <div className="w-full max-w-md">
         {/* 헤더 */}
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold font-serif text-brand-800 mb-2">회원가입</h1>
+          <h1 className="text-2xl font-bold heading-themed text-brand-800 mb-2">회원가입</h1>
           <p className="text-gray-600">
             지독해와 함께 독서 여정을 시작하세요
           </p>

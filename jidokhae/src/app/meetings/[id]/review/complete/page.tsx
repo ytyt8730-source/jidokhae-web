@@ -17,7 +17,7 @@ export default function ReviewCompletePage() {
         </div>
 
         {/* 메시지 */}
-        <h1 className="text-2xl font-bold font-serif text-brand-800 mb-2">
+        <h1 className="text-2xl font-bold heading-themed text-brand-800 mb-2">
           소중한 후기 감사합니다
         </h1>
         <p className="text-gray-600 mb-8">

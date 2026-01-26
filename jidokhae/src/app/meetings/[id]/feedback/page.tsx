@@ -77,7 +77,7 @@ export default async function FeedbackPage({ params }: PageProps) {
       <div className="max-w-lg mx-auto px-4 py-12 text-center">
         <div className="card p-8">
           <BookOpen size={48} strokeWidth={1.5} className="mx-auto text-gray-400 mb-4" />
-          <h1 className="text-xl font-bold font-serif text-brand-800 mb-2">
+          <h1 className="text-xl font-bold heading-themed text-brand-800 mb-2">
             참여 기록이 없습니다
           </h1>
           <p className="text-gray-600 mb-6">
@@ -101,7 +101,7 @@ export default async function FeedbackPage({ params }: PageProps) {
       <div className="max-w-lg mx-auto px-4 py-12 text-center">
         <div className="card p-8">
           <CheckCircle size={48} strokeWidth={1.5} className="mx-auto text-green-500 mb-4" />
-          <h1 className="text-xl font-bold font-serif text-brand-800 mb-2">
+          <h1 className="text-xl font-bold heading-themed text-brand-800 mb-2">
             이미 참여 완료되었습니다
           </h1>
           <p className="text-gray-600 mb-2">
@@ -133,7 +133,7 @@ export default async function FeedbackPage({ params }: PageProps) {
           <div className="w-12 h-12 mx-auto rounded-full bg-gray-100 flex items-center justify-center mb-4">
             <span className="text-2xl">😔</span>
           </div>
-          <h1 className="text-xl font-bold font-serif text-brand-800 mb-2">
+          <h1 className="text-xl font-bold heading-themed text-brand-800 mb-2">
             미참여 처리된 모임입니다
           </h1>
           <p className="text-gray-600 mb-6">
@@ -168,7 +168,7 @@ export default async function FeedbackPage({ params }: PageProps) {
         {/* 헤더 */}
         <div className="p-6 sm:p-8 border-b border-gray-100 text-center">
           <div className="text-4xl mb-4">📚</div>
-          <h1 className="text-xl sm:text-2xl font-bold font-serif text-brand-800 mb-2">
+          <h1 className="text-xl sm:text-2xl font-bold heading-themed text-brand-800 mb-2">
             {meeting.title} 어떠셨어요?
           </h1>
           <p className="text-gray-600">

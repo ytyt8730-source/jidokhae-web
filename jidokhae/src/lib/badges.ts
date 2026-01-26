@@ -10,13 +10,13 @@ import { cronLogger } from '@/lib/logger'
 
 const logger = cronLogger
 
-// 배지 정의
+// 배지 정의 (No-Emoji Policy: Lucide 컴포넌트명 사용)
 export const BADGE_DEFINITIONS = {
   first_step: {
     type: 'first_step',
     name: '첫 발자국',
     description: '첫 모임에 참여했어요',
-    icon: '👣',
+    icon: 'Footprints',
     conditionType: 'participation',
     conditionValue: 1,
   },
@@ -24,7 +24,7 @@ export const BADGE_DEFINITIONS = {
     type: 'participation_10',
     name: '10회 참여',
     description: '10번째 모임이에요',
-    icon: '🎯',
+    icon: 'Target',
     conditionType: 'participation',
     conditionValue: 10,
   },
@@ -32,7 +32,7 @@ export const BADGE_DEFINITIONS = {
     type: 'consecutive_4',
     name: '연속 4주',
     description: '4주 연속 참여했어요',
-    icon: '🔥',
+    icon: 'Flame',
     conditionType: 'consecutive',
     conditionValue: 4,
   },
@@ -40,7 +40,7 @@ export const BADGE_DEFINITIONS = {
     type: 'praise_10',
     name: '칭찬 10개',
     description: '칭찬을 10개 받았어요',
-    icon: '💛',
+    icon: 'Heart',
     conditionType: 'praise',
     conditionValue: 10,
   },
@@ -48,7 +48,7 @@ export const BADGE_DEFINITIONS = {
     type: 'praise_30',
     name: '칭찬 30개',
     description: '칭찬을 30개 받았어요',
-    icon: '🌟',
+    icon: 'Star',
     conditionType: 'praise',
     conditionValue: 30,
   },
@@ -56,7 +56,7 @@ export const BADGE_DEFINITIONS = {
     type: 'praise_50',
     name: '칭찬 50개',
     description: '칭찬을 50개 받았어요',
-    icon: '👑',
+    icon: 'Crown',
     conditionType: 'praise',
     conditionValue: 50,
   },

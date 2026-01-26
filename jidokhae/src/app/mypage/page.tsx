@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { User, Calendar, Award, BookOpen, ArrowRight, Trophy } from 'lucide-react'
 import { differenceInDays } from 'date-fns'
 import Badge from '@/components/ui/Badge'
+import BadgeIcon from '@/components/BadgeIcon'
 import { formatMeetingDate, formatFee } from '@/lib/utils'
 import { getDday } from '@/lib/payment'
 import { getUserBadges, getBadgeInfo } from '@/lib/badges'
@@ -98,7 +99,7 @@ export default async function MyPage() {
     <div className="max-w-3xl mx-auto px-4 py-8 space-y-8">
       {/* 페이지 헤더 */}
       <div>
-        <h1 className="flex items-center gap-3 text-2xl font-bold font-serif text-brand-800 mb-2">
+        <h1 className="flex items-center gap-3 text-2xl font-bold heading-themed text-brand-800 mb-2">
           <User className="text-brand-500" size={28} strokeWidth={1.5} />
           마이페이지
         </h1>
@@ -174,7 +175,7 @@ export default async function MyPage() {
                   className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-xl"
                   title={info.description}
                 >
-                  <span className="text-xl">{info.icon}</span>
+                  <BadgeIcon icon={info.icon} size={20} className="text-brand-600" />
                   <span className="text-sm font-medium text-gray-700">{info.name}</span>
                 </div>
               )

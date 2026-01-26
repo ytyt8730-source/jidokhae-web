@@ -57,25 +57,25 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen">
-      {/* 히어로 섹션 */}
-      <section className="bg-white border-b border-gray-100">
+      {/* 히어로 섹션 - Electric: Immersive Blue / Warm: Paper Texture */}
+      <section className="hero-section border-b border-[var(--border)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
           <div className="max-w-3xl">
-            <h1 className="font-serif text-4xl lg:text-5xl font-bold text-brand-800 leading-tight tracking-tight">
+            <h1 className="hero-title heading-themed text-4xl lg:text-5xl font-bold leading-tight tracking-tight">
               깊은 사유,
               <br />
               새로운 관점
             </h1>
-            <p className="mt-6 text-lg lg:text-xl text-gray-600 leading-relaxed max-w-2xl">
+            <p className="hero-subtitle mt-6 text-lg lg:text-xl leading-relaxed max-w-2xl">
               경주와 포항에서 매주 열리는 프라이빗 독서 클럽.
               <br className="hidden sm:block" />
               책을 통해 인사이트를 나누고, 사유를 확장합니다.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
-              <Link href="/meetings" className="btn-primary">
+              <Link href="/meetings" className="hero-btn-primary font-semibold rounded-xl px-6 py-4 transition-all duration-200 hover:-translate-y-[1px] active:scale-[0.98]">
                 모임 일정 보기
               </Link>
-              <Link href="/about" className="btn-secondary">
+              <Link href="/about" className="hero-btn-secondary font-medium rounded-xl px-6 py-4 border transition-all duration-200 active:scale-[0.98]">
                 멤버십 안내
               </Link>
             </div>
@@ -152,7 +152,7 @@ export default async function HomePage() {
       )}
 
       {/* 다가오는 모임 */}
-      <section className="bg-[#FAFAF9]">
+      <section className="bg-bg-base">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
@@ -186,16 +186,16 @@ export default async function HomePage() {
       </section>
 
       {/* CTA 섹션 */}
-      <section className="bg-white border-t border-gray-100">
+      <section className="bg-bg-surface border-t border-[var(--border)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
           <div className="max-w-3xl mx-auto text-center">
             <div className="w-16 h-16 bg-brand-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
               <Users className="text-brand-600" size={28} strokeWidth={1.5} />
             </div>
-            <h3 className="font-serif text-2xl lg:text-3xl font-bold text-brand-800 mb-4">
+            <h3 className="heading-themed text-2xl lg:text-3xl font-bold text-text mb-4">
               지독해 멤버십
             </h3>
-            <p className="text-gray-600 text-lg mb-8 leading-relaxed">
+            <p className="text-text-muted text-lg mb-8 leading-relaxed">
               지적인 대화와 깊은 사유를 추구하는 분들을 위한 공간입니다.
               <br className="hidden sm:block" />
               멤버십에 대해 더 알아보세요.

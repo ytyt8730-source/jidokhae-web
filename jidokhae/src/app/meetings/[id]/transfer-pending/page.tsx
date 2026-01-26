@@ -96,7 +96,7 @@ export default async function TransferPendingPage({ params }: PageProps) {
           <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Clock className="text-yellow-600" size={32} strokeWidth={1.5} />
           </div>
-          <h1 className="text-xl font-bold font-serif text-brand-800 mb-2">입금대기 중</h1>
+          <h1 className="text-xl font-bold heading-themed text-brand-800 mb-2">입금대기 중</h1>
           <p className="text-gray-600">
             아래 계좌로 입금해주시면 참가가 확정됩니다.
           </p>

@@ -29,7 +29,7 @@ export default function FeedbackCompleteClient() {
           </div>
 
           {/* 메시지 */}
-          <h1 className="text-2xl font-bold font-serif text-brand-800 mb-2">
+          <h1 className="text-2xl font-bold heading-themed text-brand-800 mb-2">
             참여 완료!
           </h1>
           <p className="text-gray-600 mb-8">

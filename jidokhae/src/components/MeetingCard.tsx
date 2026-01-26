@@ -61,7 +61,7 @@ export default function MeetingCard({ meeting }: MeetingCardProps) {
         </div>
 
         {/* 제목 */}
-        <h3 className="font-serif font-semibold text-brand-800 text-lg mb-3 group-hover:text-brand-600 transition-colors">
+        <h3 className="heading-themed font-semibold text-brand-800 text-lg mb-3 group-hover:text-brand-600 transition-colors">
           {meeting.title}
         </h3>
 

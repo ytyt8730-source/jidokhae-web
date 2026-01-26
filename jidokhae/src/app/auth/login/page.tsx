@@ -98,7 +98,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         {/* 헤더 */}
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold font-serif text-brand-800 mb-2">로그인</h1>
+          <h1 className="text-2xl font-bold heading-themed text-brand-800 mb-2">로그인</h1>
           <p className="text-gray-600">
             지독해에 오신 것을 환영합니다
           </p>

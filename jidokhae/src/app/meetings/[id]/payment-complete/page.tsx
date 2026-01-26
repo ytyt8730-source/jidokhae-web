@@ -68,7 +68,7 @@ export default async function PaymentCompletePage({ params }: PageProps) {
         <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
           <CheckCircle className="w-10 h-10 text-green-600" strokeWidth={1.5} />
         </div>
-        <h1 className="text-2xl font-bold font-serif text-brand-800 mb-2">
+        <h1 className="text-2xl font-bold heading-themed text-brand-800 mb-2">
           신청이 완료되었습니다!
         </h1>
         <p className="text-gray-600">

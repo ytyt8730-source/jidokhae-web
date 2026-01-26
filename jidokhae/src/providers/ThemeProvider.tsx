@@ -18,22 +18,22 @@ const ThemeContext = createContext<ThemeContextType>({
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>('electric')
-  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
+    // 클라이언트에서 저장된 테마 로드
     const saved = localStorage.getItem('jidokhae-theme') as Theme | null
     if (saved && (saved === 'electric' || saved === 'warm')) {
       setThemeState(saved)
+      document.documentElement.setAttribute('data-theme', saved)
+    } else {
+      document.documentElement.setAttribute('data-theme', 'electric')
     }
   }, [])
 
   useEffect(() => {
-    if (mounted) {
-      document.documentElement.setAttribute('data-theme', theme)
-      localStorage.setItem('jidokhae-theme', theme)
-    }
-  }, [theme, mounted])
+    document.documentElement.setAttribute('data-theme', theme)
+    localStorage.setItem('jidokhae-theme', theme)
+  }, [theme])
 
   const toggleTheme = () => {
     setThemeState(prev => prev === 'electric' ? 'warm' : 'electric')
@@ -41,11 +41,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme)
-  }
-
-  // Prevent flash of wrong theme
-  if (!mounted) {
-    return null
   }
 
   return (

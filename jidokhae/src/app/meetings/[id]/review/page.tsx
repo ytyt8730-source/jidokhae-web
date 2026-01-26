@@ -69,7 +69,7 @@ export default async function ReviewPage({ params }: PageProps) {
       <div className="max-w-lg mx-auto px-4 py-12 text-center">
         <div className="card p-8">
           <PenLine size={48} strokeWidth={1.5} className="mx-auto text-gray-400 mb-4" />
-          <h1 className="text-xl font-bold font-serif text-brand-800 mb-2">
+          <h1 className="text-xl font-bold heading-themed text-brand-800 mb-2">
             참여 기록이 없습니다
           </h1>
           <p className="text-gray-600 mb-6">
@@ -100,7 +100,7 @@ export default async function ReviewPage({ params }: PageProps) {
       <div className="max-w-lg mx-auto px-4 py-12 text-center">
         <div className="card p-8">
           <CheckCircle size={48} strokeWidth={1.5} className="mx-auto text-green-500 mb-4" />
-          <h1 className="text-xl font-bold font-serif text-brand-800 mb-2">
+          <h1 className="text-xl font-bold heading-themed text-brand-800 mb-2">
             이미 후기를 작성했어요
           </h1>
           <p className="text-gray-600 mb-6">
@@ -134,7 +134,7 @@ export default async function ReviewPage({ params }: PageProps) {
           <div className="w-12 h-12 mx-auto rounded-full bg-blue-100 flex items-center justify-center mb-4">
             <PenLine size={24} strokeWidth={1.5} className="text-blue-600" />
           </div>
-          <h1 className="text-xl sm:text-2xl font-bold font-serif text-brand-800 mb-2">
+          <h1 className="text-xl sm:text-2xl font-bold heading-themed text-brand-800 mb-2">
             모임은 어떠셨나요?
           </h1>
           <p className="text-gray-600 text-sm">

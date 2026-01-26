@@ -105,7 +105,7 @@ export default function LandingContent({ stats, reviews }: LandingContentProps) 
             initial={{ opacity: 0, y: 20 }}
             animate={heroInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-4xl sm:text-5xl md:text-6xl font-serif font-bold text-brand-800 mb-6 leading-tight"
+            className="text-4xl sm:text-5xl md:text-6xl heading-themed font-bold text-brand-800 mb-6 leading-tight"
           >
             책을 사랑하는 사람들이
             <br />

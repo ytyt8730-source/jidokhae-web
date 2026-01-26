@@ -10,6 +10,18 @@ import { useState, useEffect, useCallback } from 'react'
 import Confetti from 'react-confetti'
 import { motion, AnimatePresence } from 'framer-motion'
 import { getBadgeInfo } from '@/lib/badges-client'
+import { Footprints, Target, Flame, Heart, Star, Crown, Award, type LucideIcon } from 'lucide-react'
+
+// No-Emoji Policy: Lucide 아이콘 매핑
+const BADGE_ICONS: Record<string, LucideIcon> = {
+  Footprints,
+  Target,
+  Flame,
+  Heart,
+  Star,
+  Crown,
+  Award, // fallback
+}
 
 interface BadgeCelebrationProps {
   /**
@@ -111,7 +123,7 @@ export default function BadgeCelebration({ badges, onComplete }: BadgeCelebratio
               className="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-xl"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* 배지 아이콘 */}
+              {/* 배지 아이콘 (No-Emoji Policy: Lucide 사용) */}
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
@@ -121,9 +133,12 @@ export default function BadgeCelebration({ badges, onComplete }: BadgeCelebratio
                   damping: 20,
                   delay: 0.2,
                 }}
-                className="text-6xl mb-4"
+                className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-brand-100 to-amber-100 rounded-full flex items-center justify-center"
               >
-                {badgeInfo.icon}
+                {(() => {
+                  const IconComponent = BADGE_ICONS[badgeInfo.icon] || BADGE_ICONS.Award
+                  return <IconComponent size={40} strokeWidth={1.5} className="text-brand-600" />
+                })()}
               </motion.div>
 
               {/* 축하 메시지 */}

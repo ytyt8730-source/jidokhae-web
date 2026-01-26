@@ -1,4 +1,4 @@
-# 지독해 디자인 시스템 v3.2
+# 지독해 디자인 시스템 v3.3
 
 > **"낮과 밤의 서재 (Day & Night Library)"**
 >
@@ -8,7 +8,7 @@
 
 ---
 
-**문서 버전:** 3.2  
+**문서 버전:** 3.3  
 **작성일:** 2026-01-25  
 **디자인 컨셉:** Mood-Switchable Reading Club  
 **기반 프레임워크:** Next.js 14 + React 18 + TypeScript  
@@ -118,9 +118,19 @@
 > **중요:** 테마 토글은 **데모용 상단 패널에 두지 않습니다.**
 
 **실제 구현 위치:**
-- **Desktop:** 사이드바 하단 (Theme Switch 버튼)
+- **Desktop:** 사이드바 **맨 아래** (Theme Switch 버튼)
 - **Mobile:** MY 탭 > 설정 섹션 또는 헤더 우측 아이콘
 - **저장:** `localStorage`에 사용자 선호 테마 저장
+
+**금지 사항:**
+```
+❌ 플로팅 버튼으로 두지 마세요 (fixed bottom-4 left-4 등)
+❌ 상단 데모 패널에 두지 마세요
+❌ 페이지 중앙에 두드러지게 두지 마세요
+
+✅ Desktop: 사이드바 맨 아래
+✅ Mobile: 설정 메뉴 내부 또는 헤더 우측 아이콘
+```
 
 ```tsx
 // 테마 토글 버튼 예시 (Lucide 아이콘 사용!)
@@ -398,18 +408,70 @@ import { Price } from '@/components/ui/Price'
 | 폰트 | Electric | Warm |
 |------|----------|------|
 | **로고** | Outfit (Bold) | Noto Serif KR |
-| **제목** | Outfit / Noto Sans KR | Noto Serif KR |
+| **헤드라인/제목** | **고딕체** (Outfit / Noto Sans KR) | **명조체** (Noto Serif KR) |
 | **본문** | Noto Sans KR | Noto Sans KR |
+
+> **중요:** Electric 모드에서는 모든 헤드라인/제목이 **고딕체**여야 합니다. 명조체는 Warm 모드 전용입니다.
 
 ```typescript
 fontFamily: {
-  display: ['Outfit', 'Noto Sans KR', 'sans-serif'],
-  serif: ['Noto Serif KR', 'Georgia', 'serif'],
-  sans: ['Noto Sans KR', 'system-ui', 'sans-serif'],
+  display: ['Outfit', 'Noto Sans KR', 'sans-serif'],  // Electric 헤드라인
+  serif: ['Noto Serif KR', 'Georgia', 'serif'],       // Warm 헤드라인
+  sans: ['Noto Sans KR', 'system-ui', 'sans-serif'],  // 본문 (공통)
 }
 ```
 
-### 7.2 로고 스타일
+### 7.2 헤드라인 폰트 규칙 (필수!)
+
+> **문제:** Electric 모드인데 헤드라인에 명조체가 적용되면 브랜드 일관성이 깨집니다.
+
+| 테마 | 헤드라인 폰트 | Tailwind 클래스 |
+|------|-----------------|------------------|
+| **Electric (기본)** | 고딕체 (Sans) | `font-sans` 또는 `font-display` |
+| **Warm** | 명조체 (Serif) | `font-serif` |
+
+**코드 예시:**
+
+```tsx
+// components/HeroSection.tsx
+'use client'
+
+import { useTheme } from '@/providers/ThemeProvider'
+
+export function HeroSection() {
+  const { theme } = useTheme()
+  
+  return (
+    <section>
+      {/* 헤드라인 - 테마별 폰트 분기 */}
+      <h1 className={`text-4xl font-bold leading-tight ${
+        theme === 'warm' ? 'font-serif' : 'font-sans'
+      }`}>
+        깊은 사유,<br/>새로운 관점
+      </h1>
+      <p className="text-lg text-text-muted font-sans mt-4">
+        경주와 포항에서 매주 열리는 프라이빗 독서 클럽.
+      </p>
+    </section>
+  )
+}
+```
+
+**잘못된 예:**
+```tsx
+// ❌ Electric 모드에서 명조체 사용
+<h1 className="font-serif text-4xl">깊은 사유</h1>
+```
+
+**올바른 예:**
+```tsx
+// ✅ 테마에 따라 폰트 분기
+<h1 className={theme === 'warm' ? 'font-serif' : 'font-sans'}>
+  깊은 사유
+</h1>
+```
+
+### 7.3 로고 스타일
 
 ```tsx
 // Electric
@@ -1120,6 +1182,10 @@ body {
 | | | - next/font 폰트 로딩 전략 추가 |
 | | | - Tailwind darkMode 충돌 방지 |
 | | | - Z-Index 계층 구조 명확화 |
+| 2026-01-25 | 3.3 | **규칙 명확화** |
+| | | - 헤드라인 폰트 규칙 추가 (Electric=고딕, Warm=명조) |
+| | | - 테마 토글 플로팅 버튼 금지 명시 |
+| | | - 체크리스트 항목 보강 |
 
 ---
 
@@ -1131,9 +1197,15 @@ body {
 - [ ] 트로피 아이콘이 Lucide Trophy인가?
 - [ ] 모든 UI 아이콘이 Lucide React인가?
 
-### 테마
+### 폰트
+- [ ] Electric 모드에서 헤드라인이 **고딕체**인가?
+- [ ] Warm 모드에서 헤드라인이 **명조체**인가?
+- [ ] 본문은 양쪽 테마 모두 고딕체인가?
+
+### 테마 토글
 - [ ] 기본 테마가 Electric인가?
-- [ ] 테마 토글이 사이드바 하단에 있는가?
+- [ ] 테마 토글이 사이드바 **맨 아래**에 있는가?
+- [ ] **플로팅 토글 버튼이 없는가?** (좌측 하단 등)
 - [ ] 테마 토글 아이콘이 Lucide (Zap/Coffee)인가?
 
 ### 기술적 설정
@@ -1156,4 +1228,4 @@ body {
 
 ---
 
-*이 문서는 지독해 웹서비스의 디자인 표준 v3.2입니다.*
+*이 문서는 지독해 웹서비스의 디자인 표준 v3.3입니다.*

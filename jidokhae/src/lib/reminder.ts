@@ -225,7 +225,7 @@ async function generateTeaserText(meetingId: string): Promise<string> {
   const randomBadge = meaningfulBadges[Math.floor(Math.random() * meaningfulBadges.length)]
   const badgeName = BADGE_DISPLAY_NAMES[randomBadge.badge_type] || randomBadge.badge_type
 
-  return `✨ 이번 모임에 '${badgeName}' 벳지 보유자님이 함께해요!`
+  return `이번 모임에 '${badgeName}' 배지 보유자님이 함께해요!`
 }
 
 /**

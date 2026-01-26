@@ -55,7 +55,7 @@ export default function WelcomeBadgeNudge({
             첫 모임 신청 시 <span className="text-brand-600 font-bold">웰컴 멤버</span> 배지가 지급됩니다!
           </p>
           <p className="text-xs text-gray-500 mt-0.5">
-            지독해와 함께하는 첫 발걸음을 기념해요 ✨
+            지독해와 함께하는 첫 발걸음을 기념해요
           </p>
         </div>
       </div>

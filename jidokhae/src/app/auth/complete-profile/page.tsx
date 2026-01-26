@@ -112,7 +112,7 @@ export default function CompleteProfilePage() {
           <div className="w-16 h-16 bg-brand-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <User className="w-8 h-8 text-brand-600" strokeWidth={1.5} />
           </div>
-          <h1 className="text-2xl font-bold font-serif text-brand-800 mb-2">
+          <h1 className="text-2xl font-bold heading-themed text-brand-800 mb-2">
             환영합니다, {userName}님!
           </h1>
           <p className="text-gray-600">

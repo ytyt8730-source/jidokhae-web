@@ -71,7 +71,7 @@ export default async function PraisePage({ params }: PageProps) {
       <div className="max-w-lg mx-auto px-4 py-12 text-center">
         <div className="card p-8">
           <Heart size={48} strokeWidth={1.5} className="mx-auto text-gray-400 mb-4" />
-          <h1 className="text-xl font-bold font-serif text-brand-800 mb-2">
+          <h1 className="text-xl font-bold heading-themed text-brand-800 mb-2">
             참여 기록이 없습니다
           </h1>
           <p className="text-gray-600 mb-6">
@@ -128,7 +128,7 @@ export default async function PraisePage({ params }: PageProps) {
           <div className="w-16 h-16 mx-auto rounded-full bg-yellow-100 flex items-center justify-center mb-6">
             <Heart size={32} strokeWidth={1.5} className="text-yellow-600" />
           </div>
-          <h1 className="text-xl font-bold font-serif text-brand-800 mb-2">
+          <h1 className="text-xl font-bold heading-themed text-brand-800 mb-2">
             이미 칭찬했어요
           </h1>
           <p className="text-gray-600 mb-6">
@@ -163,7 +163,7 @@ export default async function PraisePage({ params }: PageProps) {
           <div className="w-12 h-12 mx-auto rounded-full bg-yellow-100 flex items-center justify-center mb-4">
             <Heart size={24} strokeWidth={1.5} className="text-yellow-600" />
           </div>
-          <h1 className="text-xl sm:text-2xl font-bold font-serif text-brand-800 mb-2">
+          <h1 className="text-xl sm:text-2xl font-bold heading-themed text-brand-800 mb-2">
             누구에게 칭찬을 전할까요?
           </h1>
           <p className="text-gray-600 text-sm">
