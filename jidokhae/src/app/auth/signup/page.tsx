@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import { Mail, Lock, User, Phone, AlertCircle, CheckCircle } from 'lucide-react'
+import { MICROCOPY } from '@/lib/constants/microcopy'
 
 export default function SignupPage() {
   const router = useRouter()
@@ -145,9 +146,9 @@ export default function SignupPage() {
       <div className="w-full max-w-md">
         {/* 헤더 */}
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold heading-themed text-brand-800 mb-2">회원가입</h1>
+          <h1 className="text-2xl font-bold heading-themed text-brand-800 mb-2">{MICROCOPY.buttons.signup}</h1>
           <p className="text-gray-600">
-            지독해와 함께 독서 여정을 시작하세요
+            {MICROCOPY.alerts.welcomeNew}
           </p>
         </div>
 
@@ -232,7 +233,7 @@ export default function SignupPage() {
               className="w-full"
               isLoading={isLoading}
             >
-              회원가입
+              {MICROCOPY.buttons.signup}
             </Button>
           </form>
 

@@ -9,6 +9,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Plus, Loader2, BookOpen } from 'lucide-react'
 import Button from '@/components/ui/Button'
+import { MICROCOPY } from '@/lib/constants/microcopy'
 
 export default function AddBookForm() {
   const router = useRouter()
@@ -69,7 +70,7 @@ export default function AddBookForm() {
       >
         <div className="flex items-center justify-center gap-2 text-gray-500 group-hover:text-brand-600">
           <Plus size={20} strokeWidth={1.5} />
-          <span className="font-medium">책 등록하기</span>
+          <span className="font-medium">{MICROCOPY.buttons.addBook}</span>
         </div>
       </button>
     )
@@ -153,7 +154,7 @@ export default function AddBookForm() {
             disabled={isSubmitting}
             className="flex-1"
           >
-            취소
+            {MICROCOPY.buttons.close}
           </Button>
           <Button
             type="submit"
@@ -163,10 +164,10 @@ export default function AddBookForm() {
             {isSubmitting ? (
               <>
                 <Loader2 size={16} strokeWidth={1.5} className="mr-2 animate-spin" />
-                등록 중...
+                {MICROCOPY.status.processing}
               </>
             ) : (
-              '등록하기'
+              MICROCOPY.buttons.save
             )}
           </Button>
         </div>

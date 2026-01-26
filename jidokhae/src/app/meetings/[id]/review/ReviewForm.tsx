@@ -9,6 +9,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { PenLine, Loader2, Eye } from 'lucide-react'
 import Button from '@/components/ui/Button'
+import { MICROCOPY } from '@/lib/constants/microcopy'
 
 interface ReviewFormProps {
   meetingId: string
@@ -118,12 +119,12 @@ export default function ReviewForm({ meetingId }: ReviewFormProps) {
         {isSubmitting ? (
           <>
             <Loader2 size={20} strokeWidth={1.5} className="mr-2 animate-spin" />
-            등록 중...
+            {MICROCOPY.status.processing}
           </>
         ) : (
           <>
             <PenLine size={20} strokeWidth={1.5} className="mr-2" />
-            후기 등록하기
+            {MICROCOPY.buttons.writeReview}
           </>
         )}
       </Button>

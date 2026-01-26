@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation'
 import { Heart, Loader2, Check } from 'lucide-react'
 import { PRAISE_PHRASES } from '@/lib/praise'
 import Button from '@/components/ui/Button'
+import { MICROCOPY } from '@/lib/constants/microcopy'
 
 interface Participant {
   id: string
@@ -139,12 +140,12 @@ export default function PraiseForm({ meetingId, participants }: PraiseFormProps)
         {isSubmitting ? (
           <>
             <Loader2 size={20} strokeWidth={1.5} className="mr-2 animate-spin" />
-            전송 중...
+            {MICROCOPY.status.processing}
           </>
         ) : (
           <>
             <Heart size={20} strokeWidth={1.5} className="mr-2" />
-            칭찬 보내기
+            {MICROCOPY.buttons.sendPraise}
           </>
         )}
       </Button>

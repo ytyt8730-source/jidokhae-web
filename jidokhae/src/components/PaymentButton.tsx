@@ -18,6 +18,7 @@ import { useRouter } from 'next/navigation'
 import Button from '@/components/ui/Button'
 import PaymentMethodSelector from '@/components/PaymentMethodSelector'
 import { generateIdempotencyKey, PAYMENT_MESSAGES } from '@/lib/payment'
+import { MICROCOPY } from '@/lib/constants/microcopy'
 import type { Meeting, User, PreparePaymentResponse } from '@/types/database'
 
 // 포트원 SDK 타입
@@ -286,7 +287,7 @@ export default function PaymentButton({
         isLoading={isLoading}
         className="w-full sm:w-auto"
       >
-        {isLoading ? '처리 중...' : user ? '신청하기' : '로그인 후 신청'}
+        {isLoading ? MICROCOPY.status.processing : user ? MICROCOPY.buttons.register : '로그인 후 신청'}
       </Button>
       {error && (
         <p className="text-sm text-red-500 mt-2">{error}</p>

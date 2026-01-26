@@ -19,6 +19,7 @@ import { formatMeetingDate, formatFee } from '@/lib/utils'
 import { getDday, getRefundPercentText } from '@/lib/payment'
 import { overlayAnimation, modalAnimation } from '@/lib/animations'
 import { createLogger } from '@/lib/logger'
+import { MICROCOPY } from '@/lib/constants/microcopy'
 import type { Meeting, Registration, RefundRule, RefundAccountInfo } from '@/types/database'
 
 const logger = createLogger('payment')
@@ -302,14 +303,14 @@ export default function CancelModal({
                   variant="secondary"
                   className="w-full !bg-red-50 !text-red-600 hover:!bg-red-100"
                 >
-                  취소하기
+                  {MICROCOPY.buttons.cancel}
                 </Button>
                 <Button
                   onClick={onClose}
                   variant="secondary"
                   className="w-full"
                 >
-                  닫기 (마음 돌리기)
+                  {MICROCOPY.buttons.close}
                 </Button>
               </div>
             </div>

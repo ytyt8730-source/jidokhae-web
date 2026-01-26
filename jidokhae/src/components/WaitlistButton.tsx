@@ -8,6 +8,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Button from '@/components/ui/Button'
+import { MICROCOPY } from '@/lib/constants/microcopy'
 import type { Meeting, User, Waitlist } from '@/types/database'
 
 interface WaitlistButtonProps {
@@ -124,7 +125,7 @@ export default function WaitlistButton({
         isLoading={isLoading}
         className="w-full sm:w-auto"
       >
-        {isLoading ? '처리 중...' : user ? '대기 신청' : '로그인 후 대기 신청'}
+        {isLoading ? MICROCOPY.status.processing : user ? MICROCOPY.buttons.waitlist : '로그인 후 대기 신청'}
       </Button>
       {error && <p className="text-sm text-red-500 mt-2">{error}</p>}
     </div>
