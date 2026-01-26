@@ -152,7 +152,7 @@ export function BannersClient() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-6 h-6 animate-spin text-brand-500" strokeWidth={1.5} />
+        <Loader2 className="w-6 h-6 animate-spin text-brand-600" strokeWidth={1.5} />
       </div>
     )
   }
@@ -221,7 +221,7 @@ export function BannersClient() {
                         href={banner.link_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-brand-500 hover:text-brand-600"
+                        className="text-brand-600 hover:text-brand-700"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <ExternalLink size={14} strokeWidth={1.5} />
@@ -237,11 +237,10 @@ export function BannersClient() {
                     e.stopPropagation()
                     toggleActive(banner)
                   }}
-                  className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm ${
-                    banner.is_active
+                  className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm ${banner.is_active
                       ? 'bg-green-100 text-green-700'
                       : 'bg-gray-100 text-gray-500'
-                  }`}
+                    }`}
                 >
                   {banner.is_active ? (
                     <>
@@ -263,7 +262,7 @@ export function BannersClient() {
                       e.stopPropagation()
                       openEditModal(banner)
                     }}
-                    className="p-2 text-gray-400 hover:text-brand-500 hover:bg-brand-50 rounded-lg transition-colors"
+                    className="p-2 text-gray-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors"
                   >
                     <Edit2 size={18} strokeWidth={1.5} />
                   </button>

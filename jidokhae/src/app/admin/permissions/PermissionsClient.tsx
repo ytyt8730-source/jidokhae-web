@@ -151,7 +151,7 @@ export function PermissionsClient() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-6 h-6 animate-spin text-brand-500" strokeWidth={1.5} />
+        <Loader2 className="w-6 h-6 animate-spin text-brand-600" strokeWidth={1.5} />
       </div>
     )
   }
@@ -192,11 +192,10 @@ export function PermissionsClient() {
                   <div className="flex items-center gap-2">
                     <span className="font-semibold text-brand-800">{admin.name}</span>
                     <span
-                      className={`text-xs px-2 py-0.5 rounded-full ${
-                        admin.role === 'super_admin'
-                          ? 'bg-brand-100 text-brand-700'
-                          : 'bg-gray-100 text-gray-600'
-                      }`}
+                      className={`text-xs px-2 py-0.5 rounded-full ${admin.role === 'super_admin'
+                        ? 'bg-brand-100 text-brand-700'
+                        : 'bg-gray-100 text-gray-600'
+                        }`}
                     >
                       {admin.role === 'super_admin' ? '최고 관리자' : '운영자'}
                     </span>
@@ -228,11 +227,10 @@ export function PermissionsClient() {
                 {ALL_PERMISSIONS.map((permission) => (
                   <label
                     key={permission}
-                    className={`flex items-center gap-2 p-2 rounded-lg border cursor-pointer transition-colors ${
-                      admin.permissions.includes(permission)
-                        ? 'bg-brand-50 border-brand-200'
-                        : 'bg-white border-gray-200 hover:border-gray-300'
-                    } ${savingId === admin.id ? 'opacity-50 pointer-events-none' : ''}`}
+                    className={`flex items-center gap-2 p-2 rounded-lg border cursor-pointer transition-colors ${admin.permissions.includes(permission)
+                      ? 'bg-brand-50 border-brand-200'
+                      : 'bg-white border-gray-200 hover:border-gray-300'
+                      } ${savingId === admin.id ? 'opacity-50 pointer-events-none' : ''}`}
                   >
                     <input
                       type="checkbox"
@@ -241,11 +239,10 @@ export function PermissionsClient() {
                       className="sr-only"
                     />
                     <div
-                      className={`w-5 h-5 rounded flex items-center justify-center ${
-                        admin.permissions.includes(permission)
-                          ? 'bg-brand-500 text-white'
-                          : 'border-2 border-gray-300'
-                      }`}
+                      className={`w-5 h-5 rounded flex items-center justify-center ${admin.permissions.includes(permission)
+                        ? 'bg-brand-600 text-white'
+                        : 'border-2 border-gray-300'
+                        }`}
                     >
                       {admin.permissions.includes(permission) && <Check size={14} strokeWidth={1.5} />}
                     </div>

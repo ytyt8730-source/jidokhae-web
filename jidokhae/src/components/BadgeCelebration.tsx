@@ -147,7 +147,7 @@ export default function BadgeCelebration({ badges, onComplete }: BadgeCelebratio
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
               >
-                <p className="text-sm text-brand-500 font-medium mb-2">
+                <p className="text-sm text-brand-600 font-medium mb-2">
                   새로운 배지 획득!
                 </p>
                 <h2 className="text-2xl font-bold text-brand-800 mb-2">
@@ -164,7 +164,7 @@ export default function BadgeCelebration({ badges, onComplete }: BadgeCelebratio
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5 }}
                 onClick={handleNext}
-                className="w-full py-3 px-6 bg-brand-500 hover:bg-brand-600 text-white rounded-xl font-medium transition-colors"
+                className="w-full py-3 px-6 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-medium transition-colors"
               >
                 {currentBadgeIndex < badges.length - 1 ? '다음 배지 보기' : '확인'}
               </motion.button>

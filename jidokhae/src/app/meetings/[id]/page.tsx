@@ -90,7 +90,7 @@ export default async function MeetingDetailPage({ params }: PageProps) {
       .select('content')
       .eq('is_public', true)
       .limit(10)
-    
+
     if (reviews && reviews.length > 0) {
       // 랜덤 셔플 후 3개 선택
       const shuffled = reviews.sort(() => Math.random() - 0.5)
@@ -160,19 +160,19 @@ export default async function MeetingDetailPage({ params }: PageProps) {
           {/* 핵심 정보 */}
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="flex items-center gap-3 text-gray-700">
-              <Calendar size={20} className="text-brand-500" strokeWidth={1.5} />
+              <Calendar size={20} className="text-brand-600" strokeWidth={1.5} />
               <span>{formatMeetingDate(meeting.datetime)}</span>
             </div>
             <div className="flex items-center gap-3 text-gray-700">
-              <MapPin size={20} className="text-brand-500" strokeWidth={1.5} />
+              <MapPin size={20} className="text-brand-600" strokeWidth={1.5} />
               <span>{meeting.location}</span>
             </div>
             <div className="flex items-center gap-3 text-gray-700">
-              <Coins size={20} className="text-brand-500" strokeWidth={1.5} />
+              <Coins size={20} className="text-brand-600" strokeWidth={1.5} />
               <span className="font-medium">{formatFee(meeting.fee)}</span>
             </div>
             <div className="flex items-center gap-3 text-gray-700">
-              <Users size={20} className="text-brand-500" strokeWidth={1.5} />
+              <Users size={20} className="text-brand-600" strokeWidth={1.5} />
               <span>{meeting.current_participants}명 참여</span>
             </div>
           </div>
@@ -197,8 +197,8 @@ export default async function MeetingDetailPage({ params }: PageProps) {
 
           {/* 환불 규정 (M7-001: "더보기"로 접기) */}
           {refundRules && refundRules.length > 0 && (
-            <RefundRulesSection 
-              rules={refundRules} 
+            <RefundRulesSection
+              rules={refundRules}
               policyName={refundPolicy?.name}
             />
           )}

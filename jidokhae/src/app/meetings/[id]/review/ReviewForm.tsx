@@ -72,7 +72,7 @@ export default function ReviewForm({ meetingId }: ReviewFormProps) {
           rows={6}
           maxLength={1000}
           disabled={isSubmitting}
-          className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-brand-500 focus:ring-0 text-brand-800 placeholder-gray-400 resize-none disabled:opacity-50"
+          className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-brand-600 focus:ring-0 text-brand-800 placeholder-gray-400 resize-none disabled:opacity-50"
         />
         <div className="mt-2 flex justify-between text-xs text-gray-500">
           <span>최소 10자</span>
@@ -88,7 +88,7 @@ export default function ReviewForm({ meetingId }: ReviewFormProps) {
           checked={isPublic}
           onChange={(e) => setIsPublic(e.target.checked)}
           disabled={isSubmitting}
-          className="mt-1 h-4 w-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500"
+          className="mt-1 h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-600"
         />
         <label htmlFor="isPublic" className="text-sm text-gray-700">
           <span className="font-medium flex items-center gap-1">

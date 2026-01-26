@@ -17,9 +17,9 @@ export const metadata = {
 
 export default async function MyPage() {
   const supabase = await createClient()
-  
+
   const { data: { user: authUser } } = await supabase.auth.getUser()
-  
+
   if (!authUser) {
     redirect('/auth/login')
   }
@@ -100,7 +100,7 @@ export default async function MyPage() {
       {/* 페이지 헤더 */}
       <div>
         <h1 className="flex items-center gap-3 text-2xl font-bold heading-themed text-brand-800 mb-2">
-          <User className="text-brand-500" size={28} strokeWidth={1.5} />
+          <User className="text-brand-600" size={28} strokeWidth={1.5} />
           마이페이지
         </h1>
         <p className="text-gray-600">
@@ -187,25 +187,22 @@ export default async function MyPage() {
       {/* 정기모임 자격 상태 */}
       <div className="card p-6">
         <h3 className="font-semibold text-brand-800 mb-4">정기모임 자격 상태</h3>
-        <div className={`p-4 rounded-xl ${
-          qualification.status === 'active' ? 'bg-green-50' :
-          qualification.status === 'warning' ? 'bg-orange-50' :
-          qualification.status === 'expired' ? 'bg-red-50' :
-          'bg-gray-50'
-        }`}>
+        <div className={`p-4 rounded-xl ${qualification.status === 'active' ? 'bg-green-50' :
+            qualification.status === 'warning' ? 'bg-orange-50' :
+              qualification.status === 'expired' ? 'bg-red-50' :
+                'bg-gray-50'
+          }`}>
           <div className="flex items-center gap-3">
-            <div className={`w-3 h-3 rounded-full ${
-              qualification.status === 'active' ? 'bg-green-500' :
-              qualification.status === 'warning' ? 'bg-orange-500' :
-              qualification.status === 'expired' ? 'bg-red-500' :
-              'bg-gray-400'
-            }`} />
-            <p className={`font-medium ${
-              qualification.status === 'active' ? 'text-green-800' :
-              qualification.status === 'warning' ? 'text-orange-800' :
-              qualification.status === 'expired' ? 'text-red-800' :
-              'text-gray-600'
-            }`}>
+            <div className={`w-3 h-3 rounded-full ${qualification.status === 'active' ? 'bg-green-500' :
+                qualification.status === 'warning' ? 'bg-orange-500' :
+                  qualification.status === 'expired' ? 'bg-red-500' :
+                    'bg-gray-400'
+              }`} />
+            <p className={`font-medium ${qualification.status === 'active' ? 'text-green-800' :
+                qualification.status === 'warning' ? 'text-orange-800' :
+                  qualification.status === 'expired' ? 'text-red-800' :
+                    'text-gray-600'
+              }`}>
               {qualification.message}
             </p>
           </div>

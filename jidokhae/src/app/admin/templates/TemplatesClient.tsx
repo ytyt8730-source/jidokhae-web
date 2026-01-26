@@ -127,16 +127,15 @@ export default function TemplatesClient({ initialTemplates }: TemplatesClientPro
                   key={template.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className={`border rounded-lg p-4 transition-colors ${
-                    template.is_active
+                  className={`border rounded-lg p-4 transition-colors ${template.is_active
                       ? 'border-gray-200 bg-white'
                       : 'border-gray-100 bg-gray-50'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <Bell size={16} className={template.is_active ? 'text-brand-500' : 'text-gray-400'} strokeWidth={1.5} />
+                        <Bell size={16} className={template.is_active ? 'text-brand-600' : 'text-gray-400'} strokeWidth={1.5} />
                         <span className="font-medium text-brand-800">{template.name}</span>
                         {!template.is_active && (
                           <span className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded">
@@ -191,7 +190,7 @@ export default function TemplatesClient({ initialTemplates }: TemplatesClientPro
                         title={template.is_active ? '비활성화' : '활성화'}
                       >
                         {template.is_active ? (
-                          <ToggleRight size={24} className="text-brand-500" strokeWidth={1.5} />
+                          <ToggleRight size={24} className="text-brand-600" strokeWidth={1.5} />
                         ) : (
                           <ToggleLeft size={24} className="text-gray-400" strokeWidth={1.5} />
                         )}

@@ -183,15 +183,15 @@ export default async function TransferPendingPage({ params }: PageProps) {
           {/* 안내사항 */}
           <div className="text-sm text-gray-500 space-y-2">
             <p className="flex items-start gap-2">
-              <CheckCircle size={16} strokeWidth={1.5} className="text-brand-500 mt-0.5 flex-shrink-0" />
+              <CheckCircle size={16} strokeWidth={1.5} className="text-brand-600 mt-0.5 flex-shrink-0" />
               <span>입금자명을 반드시 위와 같이 입력해주세요.</span>
             </p>
             <p className="flex items-start gap-2">
-              <CheckCircle size={16} strokeWidth={1.5} className="text-brand-500 mt-0.5 flex-shrink-0" />
+              <CheckCircle size={16} strokeWidth={1.5} className="text-brand-600 mt-0.5 flex-shrink-0" />
               <span>입금 확인 후 알림톡으로 참가 확정 안내가 발송됩니다.</span>
             </p>
             <p className="flex items-start gap-2">
-              <CheckCircle size={16} strokeWidth={1.5} className="text-brand-500 mt-0.5 flex-shrink-0" />
+              <CheckCircle size={16} strokeWidth={1.5} className="text-brand-600 mt-0.5 flex-shrink-0" />
               <span>입금자명이 다를 경우 확인이 지연될 수 있습니다.</span>
             </p>
           </div>

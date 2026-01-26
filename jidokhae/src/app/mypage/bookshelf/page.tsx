@@ -46,7 +46,7 @@ export default async function BookshelfPage() {
         </Link>
 
         <h1 className="flex items-center gap-3 text-2xl font-bold text-brand-800">
-          <BookOpen className="text-brand-500" size={28} strokeWidth={1.5} />
+          <BookOpen className="text-brand-600" size={28} strokeWidth={1.5} />
           내 책장
         </h1>
         <p className="text-gray-600 mt-2">
@@ -72,7 +72,7 @@ export default async function BookshelfPage() {
               >
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 bg-brand-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <BookOpen size={20} strokeWidth={1.5} className="text-brand-500" />
+                    <BookOpen size={20} strokeWidth={1.5} className="text-brand-600" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-medium text-brand-800 truncate">

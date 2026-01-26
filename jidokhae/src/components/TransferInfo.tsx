@@ -62,7 +62,7 @@ export default function TransferInfo({
     <div className="space-y-6">
       {/* 안내 메시지 */}
       <div className="flex items-center gap-2 text-gray-700">
-        <CreditCard size={20} strokeWidth={1.5} className="text-brand-500" />
+        <CreditCard size={20} strokeWidth={1.5} className="text-brand-600" />
         <span className="font-medium">{TRANSFER_MESSAGES.PENDING_INFO}</span>
       </div>
 
@@ -119,7 +119,7 @@ export default function TransferInfo({
               {copiedField === 'sender' ? (
                 <Check size={16} strokeWidth={1.5} className="text-green-500" />
               ) : (
-                <Copy size={16} strokeWidth={1.5} className="text-brand-500" />
+                <Copy size={16} strokeWidth={1.5} className="text-brand-600" />
               )}
             </button>
           </div>

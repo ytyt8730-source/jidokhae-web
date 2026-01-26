@@ -32,7 +32,7 @@ export default function AtmospherePreview({ reviews }: AtmospherePreviewProps) {
     >
       {/* 헤더 */}
       <div className="flex items-center gap-2 mb-3">
-        <MessageCircle size={16} className="text-brand-500" />
+        <MessageCircle size={16} className="text-brand-600" />
         <h3 className="text-sm font-medium text-gray-700">
           지난 모임의 분위기
         </h3>
@@ -45,17 +45,17 @@ export default function AtmospherePreview({ reviews }: AtmospherePreviewProps) {
             key={index}
             className="text-sm text-gray-600 italic leading-relaxed"
           >
-            &ldquo;{review.content.length > 60 
-              ? `${review.content.slice(0, 60)}...` 
+            &ldquo;{review.content.length > 60
+              ? `${review.content.slice(0, 60)}...`
               : review.content}&rdquo;
           </p>
         ))}
       </div>
 
       {/* 더 알아보기 링크 */}
-      <Link 
-        href="/about" 
-        className="inline-flex items-center gap-1 text-xs text-brand-500 hover:text-brand-600 transition-colors"
+      <Link
+        href="/about"
+        className="inline-flex items-center gap-1 text-xs text-brand-600 hover:text-brand-700 transition-colors"
       >
         지독해 더 알아보기
         <ArrowRight size={12} />

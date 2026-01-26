@@ -40,7 +40,7 @@ export default function NewMemberGuideModal({
       setShouldShow(false)
       return
     }
-    
+
     // 로컬스토리지에서 "다시 보지 않기" 설정 확인
     const hidden = localStorage.getItem(DONT_SHOW_AGAIN_KEY)
     setShouldShow(isNewMember && !hidden)
@@ -160,7 +160,7 @@ export default function NewMemberGuideModal({
                   type="checkbox"
                   checked={dontShowAgain}
                   onChange={(e) => setDontShowAgain(e.target.checked)}
-                  className="w-4 h-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500"
+                  className="w-4 h-4 rounded border-gray-300 text-brand-600 focus:ring-brand-600"
                 />
                 <span>다시 보지 않기</span>
               </label>

@@ -41,7 +41,7 @@ export default function MeetingPreviewSection({
     >
       {/* 헤더 */}
       <div className="flex items-center gap-2 mb-3">
-        <MessageCircle size={16} className="text-brand-500" />
+        <MessageCircle size={16} className="text-brand-600" />
         <h3 className="text-sm font-medium text-gray-700">
           💬 지난 모임의 분위기
         </h3>
@@ -57,17 +57,17 @@ export default function MeetingPreviewSection({
             transition={{ duration: 0.3, delay: 0.1 + index * 0.1 }}
             className="text-sm text-gray-600 italic pl-3 border-l-2 border-brand-200"
           >
-            &ldquo;{review.content.length > 60 
-              ? `${review.content.slice(0, 60)}...` 
+            &ldquo;{review.content.length > 60
+              ? `${review.content.slice(0, 60)}...`
               : review.content}&rdquo;
           </motion.p>
         ))}
       </div>
-      
+
       {/* 더 알아보기 링크 */}
-      <Link 
-        href="/about" 
-        className="inline-flex items-center gap-1 text-xs text-brand-500 hover:text-brand-600 transition-colors group"
+      <Link
+        href="/about"
+        className="inline-flex items-center gap-1 text-xs text-brand-600 hover:text-brand-700 transition-colors group"
       >
         지독해 더 알아보기
         <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />

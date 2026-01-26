@@ -78,7 +78,7 @@ export default function AddBookForm() {
   return (
     <div className="card p-6">
       <div className="flex items-center gap-2 mb-4">
-        <BookOpen size={20} strokeWidth={1.5} className="text-brand-500" />
+        <BookOpen size={20} strokeWidth={1.5} className="text-brand-600" />
         <h3 className="font-semibold text-brand-800">새 책 등록</h3>
       </div>
 
@@ -96,7 +96,7 @@ export default function AddBookForm() {
             placeholder="책 제목을 입력하세요"
             maxLength={200}
             disabled={isSubmitting}
-            className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-brand-500 focus:ring-0 text-brand-800 placeholder-gray-400 disabled:opacity-50"
+            className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-brand-600 focus:ring-0 text-brand-800 placeholder-gray-400 disabled:opacity-50"
           />
         </div>
 
@@ -113,7 +113,7 @@ export default function AddBookForm() {
             placeholder="저자를 입력하세요 (선택)"
             maxLength={100}
             disabled={isSubmitting}
-            className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-brand-500 focus:ring-0 text-brand-800 placeholder-gray-400 disabled:opacity-50"
+            className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-brand-600 focus:ring-0 text-brand-800 placeholder-gray-400 disabled:opacity-50"
           />
         </div>
 
@@ -130,7 +130,7 @@ export default function AddBookForm() {
             placeholder='예: "결국 우리는 모두 이야기가 되어간다" (선택)'
             maxLength={200}
             disabled={isSubmitting}
-            className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-brand-500 focus:ring-0 text-brand-800 placeholder-gray-400 disabled:opacity-50"
+            className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-brand-600 focus:ring-0 text-brand-800 placeholder-gray-400 disabled:opacity-50"
           />
         </div>
 

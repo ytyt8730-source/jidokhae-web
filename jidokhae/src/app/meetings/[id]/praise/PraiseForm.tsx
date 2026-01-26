@@ -79,17 +79,16 @@ export default function PraiseForm({ meetingId, participants }: PraiseFormProps)
               key={participant.id}
               onClick={() => setSelectedPerson(participant.id)}
               disabled={isSubmitting}
-              className={`w-full p-3 rounded-xl border-2 text-left transition-all duration-200 flex items-center justify-between ${
-                selectedPerson === participant.id
-                  ? 'border-brand-500 bg-brand-50'
+              className={`w-full p-3 rounded-xl border-2 text-left transition-all duration-200 flex items-center justify-between ${selectedPerson === participant.id
+                  ? 'border-brand-600 bg-brand-50'
                   : 'border-gray-200 hover:border-gray-300'
-              } disabled:opacity-50`}
+                } disabled:opacity-50`}
             >
               <span className="font-medium text-brand-800">
                 {participant.name}
               </span>
               {selectedPerson === participant.id && (
-                <Check size={20} strokeWidth={1.5} className="text-brand-500" />
+                <Check size={20} strokeWidth={1.5} className="text-brand-600" />
               )}
             </button>
           ))}
@@ -107,11 +106,10 @@ export default function PraiseForm({ meetingId, participants }: PraiseFormProps)
               key={phrase.id}
               onClick={() => setSelectedPhrase(phrase.id)}
               disabled={isSubmitting}
-              className={`w-full p-3 rounded-xl border-2 text-left transition-all duration-200 flex items-center justify-between ${
-                selectedPhrase === phrase.id
+              className={`w-full p-3 rounded-xl border-2 text-left transition-all duration-200 flex items-center justify-between ${selectedPhrase === phrase.id
                   ? 'border-yellow-500 bg-yellow-50'
                   : 'border-gray-200 hover:border-gray-300'
-              } disabled:opacity-50`}
+                } disabled:opacity-50`}
             >
               <span className="text-gray-700">
                 {phrase.text}
