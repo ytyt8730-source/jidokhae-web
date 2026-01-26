@@ -10,26 +10,26 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', isLoading, children, disabled, ...props }, ref) => {
-    // Design System v2.1 - Deep Forest Green
+    // Design System v3.3 - Mood-Switchable Reading Club
     const variants = {
       primary: [
-        'bg-brand-600 text-white',
-        'shadow-button',
-        'hover:bg-brand-700 hover:shadow-button-hover hover:-translate-y-[1px]',
+        'bg-primary text-white',
+        'shadow-[0_2px_8px_rgba(0,71,255,0.25)]',
+        'hover:shadow-[0_4px_14px_rgba(0,71,255,0.35)] hover:-translate-y-[1px]',
         'active:scale-[0.98] active:translate-y-0',
-        'focus:ring-brand-600',
+        'focus:ring-primary',
       ].join(' '),
       secondary: [
-        'bg-white text-brand-700',
-        'border border-brand-200',
-        'hover:bg-brand-50 hover:border-brand-300',
+        'bg-bg-surface text-text',
+        'border border-[var(--border)]',
+        'hover:bg-[var(--bg-base)]',
         'active:scale-[0.98]',
-        'focus:ring-brand-200',
+        'focus:ring-[var(--border)]',
       ].join(' '),
       ghost: [
-        'bg-transparent text-gray-600',
-        'hover:bg-gray-100 hover:text-gray-900',
-        'focus:ring-gray-300',
+        'bg-transparent text-text-muted',
+        'hover:bg-[var(--bg-base)] hover:text-text',
+        'focus:ring-[var(--border)]',
       ].join(' '),
       danger: [
         'bg-error text-white',

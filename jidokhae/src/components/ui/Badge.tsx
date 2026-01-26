@@ -8,15 +8,15 @@ interface BadgeProps {
 }
 
 export default function Badge({ variant = 'default', children, className }: BadgeProps) {
-  // Design System v2.1 - Deep Forest Green
+  // Design System v3.3 - Mood-Switchable Reading Club
   const variants = {
-    default: 'bg-brand-50 text-brand-700',
+    default: 'bg-[var(--bg-base)] text-text-muted',
     success: 'bg-green-50 text-success',
-    warning: 'bg-accent-100 text-accent-700',   // 마감임박 (일반 경고)
-    urgent: 'bg-accent-50 text-accent-500',     // 마감임박 (강조)
+    warning: 'bg-amber-50 text-warning',        // 마감임박 (일반 경고)
+    urgent: 'bg-accent text-accent-readable',   // 마감임박 (강조, 테마 대응)
     error: 'bg-red-50 text-error',
     info: 'bg-blue-50 text-info',
-    brand: 'bg-brand-100 text-brand-800',
+    brand: 'bg-primary/10 text-primary',
     closed: 'bg-gray-100 text-gray-400',        // 마감
   }
 

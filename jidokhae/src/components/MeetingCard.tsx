@@ -2,8 +2,9 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Calendar, MapPin, Coins, Users } from 'lucide-react'
+import { Calendar, MapPin, Users } from 'lucide-react'
 import Badge from '@/components/ui/Badge'
+import { KongIcon } from '@/components/icons/KongIcon'
 import { formatMeetingDate, formatFee } from '@/lib/utils'
 import { cardHoverTap, staggerItem, pulseAnimation } from '@/lib/animations'
 import type { MeetingWithStatus } from '@/types/database'
@@ -61,29 +62,29 @@ export default function MeetingCard({ meeting }: MeetingCardProps) {
         </div>
 
         {/* 제목 */}
-        <h3 className="heading-themed font-semibold text-brand-800 text-lg mb-3 group-hover:text-brand-600 transition-colors">
+        <h3 className="heading-themed font-semibold text-text text-lg mb-3 group-hover:text-primary transition-colors">
           {meeting.title}
         </h3>
 
         {/* 정보 */}
-        <div className="space-y-2 text-sm text-gray-600">
+        <div className="space-y-2 text-sm text-text-muted">
           <div className="flex items-center gap-2">
-            <Calendar size={16} strokeWidth={1.5} className="text-gray-400 flex-shrink-0" />
+            <Calendar size={16} strokeWidth={1.5} className="flex-shrink-0 opacity-60" />
             <span>{formatMeetingDate(meeting.datetime)}</span>
           </div>
           <div className="flex items-center gap-2">
-            <MapPin size={16} strokeWidth={1.5} className="text-gray-400 flex-shrink-0" />
+            <MapPin size={16} strokeWidth={1.5} className="flex-shrink-0 opacity-60" />
             <span className="truncate">{meeting.location}</span>
           </div>
           <div className="flex items-center gap-2">
-            <Coins size={16} strokeWidth={1.5} className="text-gray-400 flex-shrink-0" />
-            <span>{formatFee(meeting.fee)}</span>
+            <KongIcon size={16} className="flex-shrink-0" />
+            <span className="font-medium text-text">{formatFee(meeting.fee)}</span>
           </div>
         </div>
 
         {/* 하단: 참가 인원 */}
-        <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
-          <div className="flex items-center gap-1.5 text-sm text-gray-500">
+        <div className="flex items-center justify-between mt-4 pt-4 border-t border-[var(--border)]">
+          <div className="flex items-center gap-1.5 text-sm text-text-muted">
             <Users size={16} strokeWidth={1.5} />
             <span>{meeting.current_participants}명 참여</span>
           </div>
