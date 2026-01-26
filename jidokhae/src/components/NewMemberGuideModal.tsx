@@ -9,7 +9,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/navigation'
-import { X, Home, FileText } from 'lucide-react'
+import { X, Home, FileText, Hand } from 'lucide-react'
 import { overlayAnimation, modalAnimation } from '@/lib/animations'
 
 const DONT_SHOW_AGAIN_KEY = 'jidokhae_new_member_guide_hidden'
@@ -109,7 +109,7 @@ export default function NewMemberGuideModal({
               {/* 헤더 */}
               <div className="text-center mb-6">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-brand-50 rounded-full mb-4">
-                  <span className="text-3xl">👋</span>
+                  <Hand size={32} strokeWidth={1.5} className="text-brand-600" />
                 </div>
                 <h2 className="text-2xl font-bold text-brand-800 mb-2">
                   처음이시네요!

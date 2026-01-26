@@ -5,7 +5,7 @@ import { calculateMeetingStatus, formatMeetingDate, formatFee } from '@/lib/util
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
 import PaymentButton from '@/components/PaymentButton'
-import { Calendar, MapPin, Coins, Users, ArrowLeft } from 'lucide-react'
+import { Calendar, MapPin, Coins, Users, ArrowLeft, Medal } from 'lucide-react'
 import RefundRulesSection from '@/components/RefundRulesSection'
 import AtmospherePreview from '@/components/AtmospherePreview'
 import type { Metadata } from 'next'
@@ -209,7 +209,7 @@ export default async function MeetingDetailPage({ params }: PageProps) {
             {currentUser?.is_new_member && !alreadyRegistered && meetingWithStatus.displayStatus !== 'closed' && (
               <div className="mb-4 p-3 bg-brand-50 rounded-xl flex items-center gap-3 animate-pulse-slow">
                 <div className="w-10 h-10 bg-brand-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-xl">🎖️</span>
+                  <Medal size={24} strokeWidth={1.5} className="text-brand-600" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-brand-700">

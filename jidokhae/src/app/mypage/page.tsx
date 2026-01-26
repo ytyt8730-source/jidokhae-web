@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { User, Calendar, Award, BookOpen, ArrowRight, Trophy } from 'lucide-react'
+import { User, Calendar, Award, BookOpen, ArrowRight, Trophy, Heart } from 'lucide-react'
 import { differenceInDays } from 'date-fns'
 import Badge from '@/components/ui/Badge'
 import BadgeIcon from '@/components/BadgeIcon'
@@ -147,7 +147,7 @@ export default async function MyPage() {
           <p className="text-xs text-gray-500">연속 참여 (주)</p>
         </div>
         <div className="card p-4 text-center">
-          <span className="block text-2xl mb-2">💛</span>
+          <Heart className="mx-auto text-yellow-500 mb-2" size={24} strokeWidth={1.5} fill="currentColor" />
           <p className="text-2xl font-bold text-brand-800">{user.total_praises_received}</p>
           <p className="text-xs text-gray-500">받은 칭찬</p>
         </div>

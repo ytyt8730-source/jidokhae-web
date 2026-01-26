@@ -13,7 +13,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
-import { ArrowLeft, CheckCircle, BookOpen } from 'lucide-react'
+import { ArrowLeft, CheckCircle, BookOpen, Frown } from 'lucide-react'
 import type { Metadata } from 'next'
 import FeedbackOptions from './FeedbackOptions'
 
@@ -131,7 +131,7 @@ export default async function FeedbackPage({ params }: PageProps) {
       <div className="max-w-lg mx-auto px-4 py-12 text-center">
         <div className="card p-8">
           <div className="w-12 h-12 mx-auto rounded-full bg-gray-100 flex items-center justify-center mb-4">
-            <span className="text-2xl">😔</span>
+            <Frown size={24} strokeWidth={1.5} className="text-gray-500" />
           </div>
           <h1 className="text-xl font-bold heading-themed text-brand-800 mb-2">
             미참여 처리된 모임입니다
@@ -167,7 +167,9 @@ export default async function FeedbackPage({ params }: PageProps) {
       <div className="card overflow-hidden">
         {/* 헤더 */}
         <div className="p-6 sm:p-8 border-b border-gray-100 text-center">
-          <div className="text-4xl mb-4">📚</div>
+          <div className="flex justify-center mb-4">
+            <BookOpen size={48} strokeWidth={1.5} className="text-brand-600" />
+          </div>
           <h1 className="text-xl sm:text-2xl font-bold heading-themed text-brand-800 mb-2">
             {meeting.title} 어떠셨어요?
           </h1>

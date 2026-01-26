@@ -4,7 +4,7 @@
  */
 
 import Link from 'next/link'
-import { PenLine, Home, User } from 'lucide-react'
+import { PenLine, Home, User, BookOpen } from 'lucide-react'
 import Button from '@/components/ui/Button'
 
 export default function ReviewCompletePage() {
@@ -20,8 +20,8 @@ export default function ReviewCompletePage() {
         <h1 className="text-2xl font-bold heading-themed text-brand-800 mb-2">
           소중한 후기 감사합니다
         </h1>
-        <p className="text-gray-600 mb-8">
-          다음 모임에서 또 만나요 📚
+        <p className="text-gray-600 mb-8 flex items-center justify-center gap-2">
+          다음 모임에서 또 만나요 <BookOpen size={18} strokeWidth={1.5} className="text-brand-600" />
         </p>
 
         {/* 버튼들 */}

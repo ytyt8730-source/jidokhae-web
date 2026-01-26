@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { BookOpen } from 'lucide-react'
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
@@ -9,7 +10,7 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           {/* 브랜드 */}
           <div className="flex items-center gap-2">
-            <span className="text-xl">📚</span>
+            <BookOpen size={20} strokeWidth={1.5} className="text-brand-600" />
             <span className="font-semibold text-gray-700">지독해</span>
             <span className="text-sm text-gray-500">경주·포항 독서모임</span>
           </div>

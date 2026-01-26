@@ -43,7 +43,7 @@ export default function MeetingPreviewSection({
       <div className="flex items-center gap-2 mb-3">
         <MessageCircle size={16} className="text-brand-600" />
         <h3 className="text-sm font-medium text-gray-700">
-          💬 지난 모임의 분위기
+          지난 모임의 분위기
         </h3>
       </div>
 
