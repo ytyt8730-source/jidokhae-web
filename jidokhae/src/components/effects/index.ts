@@ -4,3 +4,5 @@
  */
 
 export { KongPour } from './KongPour'
+export { Confetti, triggerConfetti, triggerSideConfetti } from './Confetti'
+export { StubFlyaway } from './StubFlyaway'
