@@ -23,7 +23,16 @@ export const HAPTIC_PATTERNS: Record<HapticPattern, number[]> = {
 }
 
 // 피드백 타입 (Sound + Haptic 조합)
-export type FeedbackType = 'payment' | 'ticket' | 'confirm' | 'send' | 'tear' | 'type' | 'error'
+export type FeedbackType =
+  | 'payment'
+  | 'ticket'
+  | 'confirm'
+  | 'send'
+  | 'tear'
+  | 'type'
+  | 'tick'
+  | 'success'
+  | 'error'
 
 // 피드백 타입별 Sound/Haptic 매핑
 const FEEDBACK_MAPPING: Record<FeedbackType, { sound: SoundId; haptic: HapticPattern }> = {
@@ -33,6 +42,8 @@ const FEEDBACK_MAPPING: Record<FeedbackType, { sound: SoundId; haptic: HapticPat
   send: { sound: 'whoosh', haptic: 'light' },
   tear: { sound: 'tear', haptic: 'light' },
   type: { sound: 'typewriter', haptic: 'tick' },
+  tick: { sound: 'typewriter', haptic: 'tick' }, // 타자 효과용 (type과 동일)
+  success: { sound: 'stamp', haptic: 'success' }, // 성공 피드백 (confirm과 유사)
   error: { sound: 'stamp', haptic: 'error' }, // 에러는 stamp 소리 사용 (별도 에러음 없음)
 }
 

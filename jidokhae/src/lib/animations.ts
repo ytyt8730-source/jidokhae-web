@@ -298,3 +298,125 @@ export const reviewItem: Variants = {
     },
   },
 }
+
+// ============================================
+// M9: Ticket 관련 애니메이션
+// ============================================
+
+// 슬릿 등장 애니메이션 (화면 하단에서 올라옴)
+export const ticketSlit: Variants = {
+  hidden: {
+    y: '100%',
+    opacity: 0,
+  },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: 'spring',
+      stiffness: 300,
+      damping: 30,
+    },
+  },
+}
+
+// 티켓 인쇄 애니메이션 (위에서 아래로 내려오며 인쇄됨)
+export const ticketPrinting: Variants = {
+  hidden: {
+    height: 0,
+    opacity: 0,
+  },
+  visible: {
+    height: 'auto',
+    opacity: 1,
+    transition: {
+      duration: 2,
+      ease: 'linear',
+    },
+  },
+}
+
+// Kong Idle 애니메이션 (살랑살랑 흔들림)
+export const kongIdle: Variants = {
+  idle: {
+    rotate: [-3, 3, -3],
+    y: [-1, 1, -1],
+    transition: {
+      duration: 2,
+      repeat: Infinity,
+      ease: 'easeInOut',
+    },
+  },
+}
+
+// Kong 쏟아지는 애니메이션 컨테이너
+export const kongPourContainer: Variants = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05,
+    },
+  },
+}
+
+// Kong 개별 콩 떨어지는 애니메이션
+export const kongPourItem: Variants = {
+  hidden: {
+    y: -50,
+    opacity: 0,
+    scale: 0.5,
+  },
+  visible: {
+    y: 0,
+    opacity: 1,
+    scale: 1,
+    transition: {
+      type: 'spring',
+      stiffness: 200,
+      damping: 15,
+    },
+  },
+}
+
+// 확정 도장 애니메이션
+export const confirmStamp: Variants = {
+  hidden: {
+    scale: 3,
+    opacity: 0,
+    rotate: -15,
+  },
+  visible: {
+    scale: 1,
+    opacity: 1,
+    rotate: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 500,
+      damping: 25,
+    },
+  },
+}
+
+// 스텁 날아가는 애니메이션
+export const stubFlyaway: Variants = {
+  hidden: {
+    opacity: 1,
+    x: 0,
+    y: 0,
+    scale: 1,
+  },
+  flyaway: {
+    opacity: 0,
+    x: 100,
+    y: -100,
+    scale: 0.5,
+    rotate: 15,
+    transition: {
+      duration: 0.6,
+      ease: 'easeOut',
+    },
+  },
+}
