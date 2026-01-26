@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Search, User, Mail, Phone, Calendar, Award, BookOpen } from 'lucide-react'
 import Input from '@/components/ui/Input'
@@ -27,9 +27,23 @@ export function UsersClient() {
 
   const supabase = createClient()
 
+  const fetchUsers = useCallback(async () => {
+    setIsLoading(true)
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (!error && data) {
+      setUsers(data as UserData[])
+      setFilteredUsers(data as UserData[])
+    }
+    setIsLoading(false)
+  }, [supabase])
+
   useEffect(() => {
     fetchUsers()
-  }, [])
+  }, [fetchUsers])
 
   useEffect(() => {
     if (searchQuery.trim() === '') {
@@ -46,20 +60,6 @@ export function UsersClient() {
       )
     }
   }, [searchQuery, users])
-
-  const fetchUsers = async () => {
-    setIsLoading(true)
-    const { data, error } = await supabase
-      .from('users')
-      .select('*')
-      .order('created_at', { ascending: false })
-
-    if (!error && data) {
-      setUsers(data as UserData[])
-      setFilteredUsers(data as UserData[])
-    }
-    setIsLoading(false)
-  }
 
   const getRoleBadge = (role: string) => {
     switch (role) {

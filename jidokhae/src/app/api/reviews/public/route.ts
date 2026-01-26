@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createLogger } from '@/lib/logger'
 
+// 동적 렌더링 명시 (request.url 사용으로 인한 정적 렌더링 불가)
+export const dynamic = 'force-dynamic'
+
 const logger = createLogger('reviews')
 
 // 공개 후기 응답 타입

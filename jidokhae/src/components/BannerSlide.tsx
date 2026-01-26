@@ -81,6 +81,7 @@ export function BannerSlide({ banners, autoPlayInterval = 5000 }: BannerSlidePro
       }}
       className="absolute inset-0"
     >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={currentBanner.image_url}
         alt={currentBanner.title}

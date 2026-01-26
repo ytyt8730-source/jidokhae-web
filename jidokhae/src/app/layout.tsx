@@ -42,6 +42,9 @@ const notoSerifKR = Noto_Serif_KR({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || 'https://jidokhae.com'
+  ),
   title: '지독해 - 경주/포항 프라이빗 독서 클럽',
   description: '지적인 사유와 깊은 대화가 있는 곳. 지독해 멤버십에서 새로운 관점을 만나세요.',
   keywords: ['독서모임', '경주', '포항', '지독해', '북클럽', '멤버십'],

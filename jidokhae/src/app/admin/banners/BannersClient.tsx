@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, Reorder } from 'framer-motion'
 import {
   Plus,
@@ -40,11 +40,7 @@ export function BannersClient() {
   const [submitting, setSubmitting] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
-  useEffect(() => {
-    fetchBanners()
-  }, [])
-
-  const fetchBanners = async () => {
+  const fetchBanners = useCallback(async () => {
     try {
       const res = await fetch('/api/admin/banners')
       const data = await res.json()
@@ -56,7 +52,11 @@ export function BannersClient() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    fetchBanners()
+  }, [fetchBanners])
 
   const handleReorder = async (newOrder: Banner[]) => {
     setBanners(newOrder)
@@ -199,6 +199,7 @@ export function BannersClient() {
                 {/* 썸네일 */}
                 <div className="w-24 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
                   {banner.image_url ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
                     <img
                       src={banner.image_url}
                       alt={banner.title}
@@ -335,6 +336,7 @@ export function BannersClient() {
                 />
                 {formData.image_url && (
                   <div className="mt-2 rounded-lg overflow-hidden bg-gray-100">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={formData.image_url}
                       alt="미리보기"
