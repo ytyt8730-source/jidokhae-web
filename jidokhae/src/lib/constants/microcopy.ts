@@ -146,6 +146,36 @@ export const MICROCOPY = {
     earned: '새로운 배지를 획득했어요!',
     viewAll: '모든 배지 보기',
   },
+
+  // 티켓 관련 (M9 Phase 9.4)
+  ticket: {
+    save: '이미지로 저장',
+    calendar: '캘린더에 추가',
+    detail: '티켓 자세히 보기',
+    upcoming: '예정된 모임',
+    past: '지난 모임',
+  },
+
+  // 취소 관련 (M9 Phase 9.4)
+  cancel: {
+    // Bottom Sheet 타이틀
+    title: '정말 다음 기회로 미룰까요?',
+
+    // 긍정적 리마인더
+    reminder: '이번 모임도 분명 좋은 시간이 될 거예요',
+    reminderSub: '함께 읽고 이야기 나누는 시간은 언제나 소중하니까요',
+
+    // 버튼
+    thinkAgain: '조금 더 생각해볼게요',
+    confirmCancel: '취소할게요',
+
+    // 환불 규정 제목
+    refundPolicy: '환불 규정 확인하기',
+
+    // 완료 메시지
+    complete: '다음에 꼭 만나요',
+    completeSub: '언제든 다시 함께할 수 있어요. 다음 모임에서 뵙기를 기대할게요',
+  },
 } as const;
 
 // 타입 export

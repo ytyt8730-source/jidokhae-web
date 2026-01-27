@@ -24,6 +24,9 @@ export type LogService =
   | 'admin'
   | 'reviews'
   | 'eligibility'
+  | 'ticket-export'
+  | 'useTickets'
+  | 'tickets-page'
 
 /**
  * 구조화된 로그 엔트리

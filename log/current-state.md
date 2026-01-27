@@ -1,7 +1,7 @@
 # 현재 작업 상태 (AI 에이전트용)
 
 > **마지막 업데이트**: 2026-01-27
-> **버전**: 2.9
+> **버전**: 3.0
 
 ---
 
@@ -10,15 +10,15 @@
 | 항목 | 값 |
 |------|-----|
 | 현재 브랜치 | feature/m9-commitment-ritual |
-| 진행 중 WP | M9 (Commitment Ritual) |
-| 완료 Phase | M8 전체 + M9 Phase 9.1~9.3 |
-| 다음 Phase | M9 Phase 9.4 (티켓 보관함 + 취소 Flow) |
+| 진행 중 WP | M9 (Commitment Ritual) - 완료, 머지 대기 |
+| 완료 Phase | M8 전체 + M9 Phase 9.1~9.4 (전체) |
+| 다음 단계 | main 머지 후 M10 시작 |
 
 ---
 
 ## 마지막 완료 작업
 
-- [M9] refactor: UI 디자인 시스템 v3.3 준수 리팩터링
+- [M9] feat: Phase 9.4 - 티켓 보관함 + 취소 Flow 개선
 - 이전 커밋: 8f6265b (Phase 9.3)
 - 시간: 2026-01-27
 - 브랜치: feature/m9-commitment-ritual
@@ -110,6 +110,22 @@
 - `src/components/ticket/ConfirmationModal.tsx` - 확정 모달
 - `src/hooks/useTearGesture.ts` - 절취선 드래그 제스처
 
+### Phase 9.4: 티켓 보관함 + 취소 Flow 개선
+- `src/lib/ticket-export.ts` - 이미지 저장 및 ICS 생성
+- `src/hooks/useTickets.ts` - 티켓 목록 조회 훅
+- `src/components/ticket/TicketList.tsx` - 티켓 그리드
+- `src/components/ticket/TicketActions.tsx` - 이미지/캘린더 버튼
+- `src/components/ticket/TicketDetailModal.tsx` - 상세 모달
+- `src/components/ticket/TicketsPageHeader.tsx` - 페이지 헤더
+- `src/components/ticket/TicketsTabs.tsx` - 탭 컴포넌트
+- `src/components/cancel/CancelBottomSheet.tsx` - 취소 Bottom Sheet
+- `src/components/cancel/RefundPolicySection.tsx` - 환불 규정
+- `src/components/cancel/CancelComplete.tsx` - 취소 완료
+- `src/app/mypage/tickets/page.tsx` - 보관함 페이지
+- `src/lib/constants/microcopy.ts` - 티켓/취소 메시지 추가
+- `src/lib/logger.ts` - LogService 타입 추가
+- html2canvas 의존성 추가
+
 ---
 
 ## 전체 마일스톤 완료 현황
@@ -124,24 +140,22 @@ M6: 신규 회원 & 출시 준비 ✅
 M7: Polish & Growth ✅
 M7: 디자인 시스템 v2.1 ✅ (추가)
 M8: Ritual Foundation ✅
-M9: Commitment Ritual 🔄 (Phase 9.1~9.3 완료, 9.4 진행 예정)
+M9: Commitment Ritual ✅ (Phase 9.1~9.4 전체 완료)
 
-총 진행률: M1~M8 완료, M9 75%
+총 진행률: M1~M9 완료, 머지 대기 중
 ```
 
 ---
 
 ## 다음 작업
 
-### 즉시 가능 (M9 Phase 9.4)
-1. **티켓 보관함 구현**: `/mypage/tickets` 페이지
-2. **이미지 저장 기능**: html2canvas 활용
-3. **캘린더 추가 기능**: ICS 파일 생성
-4. **취소 Flow 개선**: Bottom Sheet + 긍정적 리마인더
-
-### M9 완료 후
+### 즉시 가능 (M9 완료)
 1. **main 머지**: M8+M9 변경사항 main에 머지
 2. **Vercel 배포**: 배포 후 실제 환경에서 확인
+
+### M10 시작 시
+1. M10 Work Package 분해
+2. 새 기능 개발 착수
 
 ### 배포 전 필요 작업
 
@@ -196,3 +210,4 @@ M9: Commitment Ritual 🔄 (Phase 9.1~9.3 완료, 9.4 진행 예정)
 | DB 스키마 | v1.3.0 (M9 마이그레이션 필요) |
 | 디자인 시스템 | v3.3 (CSS 변수 기반, 테마 전환 지원) |
 | Experience | M8+M9 (Ritual Foundation + Commitment) |
+| M9 상태 | 전체 완료 (Phase 9.1~9.4), 머지 대기 |
