@@ -1,6 +1,6 @@
 -- =============================================
 -- 지독해 테스트 데이터 삭제 (Cleanup)
--- 버전: 2.0.0
+-- 버전: 3.0.0
 -- 최종 수정: 2026-01-29
 -- =============================================
 --
@@ -8,8 +8,9 @@
 -- test-seed-data.sql로 생성한 테스트 데이터를 모두 삭제합니다.
 -- 프로덕션 배포 전 또는 테스트 완료 후 실행하세요.
 --
--- 주의: 테스트 계정(super/admin/member@test.com)은
---       Supabase Auth에서 직접 삭제해야 합니다.
+-- 삭제되는 항목:
+-- - 테스트 계정 3개 (auth.users + public.users)
+-- - [TEST] 접두사가 붙은 모든 데이터
 --
 -- =============================================
 
@@ -50,14 +51,25 @@ DELETE FROM admin_permissions WHERE user_id IN (
 );
 
 -- =============================================
--- STEP 7: 테스트 계정 역할 초기화 (선택)
+-- STEP 7: 테스트 계정 삭제 (public.users)
 -- =============================================
--- 계정은 유지하되 역할만 초기화하려면 아래 주석 해제
--- UPDATE users SET role = 'member' WHERE email IN ('super@test.com', 'admin@test.com');
+-- 참고: auth.users 삭제 시 trigger로 자동 삭제되지만, 명시적으로 처리
+DELETE FROM users WHERE email IN ('super@test.com', 'admin@test.com', 'member@test.com');
+
+-- =============================================
+-- STEP 8: 테스트 계정 삭제 (auth.users)
+-- =============================================
+DELETE FROM auth.users WHERE email IN ('super@test.com', 'admin@test.com', 'member@test.com');
 
 -- =============================================
 -- 완료!
 --
--- 테스트 계정 자체를 삭제하려면:
--- Supabase Dashboard > Authentication > Users에서 직접 삭제
+-- 삭제된 항목:
+-- - 테스트 계정 3개 (super, admin, member)
+-- - 테스트 모임 5개
+-- - 테스트 등록/대기자
+-- - 테스트 배너 3개
+-- - 테스트 요청함 2개
+--
+-- 프로덕션 배포 준비 완료!
 -- =============================================

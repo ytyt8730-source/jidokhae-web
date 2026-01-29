@@ -1,22 +1,142 @@
 -- =============================================
--- 지독해 테스트용 시드 데이터
--- 버전: 2.0.0
+-- 지독해 테스트용 시드 데이터 (통합 버전)
+-- 버전: 3.0.0
 -- 최종 수정: 2026-01-29
 -- =============================================
 --
 -- 사용법:
--- 1. 먼저 Supabase Auth에서 테스트 계정 3개 생성 (이메일/비밀번호)
---    - super@test.com / test1234
---    - admin@test.com / test1234
---    - member@test.com / test1234
--- 2. 이 SQL 실행
--- 3. 테스트 완료 후 test-seed-cleanup.sql 실행하여 삭제
+-- 1. Supabase SQL Editor에서 이 파일 전체를 실행
+-- 2. 테스트 완료 후 test-seed-cleanup.sql 실행하여 삭제
+--
+-- 생성되는 테스트 계정:
+-- - super@test.com / test1234 (최고관리자)
+-- - admin@test.com / test1234 (운영자)
+-- - member@test.com / test1234 (일반회원)
 --
 -- =============================================
 
 -- =============================================
--- STEP 1: 테스트 계정 역할 설정
+-- STEP 0: 테스트 계정 생성 (auth.users)
 -- =============================================
+-- 참고: Supabase auth.users에 직접 삽입합니다.
+-- 비밀번호 'test1234'의 bcrypt 해시를 사용합니다.
+
+DO $$
+DECLARE
+  super_uid UUID;
+  admin_uid UUID;
+  member_uid UUID;
+BEGIN
+  -- 기존 테스트 계정이 있으면 건너뛰기
+  IF NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'super@test.com') THEN
+    super_uid := gen_random_uuid();
+    INSERT INTO auth.users (
+      id,
+      instance_id,
+      email,
+      encrypted_password,
+      email_confirmed_at,
+      created_at,
+      updated_at,
+      raw_app_meta_data,
+      raw_user_meta_data,
+      aud,
+      role
+    ) VALUES (
+      super_uid,
+      '00000000-0000-0000-0000-000000000000',
+      'super@test.com',
+      crypt('test1234', gen_salt('bf')),
+      NOW(),
+      NOW(),
+      NOW(),
+      '{"provider": "email", "providers": ["email"]}',
+      '{"name": "최고관리자"}',
+      'authenticated',
+      'authenticated'
+    );
+    RAISE NOTICE 'Created super@test.com';
+  ELSE
+    RAISE NOTICE 'super@test.com already exists, skipping...';
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'admin@test.com') THEN
+    admin_uid := gen_random_uuid();
+    INSERT INTO auth.users (
+      id,
+      instance_id,
+      email,
+      encrypted_password,
+      email_confirmed_at,
+      created_at,
+      updated_at,
+      raw_app_meta_data,
+      raw_user_meta_data,
+      aud,
+      role
+    ) VALUES (
+      admin_uid,
+      '00000000-0000-0000-0000-000000000000',
+      'admin@test.com',
+      crypt('test1234', gen_salt('bf')),
+      NOW(),
+      NOW(),
+      NOW(),
+      '{"provider": "email", "providers": ["email"]}',
+      '{"name": "운영자"}',
+      'authenticated',
+      'authenticated'
+    );
+    RAISE NOTICE 'Created admin@test.com';
+  ELSE
+    RAISE NOTICE 'admin@test.com already exists, skipping...';
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'member@test.com') THEN
+    member_uid := gen_random_uuid();
+    INSERT INTO auth.users (
+      id,
+      instance_id,
+      email,
+      encrypted_password,
+      email_confirmed_at,
+      created_at,
+      updated_at,
+      raw_app_meta_data,
+      raw_user_meta_data,
+      aud,
+      role
+    ) VALUES (
+      member_uid,
+      '00000000-0000-0000-0000-000000000000',
+      'member@test.com',
+      crypt('test1234', gen_salt('bf')),
+      NOW(),
+      NOW(),
+      NOW(),
+      '{"provider": "email", "providers": ["email"]}',
+      '{"name": "테스트회원"}',
+      'authenticated',
+      'authenticated'
+    );
+    RAISE NOTICE 'Created member@test.com';
+  ELSE
+    RAISE NOTICE 'member@test.com already exists, skipping...';
+  END IF;
+END $$;
+
+-- auth.users 생성 후 trigger가 public.users에 동기화할 시간을 줌
+-- (Supabase의 handle_new_user trigger)
+
+-- =============================================
+-- STEP 1: 테스트 계정 역할 및 프로필 설정
+-- =============================================
+
+-- 잠시 대기 후 users 테이블 업데이트 (trigger 동기화 대기)
+DO $$
+BEGIN
+  PERFORM pg_sleep(1);
+END $$;
 
 UPDATE users SET
   role = 'super_admin',
@@ -210,6 +330,24 @@ UPDATE meetings SET current_participants = (
 ) WHERE title LIKE '[TEST]%';
 
 -- =============================================
--- 완료! 테스트 데이터가 생성되었습니다.
+-- 완료!
+-- =============================================
+--
+-- 생성된 테스트 계정:
+-- +-------------------+----------+-------------+
+-- | 이메일            | 비밀번호 | 역할        |
+-- +-------------------+----------+-------------+
+-- | super@test.com    | test1234 | 최고관리자  |
+-- | admin@test.com    | test1234 | 운영자      |
+-- | member@test.com   | test1234 | 일반회원    |
+-- +-------------------+----------+-------------+
+--
+-- 생성된 테스트 데이터:
+-- - 모임 5개 (예정/마감임박/마감/종료/먼미래)
+-- - 등록 다양한 상태 (confirmed, pending_transfer, completed)
+-- - 대기자 1명 (member@test.com)
+-- - 배너 3개
+-- - 요청함 2개
+--
 -- 삭제 시: test-seed-cleanup.sql 실행
 -- =============================================
