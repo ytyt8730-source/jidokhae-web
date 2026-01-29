@@ -1,10 +1,17 @@
 -- =============================================
--- 지독해 웹서비스 - 전체 스키마 초기화
--- 버전: 1.3.0
--- 실행일: 2026-01-22
+-- 지독해 웹서비스 - 통합 스키마
+-- 버전: 2.0.0
+-- 최종 업데이트: 2026-01-29
+-- =============================================
+-- 이 파일 하나로 전체 DB 초기화 가능
+-- 실행: Supabase Dashboard > SQL Editor > 이 파일 전체 실행
 -- =============================================
 -- 주의: 모든 기존 데이터가 삭제됩니다!
 -- =============================================
+
+-- #############################################
+-- PART 1: 스키마 초기화 (테이블, 인덱스)
+-- #############################################
 
 -- =============================================
 -- STEP 1: 기존 테이블 삭제 (외래키 의존성 순서)
@@ -36,9 +43,13 @@ DROP FUNCTION IF EXISTS public.adjust_waitlist_positions(UUID, INTEGER) CASCADE;
 DROP FUNCTION IF EXISTS public.get_my_role() CASCADE;
 DROP FUNCTION IF EXISTS public.is_admin() CASCADE;
 DROP FUNCTION IF EXISTS public.is_super_admin() CASCADE;
+DROP FUNCTION IF EXISTS assign_seat_number() CASCADE;
+DROP FUNCTION IF EXISTS calculate_participation_count(UUID) CASCADE;
+DROP FUNCTION IF EXISTS update_participation_count() CASCADE;
+DROP FUNCTION IF EXISTS update_user_participation_stats() CASCADE;
 
 -- =============================================
--- STEP 2: 새 스키마 생성
+-- STEP 2: 테이블 생성
 -- =============================================
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -112,14 +123,17 @@ CREATE TABLE registrations (
   cancel_reason TEXT,
   cancelled_at TIMESTAMP WITH TIME ZONE,
   -- 계좌이체 전용 필드
-  transfer_sender_name VARCHAR(100),           -- 입금자명 (예: "0125_홍길동")
-  transfer_deadline TIMESTAMP WITH TIME ZONE,  -- 입금 기한 (24시간 후)
-  -- 환불 계좌 정보 (계좌이체 결제 시 취소 요청할 때 수집)
-  refund_info JSONB,  -- { "bank": "신한은행", "account": "110-xxx-xxx", "holder": "홍길동" }
+  transfer_sender_name VARCHAR(100),
+  transfer_deadline TIMESTAMP WITH TIME ZONE,
+  -- 환불 계좌 정보
+  refund_info JSONB,
   refund_completed_at TIMESTAMP WITH TIME ZONE,
   -- 참여 완료 관련
   participation_status VARCHAR(20) CHECK (participation_status IN ('completed', 'no_show')),
   participation_method VARCHAR(20) CHECK (participation_method IN ('praise', 'review', 'confirm', 'auto', 'admin')),
+  -- M9: 티켓 시스템
+  seat_number INTEGER,
+  participation_count INTEGER,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   UNIQUE(user_id, meeting_id)
@@ -129,9 +143,11 @@ CREATE INDEX idx_registrations_user_id ON registrations(user_id);
 CREATE INDEX idx_registrations_meeting_id ON registrations(meeting_id);
 CREATE INDEX idx_registrations_status ON registrations(status);
 CREATE INDEX idx_registrations_pending_transfer ON registrations(status, transfer_deadline)
-  WHERE status = 'pending_transfer';  -- 입금대기 자동 취소 Cron 최적화
+  WHERE status = 'pending_transfer';
 CREATE INDEX idx_registrations_refund_pending ON registrations(payment_status)
-  WHERE payment_status = 'refund_pending';  -- 환불대기 조회 최적화
+  WHERE payment_status = 'refund_pending';
+CREATE INDEX idx_registrations_seat ON registrations(meeting_id, seat_number)
+  WHERE status IN ('confirmed', 'pending_payment', 'pending_transfer');
 
 -- 5. waitlists
 CREATE TABLE waitlists (
@@ -195,7 +211,7 @@ CREATE TABLE reviews (
   UNIQUE(user_id, meeting_id)
 );
 
--- 10. suggestions (요청함)
+-- 10. suggestions
 CREATE TABLE suggestions (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID REFERENCES users(id) ON DELETE SET NULL,
@@ -254,7 +270,7 @@ CREATE TABLE admin_permissions (
   UNIQUE(user_id, permission)
 );
 
--- 14. banners (배너 관리)
+-- 14. banners
 CREATE TABLE banners (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   title VARCHAR(200) NOT NULL,
@@ -285,10 +301,9 @@ CREATE TABLE payment_logs (
 CREATE INDEX idx_payment_logs_payment_id ON payment_logs(payment_id);
 CREATE INDEX idx_payment_logs_idempotency_key ON payment_logs(idempotency_key);
 
--- =============================================
--- 역할 확인 헬퍼 함수 (RLS 무한 재귀 방지)
--- =============================================
--- SECURITY DEFINER: RLS를 우회하여 실행
+-- #############################################
+-- PART 2: 헬퍼 함수 (RLS 무한 재귀 방지)
+-- #############################################
 
 CREATE OR REPLACE FUNCTION public.get_my_role()
 RETURNS TEXT AS $$
@@ -313,9 +328,9 @@ RETURNS BOOLEAN AS $$
   );
 $$ LANGUAGE sql SECURITY DEFINER STABLE;
 
--- =============================================
--- RLS 정책 (헬퍼 함수 사용)
--- =============================================
+-- #############################################
+-- PART 3: RLS 정책
+-- #############################################
 
 -- 1. users
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
@@ -403,10 +418,11 @@ ALTER TABLE payment_logs ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "payment_logs_admin_select" ON payment_logs FOR SELECT USING (public.is_admin());
 CREATE POLICY "payment_logs_insert_admin" ON payment_logs FOR INSERT WITH CHECK (public.is_admin());
 
--- =============================================
--- 함수
--- =============================================
+-- #############################################
+-- PART 4: 비즈니스 로직 함수
+-- #############################################
 
+-- updated_at 자동 갱신
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -415,23 +431,21 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- 참가자 수 관리
 CREATE OR REPLACE FUNCTION update_meeting_participants()
 RETURNS TRIGGER AS $$
 BEGIN
-  -- 참가 확정 시 정원 증가 (pending_transfer → confirmed 또는 pending → confirmed)
+  -- 참가 확정 시 정원 증가
   IF NEW.status = 'confirmed' AND (OLD.status IS NULL OR OLD.status NOT IN ('confirmed', 'pending_transfer')) THEN
     UPDATE meetings SET current_participants = current_participants + 1 WHERE id = NEW.meeting_id;
   END IF;
 
-  -- 계좌이체 입금대기 시 정원 즉시 예약 (pending → pending_transfer)
+  -- 계좌이체 입금대기 시 정원 즉시 예약
   IF NEW.status = 'pending_transfer' AND (OLD.status IS NULL OR OLD.status = 'pending') THEN
     UPDATE meetings SET current_participants = current_participants + 1 WHERE id = NEW.meeting_id;
   END IF;
 
-  -- pending_transfer → confirmed 전환 시 정원 변화 없음 (이미 예약됨)
-  -- (위의 confirmed 조건에서 pending_transfer 제외됨)
-
-  -- 취소 시 정원 복구 (confirmed 또는 pending_transfer에서 cancelled로)
+  -- 취소 시 정원 복구
   IF NEW.status = 'cancelled' AND OLD.status IN ('confirmed', 'pending_transfer') THEN
     UPDATE meetings SET current_participants = GREATEST(current_participants - 1, 0) WHERE id = NEW.meeting_id;
   END IF;
@@ -440,6 +454,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- 정원 확인 및 예약
 CREATE OR REPLACE FUNCTION check_and_reserve_capacity(p_meeting_id UUID, p_user_id UUID)
 RETURNS TABLE(success BOOLEAN, message TEXT) AS $$
 DECLARE
@@ -463,6 +478,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- 신규 회원 동기화
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -486,11 +502,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- =============================================
--- 추가 함수 (M3 알림시스템)
--- =============================================
-
--- 휴면 위험 회원 조회 (마지막 참여가 3~5개월 전)
+-- 휴면 위험 회원 조회
 CREATE OR REPLACE FUNCTION public.get_dormant_risk_users(
   three_months_ago TIMESTAMP WITH TIME ZONE,
   five_months_ago TIMESTAMP WITH TIME ZONE
@@ -516,7 +528,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- 대기자 순번 조정 (결제 완료 또는 만료 시 뒤의 대기자 순번 감소)
+-- 대기자 순번 조정
 CREATE OR REPLACE FUNCTION public.adjust_waitlist_positions(
   p_meeting_id UUID,
   p_removed_position INTEGER
@@ -531,10 +543,87 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- =============================================
--- 트리거
--- =============================================
+-- M9: 좌석 번호 자동 부여
+CREATE OR REPLACE FUNCTION assign_seat_number()
+RETURNS TRIGGER AS $$
+DECLARE
+  next_seat INTEGER;
+BEGIN
+  IF NEW.seat_number IS NOT NULL THEN
+    RETURN NEW;
+  END IF;
 
+  SELECT COALESCE(MAX(seat_number), 0) + 1
+  INTO next_seat
+  FROM registrations
+  WHERE meeting_id = NEW.meeting_id
+    AND status IN ('confirmed', 'pending_payment', 'pending_transfer');
+
+  NEW.seat_number := next_seat;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- M9: 참여 횟수 계산
+CREATE OR REPLACE FUNCTION calculate_participation_count(p_user_id UUID)
+RETURNS INTEGER AS $$
+BEGIN
+  RETURN (
+    SELECT COUNT(*)::INTEGER
+    FROM registrations r
+    JOIN meetings m ON r.meeting_id = m.id
+    WHERE r.user_id = p_user_id
+      AND r.status = 'confirmed'
+      AND m.datetime < NOW()
+  );
+END;
+$$ LANGUAGE plpgsql;
+
+-- M9: 참여 횟수 자동 업데이트
+CREATE OR REPLACE FUNCTION update_participation_count()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.participation_count := calculate_participation_count(NEW.user_id) + 1;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- MX: 참여 완료 시 사용자 통계 업데이트
+CREATE OR REPLACE FUNCTION update_user_participation_stats()
+RETURNS TRIGGER AS $$
+DECLARE
+  v_meeting_type text;
+BEGIN
+  IF NEW.participation_status = 'completed' AND
+     (OLD.participation_status IS NULL OR OLD.participation_status != 'completed') THEN
+
+    SELECT meeting_type INTO v_meeting_type
+    FROM meetings
+    WHERE id = NEW.meeting_id;
+
+    UPDATE users SET
+      total_participations = COALESCE(total_participations, 0) + 1,
+      last_regular_meeting_at = CASE
+        WHEN v_meeting_type = 'regular' THEN NOW()
+        ELSE last_regular_meeting_at
+      END,
+      updated_at = NOW()
+    WHERE id = NEW.user_id;
+
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 권한 부여
+GRANT EXECUTE ON FUNCTION update_user_participation_stats() TO service_role;
+
+-- #############################################
+-- PART 5: 트리거
+-- #############################################
+
+-- updated_at 트리거
 CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
@@ -550,17 +639,36 @@ CREATE TRIGGER update_notification_templates_updated_at BEFORE UPDATE ON notific
 CREATE TRIGGER update_banners_updated_at BEFORE UPDATE ON banners
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+-- 참가자 수 트리거
 CREATE TRIGGER update_participants_on_registration_change AFTER INSERT OR UPDATE ON registrations
   FOR EACH ROW EXECUTE FUNCTION update_meeting_participants();
 
--- auth.users 트리거 (새 회원 가입 시 public.users 동기화)
+-- auth.users 트리거
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
--- =============================================
--- 초기 데이터: 알림 템플릿 (13종)
--- =============================================
+-- M9: 좌석 번호 트리거
+CREATE TRIGGER tr_assign_seat_number
+BEFORE INSERT ON registrations
+FOR EACH ROW
+EXECUTE FUNCTION assign_seat_number();
+
+-- M9: 참여 횟수 트리거
+CREATE TRIGGER tr_update_participation_count
+BEFORE INSERT ON registrations
+FOR EACH ROW
+EXECUTE FUNCTION update_participation_count();
+
+-- MX: 참여 완료 통계 트리거
+CREATE TRIGGER update_participation_stats_trigger
+AFTER UPDATE OF participation_status ON registrations
+FOR EACH ROW
+EXECUTE FUNCTION update_user_participation_stats();
+
+-- #############################################
+-- PART 6: 초기 데이터 (알림 템플릿)
+-- #############################################
 
 INSERT INTO notification_templates (code, name, description, message_template, variables, send_timing, send_days_before, send_time, is_active) VALUES
   -- 모임 리마인드 (3종)
@@ -574,15 +682,18 @@ INSERT INTO notification_templates (code, name, description, message_template, v
 참가비: #{참가비}콩
 
 즐거운 모임 되세요!', '["이름", "모임명", "날짜", "시간", "장소", "참가비"]'::jsonb, '모임 3일 전 오전 7시', 3, '07:00:00', true),
+
   ('REMINDER_1D', '모임 리마인드 (1일 전)', '모임 1일 전 리마인드 알림', '[지독해] #{모임명} 내일이에요!
 
 안녕하세요, #{이름}님!
 
 내일 #{시간}에 #{모임명}이 있어요.
+#{티저_문구}
 
 장소: #{장소}
 
-내일 뵙겠습니다!', '["이름", "모임명", "시간", "장소"]'::jsonb, '모임 1일 전 오전 7시', 1, '07:00:00', true),
+내일 뵙겠습니다!', '["모임명", "이름", "시간", "장소", "티저_문구"]'::jsonb, '모임 1일 전 오전 7시', 1, '07:00:00', true),
+
   ('REMINDER_0D', '모임 리마인드 (당일)', '모임 당일 리마인드 알림', '[지독해] 오늘 #{모임명}!
 
 안녕하세요, #{이름}님!
@@ -630,14 +741,17 @@ INSERT INTO notification_templates (code, name, description, message_template, v
 함께하게 되어 기뻐요. 편하게 오세요!', '["이름", "모임명", "시간", "장소"]'::jsonb, '첫 모임 1일 전 저녁 8시', 1, '20:00:00', true),
 
   -- 자격 만료 임박
-  ('ELIGIBILITY_WARNING', '자격 만료 임박', '정기모임 자격 만료 임박 알림', '[지독해] 자격 만료 안내
+  ('ELIGIBILITY_WARNING', '자격 만료 임박', '정기모임 자격 만료 임박 알림', '[지독해] #{회원명}님, 자격 만료가 임박했어요!
 
-#{이름}님, 정기모임 참여 자격이 곧 만료됩니다.
+안녕하세요!
 
-마지막 정기모임 참여: #{마지막참여일}
-자격 만료 예정일: #{만료예정일}
+토론모임 등 특별 모임 참가 자격이
+#{남은일수}일 후 만료됩니다.
 
-정기모임에 참여하시면 자격이 유지됩니다!', '["이름", "마지막참여일", "만료예정일"]'::jsonb, '만료 2주 전', NULL, '10:00:00', true),
+정기모임에 참여하시면 자격이 갱신됩니다!
+지금 바로 모임 일정을 확인해보세요.
+
+[정기모임 보러가기]', '["회원명", "남은일수"]'::jsonb, '매주 월요일', NULL, '10:00:00', true),
 
   -- 휴면 위험
   ('DORMANT_RISK', '휴면 위험 알림', '3개월 이상 미참여 회원 알림', '[지독해] #{이름}님 보고싶어요!
@@ -659,18 +773,72 @@ INSERT INTO notification_templates (code, name, description, message_template, v
 입금 기한: #{기한}
 
 입금 확인 후 참가가 확정됩니다.', '["이름", "모임명", "은행", "계좌번호", "금액", "입금자명형식", "기한"]'::jsonb, '입금대기 등록 시', NULL, NULL, true),
+
   ('TRANSFER_CONFIRMED', '계좌이체 입금확인 완료', '운영자 입금 확인 후 참가 확정 알림', '#{이름}님, #{모임명} 입금이 확인되었습니다.
 
 참가가 확정되었습니다. 즐거운 모임 되세요!', '["이름", "모임명"]'::jsonb, '운영자 입금 확인 시', NULL, NULL, true),
+
   ('TRANSFER_EXPIRED', '계좌이체 입금기한 만료', '24시간 미입금 자동 취소 알림', '#{이름}님, #{모임명} 입금 기한이 만료되어 신청이 자동 취소되었습니다.
 
 다시 신청하시려면 지독해 웹사이트를 방문해주세요.', '["이름", "모임명"]'::jsonb, '24시간 미입금 자동 취소 시', NULL, NULL, true),
+
   ('REFUND_ACCOUNT_RECEIVED', '환불 계좌 접수 완료', '환불 계좌 수집 완료 알림', '#{이름}님, #{모임명} 취소 요청이 접수되었습니다.
 
 환불 예정 금액: #{환불금액}콩
 환불 계좌: #{은행} #{계좌번호}
 
-영업일 기준 2-3일 내 환불됩니다.', '["이름", "모임명", "환불금액", "은행", "계좌번호"]'::jsonb, '환불 계좌 수집 완료 시', NULL, NULL, true)
+영업일 기준 2-3일 내 환불됩니다.', '["이름", "모임명", "환불금액", "은행", "계좌번호"]'::jsonb, '환불 계좌 수집 완료 시', NULL, NULL, true),
+
+  -- M6: 신규 회원 알림
+  ('NEW_MEMBER_WELCOME', '신규 회원 첫 모임 환영', '신규 회원의 첫 정기모임 전날 발송되는 환영 알림', '[지독해] #{회원명}님, 내일 첫 모임이에요!
+
+안녕하세요! 지독해에 오신 걸 환영해요.
+
+내일 #{시간}에 #{장소}에서 만나요.
+
+준비물: 읽고 있는 책 (없어도 괜찮아요!)
+장소: #{장소}
+참가비: #{참가비}콩 (이미 결제 완료!)
+
+처음이라 걱정되시죠?
+걱정 마세요, 모두 친절하게 맞이해 드릴게요.
+
+모임에서 만나요!', '["회원명", "시간", "장소", "참가비", "모임명"]'::jsonb, '모임 1일 전', 1, '10:00:00', true),
+
+  ('FIRST_MEETING_FOLLOWUP', '첫 모임 후 후기 요청', '첫 정기모임 참여 완료 3일 후 후기 요청 및 다음 모임 안내', '[지독해] #{회원명}님, 첫 모임은 어떠셨어요?
+
+안녕하세요! 첫 모임에 와주셔서 감사해요.
+
+#{모임명}에서 어떤 시간을 보내셨는지 궁금해요!
+후기를 남겨주시면 다른 분들에게도 큰 도움이 됩니다.
+
+[후기 남기기]
+
+---
+다음 정기모임도 함께해요!
+#{다음모임명}: #{다음모임일시}
+
+[다음 모임 신청하기]', '["회원명", "모임명", "다음모임명", "다음모임일시"]'::jsonb, '첫 모임 종료 3일 후', NULL, '10:00:00', true),
+
+  ('LAUNCH_ANNOUNCEMENT', '정식 출시 안내', '전체 회원에게 발송하는 웹서비스 정식 출시 안내', '[지독해] 새로운 웹서비스가 오픈했어요!
+
+안녕하세요, #{회원명}님!
+
+지독해의 새로운 웹서비스가 오픈했습니다!
+
+이제 더 편하게 모임을 신청하고
+취소할 때 자동으로 환불받고
+알림으로 모임을 잊지 않을 수 있어요
+
+[지금 확인하기]', '["회원명"]'::jsonb, '수동 발송', NULL, NULL, true),
+
+  -- M7: 여운 메시지
+  ('AFTERGLOW', '여운 메시지', '모임 종료 후 발송되는 여운 메시지', '#{이름}님, 오늘 나눈 이야기 중 마음에 남은 단어 하나는 무엇인가요?
+
+따뜻한 밤 되세요.
+
+- 지독해', '["이름"]'::jsonb, '모임 종료 30분 후', NULL, NULL, true)
+
 ON CONFLICT (code) DO UPDATE SET
   name = EXCLUDED.name,
   description = EXCLUDED.description,
@@ -683,11 +851,13 @@ ON CONFLICT (code) DO UPDATE SET
 
 -- =============================================
 -- 완료!
--- 스키마 버전: 1.3.0
+-- 스키마 버전: 2.0.0
 -- =============================================
--- 변경사항 (v1.3.0):
--- - RLS 무한 재귀 문제 해결
--- - get_my_role(), is_admin(), is_super_admin() 헬퍼 함수 추가
--- - 모든 RLS 정책을 헬퍼 함수 사용하도록 변경
--- - handle_new_user 함수 개선
+-- 포함 내역:
+-- - v1.3.0 기본 스키마
+-- - v1.3.0 RLS 수정 (헬퍼 함수)
+-- - M9 티켓 시스템 (seat_number, participation_count)
+-- - MX 참여 통계 트리거
+-- - M6 알림 템플릿
+-- - M7 알림 템플릿
 -- =============================================
