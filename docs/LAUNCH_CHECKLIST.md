@@ -2,54 +2,124 @@
 
 > **작성일:** 2026-01-29
 > **현재 상태:** M1~M9 코드 완료, MX-Bugfix 완료
+> **예상 소요시간:** 외부 서비스 설정 1~2시간, 테스트 2~3시간
+
+---
+
+## 준비물
+
+시작하기 전에 다음 정보가 필요합니다:
+
+| 항목 | 확인 |
+|------|------|
+| Supabase 프로젝트 URL 및 키 | 있음 |
+| 포트원 V2 API 키 | 있음 |
+| 솔라피 API 키 | 있음 |
+| 카카오 비즈니스 채널 ID | 확인 필요 |
+| 테스트용 휴대폰 번호 | 본인 번호 사용 |
 
 ---
 
 ## 1. 외부 서비스 설정
 
 ### 1.1 Supabase (DB/인증)
+
+**이미 완료된 항목:**
 - [x] 프로젝트 생성
 - [x] `schema-complete.sql` 실행 (통합 스키마)
-- [ ] **테스트 계정 생성** (아래 참조)
-- [ ] 프로덕션 환경변수 확인
+
+**해야 할 일:**
+
+1. **테스트 계정 생성** (2장 참조)
+   - Supabase Dashboard > Authentication > Users
+   - 이메일/비밀번호로 3개 계정 생성
+
+2. **프로덕션 환경변수 확인**
+   - Settings > API에서 Project URL과 anon key 확인
+   - Settings > API > service_role key 확인 (비밀로 유지!)
+
+---
 
 ### 1.2 포트원 (결제)
+
+**이미 완료된 항목:**
 - [x] 가맹점 등록
 - [x] API 키 발급 (V2)
-- [ ] **테스트 결제 확인** (카카오페이)
-- [ ] 프로덕션 모드 전환 전 테스트 완료 확인
+
+**해야 할 일:**
+
+1. **테스트 결제 확인**
+   - 포트원 관리자 > 결제 연동 > 테스트 모드 확인
+   - 카카오페이 테스트 결제 진행 (실제 결제 안 됨)
+
+2. **프로덕션 전환 전**
+   - 모든 테스트 완료 후 실결제 모드로 전환
+
+---
 
 ### 1.3 솔라피 (알림톡)
+
+**이미 완료된 항목:**
 - [x] 계정 생성
 - [x] API 키 발급
-- [ ] **카카오 비즈니스 채널 승인** ← 확인 필요
-- [ ] **알림톡 템플릿 등록** (채널 승인 후)
-  - [ ] REMINDER_3D (3일 전 리마인드)
-  - [ ] REMINDER_1D (1일 전 리마인드)
-  - [ ] REMINDER_0D (당일 리마인드)
-  - [ ] WAITLIST_AVAILABLE (대기자 자리 발생)
-  - [ ] TRANSFER_PENDING (입금대기 안내)
-  - [ ] TRANSFER_CONFIRMED (입금확인 완료)
-  - [ ] TRANSFER_EXPIRED (입금기한 만료)
-  - [ ] WELCOME (신규회원 환영)
-  - [ ] POST_MEETING (모임 후 피드백)
-  - [ ] 기타 템플릿들...
-- [ ] **테스트 발송** (본인 번호로)
+
+**해야 할 일:**
+
+1. **카카오 비즈니스 채널 승인 확인**
+   - 솔라피 > 알림톡 > 카카오 비즈니스 채널 연동
+   - 승인까지 1~3일 소요될 수 있음
+
+2. **알림톡 템플릿 등록** (채널 승인 후)
+
+   DB에 저장된 템플릿 목록 (`notification_templates` 테이블):
+
+   | 코드 | 용도 | 우선순위 |
+   |------|------|----------|
+   | `REMINDER_3D` | 3일 전 리마인드 | 높음 |
+   | `REMINDER_1D` | 1일 전 리마인드 | 높음 |
+   | `REMINDER_0D` | 당일 리마인드 | 높음 |
+   | `WAITLIST_AVAILABLE` | 대기자 자리 발생 | 높음 |
+   | `TRANSFER_PENDING` | 입금대기 안내 | 높음 |
+   | `TRANSFER_CONFIRMED` | 입금확인 완료 | 높음 |
+   | `TRANSFER_EXPIRED` | 입금기한 만료 | 중간 |
+   | `WELCOME` | 신규회원 환영 | 낮음 |
+   | `POST_MEETING` | 모임 후 피드백 | 낮음 |
+
+3. **테스트 발송**
+   - 본인 휴대폰 번호로 테스트 메시지 발송
+   - 솔라피 대시보드에서 발송 내역 확인
+
+---
 
 ### 1.4 Vercel (배포)
-- [ ] 프로젝트 연결
-- [ ] 환경변수 설정
-  - [ ] `NEXT_PUBLIC_SUPABASE_URL`
-  - [ ] `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-  - [ ] `SUPABASE_SERVICE_ROLE_KEY`
-  - [ ] `PORTONE_API_KEY`
-  - [ ] `PORTONE_API_SECRET`
-  - [ ] `NEXT_PUBLIC_PORTONE_STORE_ID`
-  - [ ] `SOLAPI_API_KEY`
-  - [ ] `SOLAPI_API_SECRET`
-  - [ ] `SOLAPI_SENDER_NUMBER`
-- [ ] 배포 후 도메인 설정
-- [ ] Supabase Redirect URI 업데이트
+
+**해야 할 일:**
+
+1. **프로젝트 연결**
+   ```bash
+   # Vercel CLI로 연결 (선택)
+   npx vercel link
+   ```
+   또는 Vercel 대시보드에서 GitHub 저장소 연결
+
+2. **환경변수 설정** (Vercel > Settings > Environment Variables)
+
+   | 변수명 | 설명 | 비밀? |
+   |--------|------|-------|
+   | `NEXT_PUBLIC_SUPABASE_URL` | Supabase 프로젝트 URL | 아니오 |
+   | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase 익명 키 | 아니오 |
+   | `SUPABASE_SERVICE_ROLE_KEY` | Supabase 서비스 역할 키 | **예** |
+   | `PORTONE_API_KEY` | 포트원 API 키 | **예** |
+   | `PORTONE_API_SECRET` | 포트원 API 시크릿 | **예** |
+   | `NEXT_PUBLIC_PORTONE_STORE_ID` | 포트원 스토어 ID | 아니오 |
+   | `SOLAPI_API_KEY` | 솔라피 API 키 | **예** |
+   | `SOLAPI_API_SECRET` | 솔라피 API 시크릿 | **예** |
+   | `SOLAPI_SENDER_NUMBER` | 발신 번호 (010-XXXX-XXXX) | **예** |
+
+3. **배포 후**
+   - 커스텀 도메인 연결 (있는 경우)
+   - Supabase > Authentication > URL Configuration에서 Site URL 업데이트
+   - Redirect URLs에 Vercel 도메인 추가
 
 ---
 
@@ -225,10 +295,32 @@ UPDATE users SET role = 'admin' WHERE email = 'admin@test.com';
 - [ ] 결제 완료 Confetti
 - [ ] 배지 획득 애니메이션
 
-### 6.3 디자인 시스템
-- [ ] 브랜드 색상 확인 (Hunter Green #355E3B)
-- [ ] 콩 아이콘 초록색 확인 (MX-L01)
-- [ ] 폰트: Pretendard (본문), Noto Serif KR (제목)
+### 6.3 디자인 시스템 (v3.3)
+
+**테마 시스템 확인:**
+- [ ] 기본 테마가 **Electric**인가?
+- [ ] 테마 토글이 사이드바 맨 아래에 있는가?
+- [ ] 플로팅 토글 버튼이 없는가?
+
+**Electric 테마 색상:**
+| 항목 | 색상코드 | 확인 |
+|------|----------|------|
+| Primary (CTA) | `#0047FF` (Cobalt Blue) | [ ] |
+| Accent | `#CCFF00` (Acid Lime) | [ ] |
+| 배경 | `#F8FAFC` | [ ] |
+
+**Warm 테마 색상:**
+| 항목 | 색상코드 | 확인 |
+|------|----------|------|
+| Primary | `#0F172A` (Deep Navy) | [ ] |
+| Accent | `#EA580C` (Burnt Orange) | [ ] |
+| 배경 | `#F5F5F0` (Warm Sand) | [ ] |
+
+**아이콘 및 폰트:**
+- [ ] 콩 아이콘이 KongIcon SVG로 표시됨 (이모지 아님)
+- [ ] Electric: 헤드라인이 고딕체 (Outfit/Noto Sans KR)
+- [ ] Warm: 헤드라인이 명조체 (Noto Serif KR)
+- [ ] 본문: 양쪽 테마 모두 고딕체 (Noto Sans KR)
 
 ---
 
@@ -273,23 +365,65 @@ UPDATE users SET role = 'admin' WHERE email = 'admin@test.com';
 
 ## 빠른 참조: 현재 미완료 항목 요약
 
-### 외부 서비스
-1. 카카오 비즈니스 채널 승인 확인
-2. 솔라피 알림톡 템플릿 등록
-3. Vercel 배포 및 환경변수 설정
-4. 카카오 로그인 Provider 설정 (Supabase)
+### 외부 서비스 (우선순위 높음)
+| 항목 | 상태 | 소요시간 |
+|------|------|----------|
+| 카카오 비즈니스 채널 승인 | 확인 필요 | 승인 대기 |
+| 솔라피 알림톡 템플릿 등록 | 미완료 | 30분 |
+| Vercel 배포 및 환경변수 설정 | 미완료 | 30분 |
+| 카카오 로그인 Provider 설정 | 미완료 | 15분 |
 
-### 테스트
-1. 테스트 계정 생성 (super, admin, member)
-2. 전체 기능 테스트 (위 체크리스트)
-3. 알림톡 실제 발송 테스트
+### 테스트 (우선순위 높음)
+| 항목 | 상태 | 소요시간 |
+|------|------|----------|
+| 테스트 계정 생성 (3개) | 미완료 | 10분 |
+| 테스트 데이터 생성 (SQL) | 미완료 | 5분 |
+| 전체 기능 테스트 | 미완료 | 2시간 |
+| 알림톡 발송 테스트 | 미완료 | 15분 |
 
-### 운영
-1. 실제 모임 데이터 입력
-2. 배너 이미지 준비
-3. 오픈 공지 준비
+### 운영 준비 (출시 직전)
+| 항목 | 상태 | 소요시간 |
+|------|------|----------|
+| 실제 모임 데이터 입력 | 미완료 | 30분 |
+| 배너 이미지 준비 | 미완료 | 30분 |
+| 테스트 데이터 삭제 | - | 5분 |
+| 오픈 공지 준비 | 미완료 | - |
+
+---
+
+## 트러블슈팅
+
+### 자주 발생하는 문제
+
+**Q: 로그인이 안 됩니다**
+- Supabase > Authentication > URL Configuration에서 Site URL과 Redirect URLs 확인
+- 로컬 개발 시 `http://localhost:3000` 포함 확인
+
+**Q: 결제 모달이 열리지 않습니다**
+- 브라우저 콘솔에서 포트원 SDK 로드 확인
+- `NEXT_PUBLIC_PORTONE_STORE_ID` 환경변수 확인
+
+**Q: 알림톡이 발송되지 않습니다**
+- 솔라피 대시보드에서 잔액 확인
+- 발신번호가 등록되어 있는지 확인
+- 알림톡 템플릿 검수 승인 상태 확인
+
+**Q: 테스트 데이터가 보이지 않습니다**
+- `[TEST]`로 시작하는 데이터 확인
+- 테스트 계정으로 로그인했는지 확인
+- `test-seed-data.sql` 실행 여부 확인
+
+---
+
+## 연락처
+
+문제 발생 시 참고:
+- Supabase: https://supabase.com/docs
+- 포트원: https://developers.portone.io
+- 솔라피: https://developers.solapi.com
 
 ---
 
 **문서 작성:** Claude
 **최종 수정:** 2026-01-29
+**디자인 시스템 버전:** v3.3 (Electric/Warm 듀얼 테마)
