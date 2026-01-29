@@ -9,6 +9,7 @@ import {
   formatTransferDeadline,
 } from '@/lib/transfer'
 import CopyButton from './CopyButton'
+import TransferCancelButton from '@/components/TransferCancelButton'
 import type { Metadata } from 'next'
 
 interface PageProps {
@@ -210,6 +211,15 @@ export default async function TransferPendingPage({ params }: PageProps) {
             >
               다른 모임 둘러보기
             </Link>
+          </div>
+
+          {/* MX-C02: 입금대기 취소 버튼 */}
+          <div className="pt-4 border-t border-gray-100 text-center">
+            <TransferCancelButton
+              registrationId={registration.id}
+              meetingTitle={meeting.title}
+              variant="text"
+            />
           </div>
         </div>
       </div>

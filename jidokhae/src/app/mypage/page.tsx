@@ -68,6 +68,11 @@ export default async function MyPage() {
     r => r.status === 'pending_transfer' && new Date(r.meetings.datetime) > new Date()
   )
 
+  // MX-H01: 참여 완료 모임
+  const completedRegistrations = (registrations || []).filter(
+    r => r.participation_status === 'completed'
+  )
+
   // 취소된 신청
   const cancelledRegistrations = (registrations || []).filter(r => r.status === 'cancelled')
 
@@ -311,6 +316,53 @@ export default async function MyPage() {
                   </div>
                 </Link>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* MX-H01: 참여 완료 */}
+        {completedRegistrations.length > 0 && (
+          <div className="mt-6 pt-6 border-t border-gray-100">
+            <h4 className="text-sm font-medium text-gray-700 mb-3">참여 완료</h4>
+            <div className="space-y-3">
+              {completedRegistrations.slice(0, 5).map((reg) => (
+                <div
+                  key={reg.id}
+                  className="p-4 bg-green-50 rounded-xl"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Badge variant="success">참여 완료</Badge>
+                      </div>
+                      <h4 className="font-medium text-brand-800 truncate">{reg.meetings.title}</h4>
+                      <p className="text-sm text-gray-500 mt-1">
+                        {formatMeetingDate(reg.meetings.datetime)}
+                      </p>
+                    </div>
+                    {/* 칭찬하기 / 후기 쓰기 버튼 */}
+                    <div className="flex gap-2 flex-shrink-0">
+                      <Link
+                        href={`/meetings/${reg.meeting_id}/praise`}
+                        className="text-xs text-brand-600 hover:text-brand-700 px-2 py-1 bg-white rounded-lg border border-brand-200 hover:border-brand-300"
+                      >
+                        칭찬하기
+                      </Link>
+                      <Link
+                        href={`/meetings/${reg.meeting_id}/feedback`}
+                        className="text-xs text-gray-600 hover:text-gray-700 px-2 py-1 bg-white rounded-lg border border-gray-200 hover:border-gray-300"
+                      >
+                        후기 쓰기
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {completedRegistrations.length > 5 && (
+                <p className="text-sm text-gray-500 text-center">
+                  외 {completedRegistrations.length - 5}개 모임
+                </p>
+              )}
             </div>
           </div>
         )}

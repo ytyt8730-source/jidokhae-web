@@ -48,6 +48,7 @@ export default function TransfersClient() {
 
   const [activeTab, setActiveTab] = useState<Tab>(initialTab)
   const [searchQuery, setSearchQuery] = useState('')
+  const [selectedMeetingId, setSelectedMeetingId] = useState<string>('all') // MX-H02: 모임 필터
   const [pendingList, setPendingList] = useState<TransferRegistration[]>([])
   const [refundList, setRefundList] = useState<TransferRegistration[]>([])
   const [loading, setLoading] = useState(true)
@@ -138,8 +139,20 @@ export default function TransfersClient() {
     }
   }
 
-  // 검색 필터링
+  // MX-H02: 모임 목록 추출 (중복 제거)
+  const meetingOptions = Array.from(
+    new Map(
+      [...pendingList, ...refundList].map((r) => [r.meeting_id, r.meetings.title])
+    )
+  ).map(([id, title]) => ({ id, title }))
+
+  // 검색 + 모임 필터링
   const filteredPendingList = pendingList.filter((r) => {
+    // 모임 필터
+    if (selectedMeetingId !== 'all' && r.meeting_id !== selectedMeetingId) {
+      return false
+    }
+    // 검색 필터
     if (!searchQuery) return true
     const query = searchQuery.toLowerCase()
     return (
@@ -150,6 +163,11 @@ export default function TransfersClient() {
   })
 
   const filteredRefundList = refundList.filter((r) => {
+    // 모임 필터
+    if (selectedMeetingId !== 'all' && r.meeting_id !== selectedMeetingId) {
+      return false
+    }
+    // 검색 필터
     if (!searchQuery) return true
     const query = searchQuery.toLowerCase()
     return (
@@ -230,16 +248,32 @@ export default function TransfersClient() {
         </button>
       </div>
 
-      {/* 검색 */}
-      <div className="relative">
-        <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" strokeWidth={1.5} />
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder={activeTab === 'pending' ? '회원명 또는 입금자명으로 검색' : '회원명 또는 예금주로 검색'}
-          className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent"
-        />
+      {/* MX-H02: 검색 + 모임 필터 */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1">
+          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" strokeWidth={1.5} />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={activeTab === 'pending' ? '회원명 또는 입금자명으로 검색' : '회원명 또는 예금주로 검색'}
+            className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+          />
+        </div>
+        {meetingOptions.length > 0 && (
+          <select
+            value={selectedMeetingId}
+            onChange={(e) => setSelectedMeetingId(e.target.value)}
+            className="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white min-w-[180px]"
+          >
+            <option value="all">전체 모임</option>
+            {meetingOptions.map((meeting) => (
+              <option key={meeting.id} value={meeting.id}>
+                {meeting.title}
+              </option>
+            ))}
+          </select>
+        )}
       </div>
 
       {/* 에러 */}

@@ -3,8 +3,9 @@
 /**
  * Kong(콩) 아이콘
  * M9 Phase 9.2: Commitment Ritual
+ * MX-L01: 색상 변경 (Gold/Brown → Green)
  *
- * Gold/Brown 그라데이션 콩 아이콘
+ * 초록색 그라데이션 콩 아이콘
  */
 
 import { motion } from 'framer-motion'
@@ -51,11 +52,11 @@ export function KongIcon({
       aria-label="콩"
     >
       <defs>
-        {/* 메인 그라데이션 (Gold to Brown) */}
+        {/* 메인 그라데이션 (Green) */}
         <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#D4A574" /> {/* Light Gold */}
-          <stop offset="50%" stopColor="#8B6914" /> {/* Gold */}
-          <stop offset="100%" stopColor="#5C4033" /> {/* Brown */}
+          <stop offset="0%" stopColor="#86EFAC" /> {/* Light Green */}
+          <stop offset="50%" stopColor="#22C55E" /> {/* Green */}
+          <stop offset="100%" stopColor="#166534" /> {/* Dark Green */}
         </linearGradient>
 
         {/* 하이라이트 그라데이션 */}
@@ -67,7 +68,7 @@ export function KongIcon({
           fx="30%"
           fy="30%"
         >
-          <stop offset="0%" stopColor="rgba(255,255,255,0.4)" />
+          <stop offset="0%" stopColor="rgba(255,255,255,0.5)" />
           <stop offset="100%" stopColor="rgba(255,255,255,0)" />
         </radialGradient>
       </defs>
@@ -79,14 +80,14 @@ export function KongIcon({
         rx="8"
         ry="10"
         fill={`url(#${gradientId})`}
-        stroke="#3D2B1F"
+        stroke="#166534"
         strokeWidth="0.5"
       />
 
       {/* 콩 중앙 라인 */}
       <path
         d="M12 3 Q10 12 12 21"
-        stroke="#3D2B1F"
+        stroke="#166534"
         strokeWidth="0.5"
         fill="none"
         opacity="0.4"

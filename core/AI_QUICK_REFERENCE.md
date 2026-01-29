@@ -1,7 +1,7 @@
 # AI 빠른 참조 가이드 (Quick Reference)
 
-> **버전**: 1.2
-> **마지막 업데이트**: 2026-01-22
+> **버전**: 1.3
+> **마지막 업데이트**: 2026-01-28
 > **용도**: AI 에이전트가 작업 중 빠르게 참조할 치트시트
 
 ---
@@ -17,6 +17,19 @@
 | M5 운영자도구 | ✅ 완료 | 2026-01-21 |
 | M6 신규회원/출시 | ✅ 완료 | 2026-01-21 |
 | M7 Polish & Growth | ✅ 완료 | 2026-01-22 |
+| **Experience Enhancement** | | |
+| M8 Ritual Foundation | ⏳ 대기 | - |
+| M9 Commitment Ritual | ⏳ 대기 | - |
+| M10 Connection & Memory | ⏳ 대기 | - |
+| M11 Community Hub | ⏳ 대기 | - |
+| M12 Admin Evolution | ⏳ 대기 | - |
+| **백오피스 MVP** | | |
+| M13 Admin Foundation | ⏳ 대기 | - |
+| M14 결제 운영 | ⏳ 대기 | - |
+| M15 모임 관리 | ⏳ 대기 | - |
+| M16 회원 관리 | ⏳ 대기 | - |
+| M17 설정 관리 | ⏳ 대기 | - |
+| M18 알림/Audit | ⏳ Post-MVP | - |
 
 **상세 현황**: [`/log/current-state.md`](/log/current-state.md)
 

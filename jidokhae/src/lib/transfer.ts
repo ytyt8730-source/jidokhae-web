@@ -171,8 +171,19 @@ export function isTransferDeadlineExpired(deadline: Date | string): boolean {
  * @param deadline 입금 기한
  * @returns 남은 시간 문자열 (예: "5시간 30분", "만료됨")
  */
-export function getRemainingTime(deadline: Date | string): string {
+export function getRemainingTime(deadline: Date | string | null | undefined): string {
+  // null/undefined 체크
+  if (!deadline) {
+    return '기한 없음'
+  }
+
   const deadlineDate = typeof deadline === 'string' ? new Date(deadline) : deadline
+
+  // Invalid Date 체크
+  if (isNaN(deadlineDate.getTime())) {
+    return '기한 없음'
+  }
+
   const now = new Date()
   const diff = deadlineDate.getTime() - now.getTime()
 

@@ -184,102 +184,111 @@ export function BannersClient() {
             <Reorder.Item key={banner.id} value={banner}>
               <motion.div
                 layout
-                className="card p-4 flex items-center gap-4 cursor-grab active:cursor-grabbing"
+                className="card p-4 cursor-grab active:cursor-grabbing"
               >
-                {/* 드래그 핸들 */}
-                <div className="text-gray-400 hover:text-gray-600">
-                  <GripVertical size={20} strokeWidth={1.5} />
-                </div>
-
-                {/* 순서 번호 */}
-                <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm font-medium text-gray-600">
-                  {banner.display_order}
-                </div>
-
-                {/* 썸네일 */}
-                <div className="w-24 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-                  {banner.image_url ? (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img
-                      src={banner.image_url}
-                      alt={banner.title}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <ImageIcon className="w-8 h-8 text-gray-300" strokeWidth={1.5} />
+                {/* 모바일: 세로 레이아웃 / 데스크톱: 가로 레이아웃 */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                  {/* 상단 영역: 드래그 + 순서 + 썸네일 + 제목 */}
+                  <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                    {/* 드래그 핸들 */}
+                    <div className="text-gray-400 hover:text-gray-600 flex-shrink-0">
+                      <GripVertical size={20} strokeWidth={1.5} />
                     </div>
-                  )}
-                </div>
 
-                {/* 정보 */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium text-brand-800 truncate">{banner.title}</span>
-                    {banner.link_url && (
-                      <a
-                        href={banner.link_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-brand-600 hover:text-brand-700"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <ExternalLink size={14} strokeWidth={1.5} />
-                      </a>
-                    )}
+                    {/* 순서 번호 */}
+                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm font-medium text-gray-600 flex-shrink-0">
+                      {banner.display_order}
+                    </div>
+
+                    {/* 썸네일 */}
+                    <div className="w-16 h-12 sm:w-24 sm:h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                      {banner.image_url ? (
+                        /* eslint-disable-next-line @next/next/no-img-element */
+                        <img
+                          src={banner.image_url}
+                          alt={banner.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <ImageIcon className="w-6 h-6 sm:w-8 sm:h-8 text-gray-300" strokeWidth={1.5} />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* 정보 */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-brand-800 truncate text-sm sm:text-base">{banner.title}</span>
+                        {banner.link_url && (
+                          <a
+                            href={banner.link_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-brand-600 hover:text-brand-700 flex-shrink-0"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <ExternalLink size={14} strokeWidth={1.5} />
+                          </a>
+                        )}
+                      </div>
+                      <div className="text-xs sm:text-sm text-gray-500 truncate hidden sm:block">{banner.image_url}</div>
+                    </div>
                   </div>
-                  <div className="text-sm text-gray-500 truncate">{banner.image_url}</div>
-                </div>
 
-                {/* 상태 토글 */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    toggleActive(banner)
-                  }}
-                  className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm ${banner.is_active
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-gray-100 text-gray-500'
-                    }`}
-                >
-                  {banner.is_active ? (
-                    <>
-                      <ToggleRight size={16} strokeWidth={1.5} />
-                      활성
-                    </>
-                  ) : (
-                    <>
-                      <ToggleLeft size={16} strokeWidth={1.5} />
-                      비활성
-                    </>
-                  )}
-                </button>
+                  {/* 하단 영역: 상태 토글 + 액션 버튼 */}
+                  <div className="flex items-center justify-between sm:justify-end gap-3 pl-11 sm:pl-0">
+                    {/* 상태 토글 */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        toggleActive(banner)
+                      }}
+                      className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-sm ${banner.is_active
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-gray-100 text-gray-500'
+                        }`}
+                    >
+                      {banner.is_active ? (
+                        <>
+                          <ToggleRight size={16} strokeWidth={1.5} />
+                          활성
+                        </>
+                      ) : (
+                        <>
+                          <ToggleLeft size={16} strokeWidth={1.5} />
+                          비활성
+                        </>
+                      )}
+                    </button>
 
-                {/* 액션 버튼 */}
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      openEditModal(banner)
-                    }}
-                    className="p-2 text-gray-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors"
-                  >
-                    <Edit2 size={18} strokeWidth={1.5} />
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      deleteBanner(banner.id)
-                    }}
-                    disabled={deletingId === banner.id}
-                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                  >
-                    {deletingId === banner.id ? (
-                      <Loader2 size={18} className="animate-spin" strokeWidth={1.5} />
-                    ) : (
-                      <Trash2 size={18} strokeWidth={1.5} />
-                    )}
-                  </button>
+                    {/* 액션 버튼 */}
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          openEditModal(banner)
+                        }}
+                        className="p-2 text-gray-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors"
+                      >
+                        <Edit2 size={18} strokeWidth={1.5} />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          deleteBanner(banner.id)
+                        }}
+                        disabled={deletingId === banner.id}
+                        className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                      >
+                        {deletingId === banner.id ? (
+                          <Loader2 size={18} className="animate-spin" strokeWidth={1.5} />
+                        ) : (
+                          <Trash2 size={18} strokeWidth={1.5} />
+                        )}
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             </Reorder.Item>

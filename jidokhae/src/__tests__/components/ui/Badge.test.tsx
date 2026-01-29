@@ -16,7 +16,8 @@ describe('Badge', () => {
     render(<Badge>기본</Badge>)
 
     const badge = screen.getByText('기본')
-    expect(badge).toHaveClass('bg-brand-50', 'text-brand-700')
+    // Design System v3.3 - CSS 변수 기반
+    expect(badge).toHaveClass('bg-[var(--bg-base)]', 'text-text-muted')
   })
 
   it('success variant를 적용한다', () => {
@@ -30,14 +31,16 @@ describe('Badge', () => {
     render(<Badge variant="warning">경고</Badge>)
 
     const badge = screen.getByText('경고')
-    expect(badge).toHaveClass('bg-accent-100', 'text-accent-700')
+    // Design System v3.3 - 마감임박 (일반 경고)
+    expect(badge).toHaveClass('bg-amber-50', 'text-warning')
   })
 
   it('urgent variant를 적용한다', () => {
     render(<Badge variant="urgent">마감임박</Badge>)
 
     const badge = screen.getByText('마감임박')
-    expect(badge).toHaveClass('bg-accent-50', 'text-accent-500')
+    // Design System v3.3 - 마감임박 (강조, 테마 대응)
+    expect(badge).toHaveClass('bg-accent', 'text-accent-readable')
   })
 
   it('error variant를 적용한다', () => {
@@ -58,7 +61,8 @@ describe('Badge', () => {
     render(<Badge variant="brand">브랜드</Badge>)
 
     const badge = screen.getByText('브랜드')
-    expect(badge).toHaveClass('bg-brand-100', 'text-brand-800')
+    // Design System v3.3 - 테마 기반 primary 색상
+    expect(badge).toHaveClass('bg-primary/10', 'text-primary')
   })
 
   it('closed variant를 적용한다', () => {

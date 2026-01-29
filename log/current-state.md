@@ -130,6 +130,7 @@
 
 ## 전체 마일스톤 완료 현황
 
+### Part 1: MVP Milestones (M1~M7)
 ```
 M1: 프로젝트 기반 구축 ✅
 M2: 핵심 결제 흐름 ✅
@@ -138,12 +139,28 @@ M4: 소속감 기능 ✅
 M5: 운영자 도구 ✅
 M6: 신규 회원 & 출시 준비 ✅
 M7: Polish & Growth ✅
-M7: 디자인 시스템 v2.1 ✅ (추가)
-M8: Ritual Foundation ✅
-M9: Commitment Ritual ✅ (Phase 9.1~9.4 전체 완료)
-
-총 진행률: M1~M9 완료, 머지 대기 중
 ```
+
+### Part 2: Experience Enhancement (M8~M12)
+```
+M8: Ritual Foundation ✅
+M9: Commitment Ritual ✅ (Phase 9.1~9.4 전체 완료, 머지 대기)
+M10: Connection & Memory ⏳ (WP 완료, 코드 미구현)
+M11: Community Hub ⏳ (WP 완료, 코드 미구현)
+M12: Admin Evolution ⏳ (WP 완료, 코드 미구현)
+```
+
+### Part 3: 백오피스 MVP (M13~M17)
+```
+M13: 백오피스 기반 구축 ⏳ (WP 신규 생성)
+M14: 결제 운영 ⏳ (WP 신규 생성)
+M15: 모임 관리 ⏳ (WP 신규 생성)
+M16: 회원 관리 ⏳ (WP 신규 생성)
+M17: 설정 관리 ⏳ (WP 신규 생성)
+M18: 알림 관리 & Audit ⏳ (Post-MVP, WP 미생성)
+```
+
+**총 진행률:** M1~M9 코드 완료 / M10~M17 WP 완료
 
 ---
 
@@ -153,9 +170,18 @@ M9: Commitment Ritual ✅ (Phase 9.1~9.4 전체 완료)
 1. **main 머지**: M8+M9 변경사항 main에 머지
 2. **Vercel 배포**: 배포 후 실제 환경에서 확인
 
-### M10 시작 시
-1. M10 Work Package 분해
-2. 새 기능 개발 착수
+### 개발 경로 선택
+> Experience Enhancement (M10~M12) vs 백오피스 MVP (M13~M17) 중 우선순위 결정 필요
+
+**Option A: Experience 우선**
+1. M10 (Connection & Memory) - 회원 연결 강화
+2. M11 (Community Hub) - 커뮤니티 공간
+3. M12 (Admin Evolution) - 운영 진화
+
+**Option B: 백오피스 우선 (운영 효율)**
+1. M13 (Admin Foundation) - 백오피스 기반
+2. M14 (Payment Operations) - 결제 운영
+3. M15~M17 순차 진행
 
 ### 배포 전 필요 작업
 
@@ -211,3 +237,4 @@ M9: Commitment Ritual ✅ (Phase 9.1~9.4 전체 완료)
 | 디자인 시스템 | v3.3 (CSS 변수 기반, 테마 전환 지원) |
 | Experience | M8+M9 (Ritual Foundation + Commitment) |
 | M9 상태 | 전체 완료 (Phase 9.1~9.4), 머지 대기 |
+| WP 문서 | M1~M17 완료 (M18 미생성) |

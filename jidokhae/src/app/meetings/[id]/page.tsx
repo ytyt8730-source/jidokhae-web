@@ -5,6 +5,7 @@ import { calculateMeetingStatus, formatMeetingDate, formatFee } from '@/lib/util
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
 import PaymentButton from '@/components/PaymentButton'
+import WaitlistCancelButton from '@/components/WaitlistCancelButton'
 import { Calendar, MapPin, Users, ArrowLeft, Medal } from 'lucide-react'
 import { KongIcon } from '@/components/icons/KongIcon'
 import RefundRulesSection from '@/components/RefundRulesSection'
@@ -72,6 +73,8 @@ export default async function MeetingDetailPage({ params }: PageProps) {
 
   // 이미 신청했는지 확인
   let alreadyRegistered = false
+  let userWaitlist: { id: string; position: number } | null = null
+
   if (currentUser) {
     const { data: existingReg } = await supabase
       .from('registrations')
@@ -81,6 +84,18 @@ export default async function MeetingDetailPage({ params }: PageProps) {
       .neq('status', 'cancelled')
       .single()
     alreadyRegistered = !!existingReg
+
+    // MX-C01: 대기 상태 확인
+    if (!alreadyRegistered) {
+      const { data: waitlist } = await supabase
+        .from('waitlists')
+        .select('id, position')
+        .eq('user_id', currentUser.id)
+        .eq('meeting_id', meeting.id)
+        .eq('status', 'waiting')
+        .single()
+      userWaitlist = waitlist
+    }
   }
 
   // M7-003: 공개 동의한 후기 조회 (신규회원에게만 표시)
@@ -228,6 +243,17 @@ export default async function MeetingDetailPage({ params }: PageProps) {
                 <p className="text-xs text-primary mt-3">
                   이미 신청한 모임입니다. 마이페이지에서 확인하세요.
                 </p>
+              </div>
+            ) : userWaitlist ? (
+              // MX-C01: 대기 중인 사용자에게 대기 취소 버튼 표시
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <Badge variant="info">대기 {userWaitlist.position}번째</Badge>
+                </div>
+                <WaitlistCancelButton
+                  waitlistId={userWaitlist.id}
+                  meetingTitle={meeting.title}
+                />
               </div>
             ) : meetingWithStatus.displayStatus === 'closed' ? (
               <Button disabled className="w-full sm:w-auto">

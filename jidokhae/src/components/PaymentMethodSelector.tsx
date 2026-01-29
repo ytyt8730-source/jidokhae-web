@@ -306,7 +306,7 @@ export default function PaymentMethodSelector({
                 <p className={`font-medium ${selectedMethod === 'easy' ? 'text-brand-700' : 'text-brand-800'}`}>
                   간편결제
                 </p>
-                <p className="text-sm text-gray-500">카카오페이, 토스페이 등</p>
+                <p className="text-sm text-gray-500">카카오페이</p>
               </div>
               <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center
                 ${selectedMethod === 'easy' ? 'border-brand-500' : 'border-gray-300'}`}>
