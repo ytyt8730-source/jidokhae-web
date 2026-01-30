@@ -20,9 +20,10 @@ export function calculateMeetingStatus(meeting: Meeting): MeetingWithStatus {
   const remainingSpots = meeting.capacity - meeting.current_participants
 
   let displayStatus: MeetingWithStatus['displayStatus'] = 'open'
-  
+
   if (remainingSpots <= 0) {
-    displayStatus = 'closed'
+    // 정원 마감이지만 모임 status가 'open'이면 대기 신청 가능
+    displayStatus = meeting.status === 'open' ? 'waitlist_available' : 'closed'
   } else if (remainingSpots <= 3) {
     displayStatus = 'closing_soon'
   }

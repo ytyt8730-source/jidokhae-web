@@ -5,6 +5,7 @@ import { calculateMeetingStatus, formatMeetingDate, formatFee } from '@/lib/util
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
 import PaymentButton from '@/components/PaymentButton'
+import WaitlistButton from '@/components/WaitlistButton'
 import WaitlistCancelButton from '@/components/WaitlistCancelButton'
 import { Calendar, MapPin, Users, ArrowLeft, Medal } from 'lucide-react'
 import { KongIcon } from '@/components/icons/KongIcon'
@@ -259,6 +260,11 @@ export default async function MeetingDetailPage({ params }: PageProps) {
               <Button disabled className="w-full sm:w-auto">
                 마감되었습니다
               </Button>
+            ) : meetingWithStatus.displayStatus === 'waitlist_available' ? (
+              <WaitlistButton
+                meeting={meeting}
+                user={currentUser}
+              />
             ) : (
               <PaymentButton
                 meeting={meeting}
