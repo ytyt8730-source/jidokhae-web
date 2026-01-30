@@ -420,3 +420,95 @@ export const stubFlyaway: Variants = {
     },
   },
 }
+
+// ============================================
+// Design System v3.3: Bottom Sheet 애니메이션
+// ============================================
+
+// Bottom Sheet 오버레이
+export const bottomSheetOverlay: Variants = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+    transition: {
+      duration: 0.2,
+    },
+  },
+  exit: {
+    opacity: 0,
+    transition: {
+      duration: 0.15,
+    },
+  },
+}
+
+// Bottom Sheet 콘텐츠 (Spring 기반)
+export const bottomSheetContent: Variants = {
+  hidden: {
+    y: '100%',
+  },
+  visible: {
+    y: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 300,
+      damping: 30,
+    },
+  },
+  exit: {
+    y: '100%',
+    transition: {
+      duration: 0.2,
+      ease: 'easeIn',
+    },
+  },
+}
+
+// ============================================
+// Design System v3.3: Bento Grid 애니메이션
+// ============================================
+
+// Bento 카드 호버 효과
+export const bentoCardHover = {
+  hover: {
+    y: -2,
+    transition: {
+      duration: 0.2,
+      ease: 'easeOut' as const,
+    },
+  },
+}
+
+// Bento 그리드 stagger 컨테이너
+export const bentoStagger: Variants = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.05,
+    },
+  },
+}
+
+// Bento 개별 카드 애니메이션
+export const bentoItem: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 15,
+    scale: 0.98,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.4,
+      ease: 'easeOut',
+    },
+  },
+}

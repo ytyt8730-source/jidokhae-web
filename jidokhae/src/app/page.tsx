@@ -6,7 +6,8 @@ import { CalendarDays, ArrowRight, CheckCircle, Sparkles, Users } from 'lucide-r
 import Link from 'next/link'
 import Badge from '@/components/ui/Badge'
 import { BannerSlide } from '@/components/BannerSlide'
-import type { Meeting, Registration } from '@/types/database'
+import BentoGridSection from '@/components/BentoGridSection'
+import type { Meeting, Registration, User as UserType } from '@/types/database'
 
 export default async function HomePage() {
   const supabase = await createClient()
@@ -14,9 +15,20 @@ export default async function HomePage() {
   // 현재 로그인 사용자 조회
   const { data: { user: authUser } } = await supabase.auth.getUser()
 
-  // 로그인한 사용자의 신청 모임 조회
+  // 로그인한 사용자 정보 및 신청 모임 조회
   let myRegistrations: (Registration & { meetings: Meeting })[] = []
+  let userData: UserType | null = null
+
   if (authUser) {
+    // 사용자 정보 조회
+    const { data: user } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', authUser.id)
+      .single() as { data: UserType | null }
+    userData = user
+
+    // 신청 모임 조회
     const { data: regs } = await supabase
       .from('registrations')
       .select('*, meetings(*)')
@@ -85,16 +97,23 @@ export default async function HomePage() {
 
       {/* 배너 슬라이드 */}
       {banners && banners.length > 0 && (
-        <section className="bg-white border-b border-gray-100">
+        <section className="bg-[var(--bg-surface)] border-b border-[var(--border)]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <BannerSlide banners={banners} />
           </div>
         </section>
       )}
 
+      {/* Bento Grid 대시보드 - Design System v3.3 */}
+      <BentoGridSection
+        user={userData}
+        thisWeekMeeting={thisWeekMeetings[0] || null}
+        nextRegistration={myRegistrations[0] || null}
+      />
+
       {/* 내 신청 모임 - 로그인 사용자만 표시 */}
       {authUser && myRegistrations.length > 0 && (
-        <section className="bg-white border-b border-gray-100">
+        <section className="bg-[var(--bg-surface)] border-b border-[var(--border)]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div className="bg-gradient-to-r from-brand-50 to-brand-100/30 rounded-2xl p-6 lg:p-8">
               <div className="flex items-center justify-between mb-6">
@@ -133,7 +152,7 @@ export default async function HomePage() {
 
       {/* 이번 주 모임 */}
       {thisWeekMeetings.length > 0 && (
-        <section className="bg-white border-b border-gray-100">
+        <section className="bg-[var(--bg-surface)] border-b border-[var(--border)]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
@@ -178,8 +197,8 @@ export default async function HomePage() {
           {upcomingMeetings.length > 0 ? (
             <MeetingList meetings={upcomingMeetings} />
           ) : thisWeekMeetings.length === 0 ? (
-            <div className="bg-white rounded-2xl p-12 text-center shadow-sm">
-              <p className="text-gray-500">현재 예정된 모임이 없습니다.</p>
+            <div className="bg-[var(--bg-surface)] rounded-2xl p-12 text-center shadow-sm">
+              <p className="text-[var(--text-muted)]">현재 예정된 모임이 없습니다.</p>
             </div>
           ) : null}
         </div>

@@ -5,6 +5,7 @@ import { User, Calendar, Award, BookOpen, ArrowRight, Trophy, Heart } from 'luci
 import { differenceInDays } from 'date-fns'
 import Badge from '@/components/ui/Badge'
 import BadgeIcon from '@/components/BadgeIcon'
+import ThemeToggle from '@/components/ThemeToggle'
 import { formatMeetingDate, formatFee } from '@/lib/utils'
 import { getDday } from '@/lib/payment'
 import { getUserBadges, getBadgeInfo } from '@/lib/badges'
@@ -103,14 +104,18 @@ export default async function MyPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-8 space-y-8">
       {/* 페이지 헤더 */}
-      <div>
-        <h1 className="flex items-center gap-3 text-2xl font-bold heading-themed text-brand-800 mb-2">
-          <User className="text-brand-600" size={28} strokeWidth={1.5} />
-          마이페이지
-        </h1>
-        <p className="text-gray-600">
-          내 정보와 참여 기록을 확인하세요.
-        </p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="flex items-center gap-3 text-2xl font-bold heading-themed text-brand-800 mb-2">
+            <User className="text-brand-600" size={28} strokeWidth={1.5} />
+            마이페이지
+          </h1>
+          <p className="text-gray-600">
+            내 정보와 참여 기록을 확인하세요.
+          </p>
+        </div>
+        {/* Theme Toggle - Design System v3.3 */}
+        <ThemeToggle />
       </div>
 
       {/* 프로필 카드 */}

@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="electric">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>지독해 UI 리디자인 목업 v1.0</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&family=Noto+Serif+KR:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ========== CSS Variables ========== */
+    :root {
+      --bg-base: #F8FAFC;
+      --bg-surface: #FFFFFF;
+      --primary: #0047FF;
+      --accent: #CCFF00;
+      --accent-readable: #0F172A;
+      --text: #0F172A;
+      --text-muted: #64748B;
+      --text-light: #94A3B8;
+      --border: #E2E8F0;
+      --overlay: rgba(0, 0, 0, 0.5);
+      --font-headline: 'Outfit', 'Noto Sans KR', sans-serif;
+      --font-body: 'Noto Sans KR', sans-serif;
+    }
+
+    [data-theme="warm"] {
+      --bg-base: #F5F5F0;
+      --bg-surface: #FAFAF7;
+      --primary: #0F172A;
+      --accent: #EA580C;
+      --accent-readable: #FFFFFF;
+      --text: #0F172A;
+      --text-muted: #64748B;
+      --text-light: #94A3B8;
+      --border: #E7E5E4;
+      --overlay: rgba(15, 23, 42, 0.6);
+      --font-headline: 'Noto Serif KR', serif;
+    }
+
+    /* Warm theme noise texture */
+    [data-theme="warm"] body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.06;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* ========== Reset & Base ========== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-base);
+      color: var(--text);
+      line-height: 1.6;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* ========== Theme Toggle (Fixed) ========== */
+    .theme-toggle-fixed {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10000;
+      display: flex;
+      gap: 8px;
+      background: var(--bg-surface);
+      padding: 8px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      border: 1px solid var(--border);
+    }
+
+    .theme-btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .theme-btn.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .theme-btn:not(.active) {
+      background: transparent;
+      color: var(--text-muted);
+    }
+
+    .theme-btn:not(.active):hover {
+      background: var(--border);
+    }
+
+    /* ========== Hero Section ========== */
+    .hero {
+      padding: 80px 24px 60px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      font-family: var(--font-headline);
+      font-size: clamp(2.5rem, 6vw, 3.5rem);
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 24px;
+    }
+
+    .hero p {
+      font-size: 1.125rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin-bottom: 32px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      padding: 16px 28px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      padding: 16px 28px;
+      border-radius: 12px;
+      font-weight: 500;
+      font-size: 1rem;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-surface);
+    }
+
+    /* ========== Bento Grid ========== */
+    .bento-section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 48px 24px;
+    }
+
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .bento-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .bento-card {
+      background: var(--bg-surface);
+      border-radius: 20px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+
+    .bento-card:hover {
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+    }
+
+    .bento-card.span-2 {
+      grid-column: span 2;
+    }
+
+    /* Weekly Curator Card */
+    .curator-card {
+      display: flex;
+      gap: 20px;
+    }
+
+    .curator-card .atmospheric-cover {
+      width: 140px;
+      height: 180px;
+      flex-shrink: 0;
+    }
+
+    .curator-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .section-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    [data-theme="warm"] .section-label {
+      color: var(--accent);
+    }
+
+    .curator-info h3 {
+      font-family: var(--font-headline);
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .curator-info .author {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      margin-bottom: 16px;
+    }
+
+    .price-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 700;
+      color: var(--text);
+      margin-top: auto;
+    }
+
+    .kong-icon {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    /* MY GROWTH Card */
+    .growth-card {
+      background: linear-gradient(145deg, #1E293B, #0F172A);
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .growth-card .section-label {
+      color: var(--accent);
+    }
+
+    .growth-card .trophy {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 32px;
+      height: 32px;
+      color: var(--accent);
+      filter: drop-shadow(0 0 12px var(--accent));
+    }
+
+    .growth-card h3 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      line-height: 1.4;
+      margin-bottom: 20px;
+    }
+
+    .growth-card h3 span {
+      color: #94A3B8;
+    }
+
+    .progress-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .progress-label {
+      font-size: 12px;
+      color: #94A3B8;
+    }
+
+    .progress-track {
+      flex: 1;
+      height: 6px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 100px;
+      transition: width 1s ease;
+    }
+
+    .progress-value {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .growth-card .hint {
+      font-size: 11px;
+      color: #64748B;
+    }
+
+    /* D-3 Card */
+    .dday-card-electric {
+      background: var(--bg-surface);
+      border: 2px solid var(--accent);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    [data-theme="warm"] .dday-card-electric {
+      background: var(--accent);
+      border: none;
+      color: white;
+    }
+
+    .dday-card-electric .section-label {
+      color: var(--primary);
+    }
+
+    [data-theme="warm"] .dday-card-electric .section-label {
+      color: rgba(255,255,255,0.7);
+    }
+
+    .dday-number {
+      font-size: 3.5rem;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .dday-card-electric .meeting-name {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    [data-theme="warm"] .dday-card-electric .meeting-name {
+      color: rgba(255,255,255,0.8);
+    }
+
+    .dday-card-electric .link {
+      font-size: 12px;
+      margin-top: 12px;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    [data-theme="warm"] .dday-card-electric .link {
+      color: white;
+    }
+
+    /* ========== Atmospheric Cover ========== */
+    .atmospheric-cover {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #f0f0f0;
+    }
+
+    .atmospheric-bg {
+      position: absolute;
+      inset: -20px;
+      background-size: cover;
+      background-position: center;
+      filter: blur(25px) saturate(1.3);
+      opacity: 0.6;
+    }
+
+    .atmospheric-cover img {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 4px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+
+    /* ========== Session Section ========== */
+    .session-section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 48px 24px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+    }
+
+    .section-title {
+      font-family: var(--font-headline);
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    /* Tabs */
+    .session-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .tab-btn {
+      padding: 10px 20px;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+      background: transparent;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: var(--text-muted);
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .tab-btn:not(.active):hover {
+      background: var(--bg-surface);
+    }
+
+    /* Session Cards Grid */
+    .session-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    /* Session Card */
+    .session-card {
+      background: var(--bg-surface);
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .session-card:hover {
+      box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+      transform: translateY(-4px);
+    }
+
+    .session-cover {
+      height: 160px;
+      position: relative;
+    }
+
+    .session-cover .atmospheric-bg {
+      inset: -30px;
+    }
+
+    .session-cover img {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: auto;
+      height: 140px;
+      border-radius: 4px;
+      z-index: 10;
+    }
+
+    .session-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 20;
+      display: flex;
+      gap: 6px;
+    }
+
+    .badge {
+      padding: 4px 10px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .badge-type {
+      background: var(--bg-surface);
+      color: var(--text);
+    }
+
+    .badge-warning {
+      background: #EA580C;
+      color: white;
+    }
+
+    .session-info {
+      padding: 20px;
+    }
+
+    .session-info h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .session-info .author {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      margin-bottom: 16px;
+    }
+
+    .session-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .session-meta span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .session-meta svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .session-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .session-footer .price-tag {
+      font-size: 1rem;
+    }
+
+    .arrow-icon {
+      width: 20px;
+      height: 20px;
+      color: var(--text-muted);
+    }
+
+    /* ========== Bottom Sheet ========== */
+    .bottom-sheet-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--overlay);
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .bottom-sheet-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .bottom-sheet {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translate(-50%, 100%);
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      background: var(--bg-surface);
+      border-radius: 24px 24px 0 0;
+      z-index: 1001;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+
+    .bottom-sheet-overlay.open .bottom-sheet {
+      transform: translate(-50%, 0);
+    }
+
+    .sheet-handle {
+      width: 36px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 100px;
+      margin: 12px auto 20px;
+    }
+
+    .sheet-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: var(--bg-base);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s ease;
+    }
+
+    .sheet-close:hover {
+      background: var(--border);
+    }
+
+    .sheet-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 24px 24px;
+    }
+
+    .sheet-cover {
+      height: 220px;
+      margin-bottom: 24px;
+      border-radius: 16px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .sheet-cover .atmospheric-bg {
+      inset: -40px;
+    }
+
+    .sheet-cover img {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      height: 180px;
+      width: auto;
+      z-index: 10;
+      border-radius: 4px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.25);
+    }
+
+    .sheet-title {
+      font-family: var(--font-headline);
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .sheet-author {
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .sheet-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .sheet-details span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .sheet-details strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .sheet-details svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .sheet-description {
+      color: var(--text-muted);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .sheet-cta {
+      padding: 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .cta-button {
+      width: 100%;
+      padding: 18px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .cta-button:hover {
+      opacity: 0.9;
+    }
+
+    .cta-button:active {
+      transform: scale(0.98);
+    }
+
+    .cta-button .kong-icon {
+      fill: white;
+    }
+
+    /* ========== FAB ========== */
+    .fab {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 200;
+      background: var(--text);
+      color: white;
+      padding: 16px 24px;
+      border-radius: 100px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .fab:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    }
+
+    .fab svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* ========== Mypage Section ========== */
+    .mypage-section {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 48px 24px;
+    }
+
+    .profile-card {
+      background: var(--bg-surface);
+      border-radius: 20px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .profile-info h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .profile-info .email {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .level-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background: var(--accent);
+      color: var(--accent-readable);
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .days-counter {
+      background: var(--bg-base);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .days-counter p {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .days-counter strong {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 600px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .stat-card {
+      background: var(--bg-surface);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+
+    .stat-card svg {
+      width: 24px;
+      height: 24px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .stat-card .value {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .stat-card .label {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* ========== Page Navigation ========== */
+    .page-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border);
+      padding: 12px 24px 24px;
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .page-nav-btn {
+      padding: 10px 20px;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+      background: transparent;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: var(--text-muted);
+    }
+
+    .page-nav-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .page-section {
+      display: none;
+      padding-bottom: 100px;
+    }
+
+    .page-section.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <!-- Theme Toggle -->
+  <div class="theme-toggle-fixed">
+    <button class="theme-btn active" id="btn-electric" onclick="setTheme('electric')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+      </svg>
+      Electric
+    </button>
+    <button class="theme-btn" id="btn-warm" onclick="setTheme('warm')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M17 8h1a4 4 0 1 1 0 8h-1"></path>
+        <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"></path>
+        <line x1="6" y1="2" x2="6" y2="4"></line>
+        <line x1="10" y1="2" x2="10" y2="4"></line>
+        <line x1="14" y1="2" x2="14" y2="4"></line>
+      </svg>
+      Warm
+    </button>
+  </div>
+
+  <!-- Page: Home -->
+  <div class="page-section active" id="page-home">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-content">
+        <h1>깊은 사유,<br>새로운 관점</h1>
+        <p>경주와 포항에서 매주 열리는 프라이빗 독서 클럽.<br>책을 통해 인사이트를 나누고, 사유를 확장합니다.</p>
+        <div class="hero-buttons">
+          <a href="#" class="btn-primary">모임 일정 보기</a>
+          <a href="#" class="btn-secondary">멤버십 안내</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bento Grid -->
+    <section class="bento-section">
+      <div class="bento-grid">
+        <!-- Weekly Curator -->
+        <div class="bento-card span-2 curator-card">
+          <div class="atmospheric-cover">
+            <div class="atmospheric-bg" style="background-image: url('https://image.yes24.com/goods/117669541/XL')"></div>
+            <img src="https://image.yes24.com/goods/117669541/XL" alt="Book Cover">
+          </div>
+          <div class="curator-info">
+            <span class="section-label">Weekly Curator</span>
+            <h3>아무튼, 메모</h3>
+            <p class="author">최문정 지음</p>
+            <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 16px;">일상의 작은 순간들을 기록하는 습관에 대한 이야기</p>
+            <div class="price-tag">
+              <svg class="kong-icon" viewBox="0 0 24 24"><ellipse cx="12" cy="13" rx="7" ry="9"/><ellipse cx="10" cy="9" rx="2" ry="3" opacity="0.3"/></svg>
+              5,000콩
+            </div>
+          </div>
+        </div>
+
+        <!-- MY GROWTH -->
+        <div class="bento-card growth-card">
+          <svg class="trophy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+            <path d="M4 22h16"></path>
+            <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+            <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+            <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+          </svg>
+          <span class="section-label">MY GROWTH</span>
+          <h3>열정 배지<span>까지</span><br>2번 남았어요!
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2" style="display: inline; vertical-align: middle;">
+              <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
+            </svg>
+          </h3>
+          <div class="progress-bar">
+            <span class="progress-label">Progress</span>
+            <div class="progress-track">
+              <div class="progress-fill" style="width: 60%"></div>
+            </div>
+            <span class="progress-value">60%</span>
+          </div>
+          <p class="hint">다음 달성 시: 멤버십 포인트 +500</p>
+        </div>
+
+        <!-- D-3 -->
+        <div class="bento-card dday-card-electric">
+          <span class="section-label">NEXT</span>
+          <div class="dday-number">D-3</div>
+          <p class="meeting-name">1월 4주차 정기모임</p>
+          <span class="link">준비물 확인하기</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Session List -->
+    <section class="session-section">
+      <div class="section-header">
+        <h2 class="section-title">모임 일정</h2>
+      </div>
+
+      <div class="session-tabs">
+        <button class="tab-btn active">정기</button>
+        <button class="tab-btn">토론</button>
+        <button class="tab-btn">번개</button>
+      </div>
+
+      <div class="session-grid">
+        <!-- Card 1 -->
+        <div class="session-card" onclick="openSheet()">
+          <div class="session-cover">
+            <div class="atmospheric-bg" style="background-image: url('https://image.yes24.com/goods/117669541/XL')"></div>
+            <img src="https://image.yes24.com/goods/117669541/XL" alt="Book">
+            <div class="session-badge">
+              <span class="badge badge-type">정기</span>
+            </div>
+          </div>
+          <div class="session-info">
+            <h3>아무튼, 메모</h3>
+            <p class="author">최문정 지음</p>
+            <div class="session-meta">
+              <span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                1월 25일 (토)
+              </span>
+              <span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                19:00
+              </span>
+              <span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                경주 황리단길
+              </span>
+              <span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                8명 참여
+              </span>
+            </div>
+            <div class="session-footer">
+              <div class="price-tag">
+                <svg class="kong-icon" viewBox="0 0 24 24"><ellipse cx="12" cy="13" rx="7" ry="9"/><ellipse cx="10" cy="9" rx="2" ry="3" opacity="0.3"/></svg>
+                5,000콩
+              </div>
+              <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="session-card" onclick="openSheet()">
+          <div class="session-cover">
+            <div class="atmospheric-bg" style="background-image: url('https://image.yes24.com/goods/90075924/XL')"></div>
+            <img src="https://image.yes24.com/goods/90075924/XL" alt="Book">
+            <div class="session-badge">
+              <span class="badge badge-type">토론</span>
+              <span class="badge badge-warning">마감임박</span>
+            </div>
+          </div>
+          <div class="session-info">
+            <h3>불편한 편의점</h3>
+            <p class="author">김호연 지음</p>
+            <div class="session-meta">
+              <span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                2월 1일 (토)
+              </span>
+              <span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                14:00
+              </span>
+              <span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                포항 영일대
+              </span>
+              <span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                11명 참여
+              </span>
+            </div>
+            <div class="session-footer">
+              <div class="price-tag">
+                <svg class="kong-icon" viewBox="0 0 24 24"><ellipse cx="12" cy="13" rx="7" ry="9"/><ellipse cx="10" cy="9" rx="2" ry="3" opacity="0.3"/></svg>
+                8,000콩
+              </div>
+              <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="session-card" onclick="openSheet()">
+          <div class="session-cover">
+            <div class="atmospheric-bg" style="background-image: url('https://image.yes24.com/goods/102898602/XL')"></div>
+            <img src="https://image.yes24.com/goods/102898602/XL" alt="Book">
+            <div class="session-badge">
+              <span class="badge badge-type">번개</span>
+            </div>
+          </div>
+          <div class="session-info">
+            <h3>역행자</h3>
+            <p class="author">자청 지음</p>
+            <div class="session-meta">
+              <span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                2월 8일 (토)
+              </span>
+              <span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                10:00
+              </span>
+              <span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                경주 동궁원
+              </span>
+              <span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                6명 참여
+              </span>
+            </div>
+            <div class="session-footer">
+              <div class="price-tag">
+                <svg class="kong-icon" viewBox="0 0 24 24"><ellipse cx="12" cy="13" rx="7" ry="9"/><ellipse cx="10" cy="9" rx="2" ry="3" opacity="0.3"/></svg>
+                6,000콩
+              </div>
+              <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Page: Mypage -->
+  <div class="page-section" id="page-mypage">
+    <section class="mypage-section">
+      <h1 style="font-family: var(--font-headline); font-size: 1.75rem; font-weight: 700; margin-bottom: 32px;">마이페이지</h1>
+
+      <!-- MY GROWTH (Full width) -->
+      <div class="bento-card growth-card" style="margin-bottom: 24px;">
+        <svg class="trophy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+          <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+          <path d="M4 22h16"></path>
+          <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+          <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+          <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+        </svg>
+        <span class="section-label">MY GROWTH</span>
+        <h3>열정 배지<span>까지</span><br>2번 남았어요!
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2" style="display: inline; vertical-align: middle;">
+            <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
+          </svg>
+        </h3>
+        <div class="progress-bar">
+          <span class="progress-label">Progress</span>
+          <div class="progress-track">
+            <div class="progress-fill" style="width: 60%"></div>
+          </div>
+          <span class="progress-value">60%</span>
+        </div>
+        <p class="hint">다음 달성 시: 멤버십 포인트 +500</p>
+      </div>
+
+      <!-- Profile Card -->
+      <div class="profile-card">
+        <div class="profile-header">
+          <div class="avatar">D</div>
+          <div class="profile-info">
+            <h2>김단무지</h2>
+            <p class="email">danmuji@email.com</p>
+            <span class="level-badge">Lv.2 열정 멤버</span>
+          </div>
+        </div>
+        <div class="days-counter">
+          <p>지독해와 함께한 지</p>
+          <strong>156일째</strong>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          <div class="value">12</div>
+          <div class="label">총 참여</div>
+        </div>
+        <div class="stat-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"></circle><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path></svg>
+          <div class="value">4</div>
+          <div class="label">연속 (주)</div>
+        </div>
+        <div class="stat-card">
+          <svg viewBox="0 0 24 24" fill="#FBBF24" stroke="#FBBF24" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+          <div class="value">8</div>
+          <div class="label">받은 칭찬</div>
+        </div>
+        <div class="stat-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+          <div class="value">15</div>
+          <div class="label">등록한 책</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- FAB -->
+  <button class="fab">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"></path>
+      <path d="M13 5v2"></path>
+      <path d="M13 17v2"></path>
+      <path d="M13 11v2"></path>
+    </svg>
+    MY PASS
+  </button>
+
+  <!-- Bottom Sheet -->
+  <div class="bottom-sheet-overlay" id="sheet-overlay" onclick="closeSheet()">
+    <div class="bottom-sheet" onclick="event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <button class="sheet-close" onclick="closeSheet()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <div class="sheet-content">
+        <div class="sheet-cover">
+          <div class="atmospheric-bg" style="background-image: url('https://image.yes24.com/goods/117669541/XL')"></div>
+          <img src="https://image.yes24.com/goods/117669541/XL" alt="Book Cover">
+        </div>
+        <h2 class="sheet-title">아무튼, 메모</h2>
+        <p class="sheet-author">최문정 지음</p>
+        <div class="sheet-details">
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            <strong>1월 25일 (토)</strong>
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <strong>19:00</strong>
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            <strong>경주 황리단길</strong>
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            <strong>8/12명</strong>
+          </span>
+        </div>
+        <p class="sheet-description">
+          일상의 작은 순간들을 기록하는 습관에 대한 이야기입니다. 메모하는 삶이 가져다주는 변화와 성장에 대해 함께 이야기 나눠봅니다.
+          <br><br>
+          이번 모임에서는 각자의 메모 습관을 공유하고, 효과적인 기록 방법에 대해 토론할 예정입니다.
+        </p>
+      </div>
+      <div class="sheet-cta">
+        <button class="cta-button">
+          <svg class="kong-icon" viewBox="0 0 24 24"><ellipse cx="12" cy="13" rx="7" ry="9"/><ellipse cx="10" cy="9" rx="2" ry="3" opacity="0.3"/></svg>
+          5,000콩으로 신청하기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page Navigation -->
+  <div class="page-nav">
+    <button class="page-nav-btn active" onclick="showPage('home')">홈</button>
+    <button class="page-nav-btn" onclick="showPage('mypage')">마이페이지</button>
+  </div>
+
+  <script>
+    function setTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      document.getElementById('btn-electric').classList.toggle('active', theme === 'electric');
+      document.getElementById('btn-warm').classList.toggle('active', theme === 'warm');
+    }
+
+    function openSheet() {
+      document.getElementById('sheet-overlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeSheet() {
+      document.getElementById('sheet-overlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function showPage(pageId) {
+      document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.page-nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('page-' + pageId).classList.add('active');
+      event.target.classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    // ESC key to close sheet
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeSheet();
+    });
+  </script>
+</body>
+</html>

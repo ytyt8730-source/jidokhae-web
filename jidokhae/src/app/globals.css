@@ -145,43 +145,42 @@
   }
 
   /* ===== Hero Section (Theme-aware) ===== */
-  /* Electric Mode: Immersive Blue */
+  /*
+   * PRD v1.5 사양:
+   * - Electric: Clean White (#F8FAFC) 배경 + 어두운 텍스트
+   * - Warm: Warm Paper (#F5F5F0) 배경 + 어두운 텍스트
+   * - 파란 그라데이션은 사용하지 않음 (촌스러움의 원인)
+   */
   .hero-section {
-    @apply bg-gradient-to-br from-blue-900 via-[#0047FF] to-blue-800;
+    background-color: var(--bg-base);
   }
   .hero-section .hero-title {
-    @apply text-white;
+    color: var(--text);
   }
   .hero-section .hero-subtitle {
-    @apply text-white/80;
-  }
-  .hero-section .hero-btn-primary {
-    @apply bg-white text-[#0047FF] hover:bg-gray-100;
-    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.25);
-  }
-  .hero-section .hero-btn-secondary {
-    @apply bg-transparent text-white border-white/30 hover:bg-white/10;
-  }
-
-  /* Warm Mode: Paper Texture */
-  [data-theme="warm"] .hero-section {
-    @apply bg-bg-surface;
-    background-image: none;
-  }
-  [data-theme="warm"] .hero-section .hero-title {
-    color: var(--text);
-  }
-  [data-theme="warm"] .hero-section .hero-subtitle {
     color: var(--text-muted);
   }
-  [data-theme="warm"] .hero-section .hero-btn-primary {
+  .hero-section .hero-btn-primary {
     background-color: var(--primary);
-    @apply text-white;
-    box-shadow: none;
+    @apply text-white font-semibold;
+    box-shadow: 0 2px 8px rgba(0, 71, 255, 0.25);
   }
-  [data-theme="warm"] .hero-section .hero-btn-secondary {
-    @apply bg-transparent border-[var(--border)];
+  .hero-section .hero-btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+  .hero-section .hero-btn-secondary {
+    @apply bg-transparent font-medium;
     color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .hero-section .hero-btn-secondary:hover {
+    background-color: var(--bg-surface);
+  }
+
+  /* Warm Mode 오버라이드 (필요시) */
+  [data-theme="warm"] .hero-section .hero-btn-primary {
+    box-shadow: none;
   }
 }
 
@@ -324,6 +323,50 @@
     background-color: var(--accent);
     color: var(--accent-readable);
   }
+}
+
+/* ===== D-Day Card Theme Styles (Design System v3.3) ===== */
+/* Electric Mode: accent 테두리 + 흰 배경 */
+.dday-card {
+  background-color: var(--bg-surface);
+  border: 2px solid var(--accent);
+}
+.dday-label {
+  color: var(--primary);
+}
+.dday-number {
+  color: var(--text);
+}
+.dday-meeting-name {
+  color: var(--text-muted);
+}
+.dday-text-muted {
+  color: var(--text-muted);
+}
+.dday-link {
+  color: var(--text);
+}
+
+/* Warm Mode: accent 배경 + 흰 텍스트 */
+[data-theme="warm"] .dday-card {
+  background-color: var(--accent);
+  border: none;
+  color: white;
+}
+[data-theme="warm"] .dday-label {
+  color: rgba(255, 255, 255, 0.7);
+}
+[data-theme="warm"] .dday-number {
+  color: white;
+}
+[data-theme="warm"] .dday-meeting-name {
+  color: rgba(255, 255, 255, 0.8);
+}
+[data-theme="warm"] .dday-text-muted {
+  color: rgba(255, 255, 255, 0.7);
+}
+[data-theme="warm"] .dday-link {
+  color: white;
 }
 
 /* ===== Scrollbar ===== */
