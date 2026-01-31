@@ -9,6 +9,7 @@ import { NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { successResponse, errorResponse, validateRequired, requireAuth } from '@/lib/api'
 import { ErrorCode } from '@/lib/errors'
+import { registrationLogger } from '@/lib/logger'
 
 interface CancelPendingRequest extends Record<string, unknown> {
   registrationId: string
@@ -64,7 +65,10 @@ export async function POST(request: NextRequest) {
       .eq('status', 'pending')
 
     if (deleteError) {
-      console.error('Delete pending registration error:', deleteError)
+      registrationLogger.error('cancel_pending_delete_error', {
+        registrationId,
+        error: deleteError.message,
+      })
       return errorResponse(ErrorCode.INTERNAL_ERROR, { message: '취소 처리 중 오류가 발생했습니다' })
     }
 
@@ -73,7 +77,9 @@ export async function POST(request: NextRequest) {
       message: reason === 'user_cancelled' ? '결제가 취소되었습니다' : '결제에 실패했습니다',
     })
   } catch (error) {
-    console.error('Cancel pending registration error:', error)
+    registrationLogger.error('cancel_pending_registration_error', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+    })
     return errorResponse(ErrorCode.INTERNAL_ERROR)
   }
 }

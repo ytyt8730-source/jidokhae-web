@@ -45,7 +45,7 @@ export default function TicketsPage() {
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
-        router.push('/login')
+        router.push('/auth/login?redirectTo=/mypage/tickets')
         return
       }
       setUserId(user.id)

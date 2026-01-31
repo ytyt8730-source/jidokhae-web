@@ -11,6 +11,7 @@ import { NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { successResponse, errorResponse, validateRequired, requireAuth } from '@/lib/api'
 import { ErrorCode } from '@/lib/errors'
+import { waitlistLogger } from '@/lib/logger'
 import type { Meeting } from '@/types/database'
 
 interface RegisterWaitlistRequest extends Record<string, unknown> {
@@ -107,7 +108,11 @@ export async function POST(request: NextRequest) {
       })
 
     if (insertError) {
-      console.error('Waitlist insert error:', insertError)
+      waitlistLogger.error('register_waitlist_insert_error', {
+        meetingId,
+        userId: authUser.id,
+        error: insertError.message,
+      })
 
       // 중복 키 오류 (동시성 이슈)
       if (insertError.message.includes('duplicate')) {
@@ -126,7 +131,9 @@ export async function POST(request: NextRequest) {
       position: newPosition,
     })
   } catch (error) {
-    console.error('Register waitlist error:', error)
+    waitlistLogger.error('register_waitlist_error', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+    })
     return errorResponse(ErrorCode.INTERNAL_ERROR)
   }
 }

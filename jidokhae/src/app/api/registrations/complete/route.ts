@@ -11,6 +11,7 @@ import { NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { successResponse, errorResponse, validateRequired, requireAuth } from '@/lib/api'
 import { ErrorCode } from '@/lib/errors'
+import { registrationLogger } from '@/lib/logger'
 
 interface CompletePaymentRequest extends Record<string, unknown> {
   registrationId: string
@@ -99,7 +100,11 @@ export async function POST(request: NextRequest) {
       })
 
     if (logError) {
-      console.error('Payment log error:', logError)
+      registrationLogger.error('complete_payment_log_insert_error', {
+        registrationId,
+        paymentId,
+        error: logError.message,
+      })
       // 로그 실패해도 결제 처리는 계속
     }
 
@@ -116,7 +121,10 @@ export async function POST(request: NextRequest) {
       .eq('id', registrationId)
 
     if (updateError) {
-      console.error('Registration update error:', updateError)
+      registrationLogger.error('complete_registration_update_error', {
+        registrationId,
+        error: updateError.message,
+      })
       return errorResponse(ErrorCode.INTERNAL_ERROR, { message: '결제 처리 중 오류가 발생했습니다' })
     }
 
@@ -125,7 +133,9 @@ export async function POST(request: NextRequest) {
       message: '신청이 완료되었습니다',
     })
   } catch (error) {
-    console.error('Complete registration error:', error)
+    registrationLogger.error('complete_registration_error', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+    })
     return errorResponse(ErrorCode.INTERNAL_ERROR)
   }
 }

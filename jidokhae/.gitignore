@@ -9,6 +9,9 @@
 # testing
 /coverage
 
+# screenshots (자동 생성)
+/screenshots
+
 # next.js
 /.next/
 /out/

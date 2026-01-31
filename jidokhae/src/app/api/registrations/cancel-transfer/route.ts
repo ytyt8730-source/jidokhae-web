@@ -64,11 +64,11 @@ export async function POST(request: NextRequest) {
     const serviceClient = await createServiceClient()
 
     // registration 상태 업데이트
+    // payment_status는 변경하지 않음 (결제가 이루어지지 않은 상태)
     const { error: updateError } = await serviceClient
       .from('registrations')
       .update({
         status: 'cancelled',
-        payment_status: 'cancelled',
         cancel_reason: cancelReason || '사용자 취소',
         cancelled_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),

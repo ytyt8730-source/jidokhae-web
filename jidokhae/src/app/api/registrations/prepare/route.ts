@@ -14,6 +14,7 @@ import { createClient } from '@/lib/supabase/server'
 import { successResponse, errorResponse, validateRequired, requireAuth } from '@/lib/api'
 import { ErrorCode } from '@/lib/errors'
 import { checkMeetingQualification } from '@/lib/payment'
+import { registrationLogger } from '@/lib/logger'
 import type { User, Meeting, PreparePaymentResponse } from '@/types/database'
 
 export async function POST(request: NextRequest) {
@@ -77,7 +78,11 @@ export async function POST(request: NextRequest) {
       })
 
     if (reserveError) {
-      console.error('Reserve error:', reserveError)
+      registrationLogger.error('prepare_reserve_capacity_error', {
+        meetingId,
+        userId: authUser.id,
+        error: reserveError.message,
+      })
       return errorResponse(ErrorCode.INTERNAL_ERROR, { message: '신청 처리 중 오류가 발생했습니다' })
     }
 
@@ -138,7 +143,9 @@ export async function POST(request: NextRequest) {
       meetingTitle: meeting.title,
     })
   } catch (error) {
-    console.error('Prepare registration error:', error)
+    registrationLogger.error('prepare_registration_error', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+    })
     return errorResponse(ErrorCode.INTERNAL_ERROR)
   }
 }

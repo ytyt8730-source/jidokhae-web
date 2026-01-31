@@ -9,6 +9,7 @@ import { NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { successResponse, errorResponse, validateRequired, requireAuth } from '@/lib/api'
 import { ErrorCode } from '@/lib/errors'
+import { waitlistLogger } from '@/lib/logger'
 
 interface CancelWaitlistRequest extends Record<string, unknown> {
   waitlistId: string
@@ -61,7 +62,10 @@ export async function POST(request: NextRequest) {
       .eq('id', waitlistId)
 
     if (deleteError) {
-      console.error('Waitlist delete error:', deleteError)
+      waitlistLogger.error('cancel_waitlist_delete_error', {
+        waitlistId,
+        error: deleteError.message,
+      })
       return errorResponse(ErrorCode.INTERNAL_ERROR)
     }
 
@@ -90,7 +94,9 @@ export async function POST(request: NextRequest) {
       message: '대기가 취소되었습니다.',
     })
   } catch (error) {
-    console.error('Cancel waitlist error:', error)
+    waitlistLogger.error('cancel_waitlist_error', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+    })
     return errorResponse(ErrorCode.INTERNAL_ERROR)
   }
 }

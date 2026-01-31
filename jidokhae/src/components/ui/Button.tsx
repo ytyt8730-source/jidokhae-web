@@ -32,9 +32,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         'focus:ring-[var(--border)]',
       ].join(' '),
       danger: [
-        'bg-error text-white',
+        'bg-danger text-white',
         'hover:bg-red-700',
-        'focus:ring-error',
+        'focus:ring-danger',
       ].join(' '),
     }
 

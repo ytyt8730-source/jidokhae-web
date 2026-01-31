@@ -113,7 +113,10 @@ export async function POST(request: NextRequest) {
       .eq('id', registrationId)
 
     if (updateError) {
-      console.error('Cancel registration error:', updateError)
+      registrationLogger.error('cancel_registration_update_error', {
+        registrationId,
+        error: updateError.message,
+      })
       return errorResponse(ErrorCode.INTERNAL_ERROR)
     }
 
