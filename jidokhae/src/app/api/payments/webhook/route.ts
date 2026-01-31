@@ -20,29 +20,55 @@ const logger = createLogger('webhook')
 
 /**
  * 포트원 V2 웹훅 서명 검증
- * HMAC-SHA256 사용
+ * Standard Webhooks 스펙 준수
+ * https://github.com/standard-webhooks/standard-webhooks
  */
 function verifyWebhookSignature(
   payload: string,
-  signature: string,
+  webhookId: string,
+  webhookTimestamp: string,
+  webhookSignature: string,
   secret: string
 ): boolean {
-  if (!signature || !secret) {
+  if (!webhookId || !webhookTimestamp || !webhookSignature || !secret) {
     return false
   }
 
   try {
-    const expectedSignature = crypto
-      .createHmac('sha256', secret)
-      .update(payload, 'utf8')
-      .digest('hex')
-
-    // Timing-safe 비교로 타이밍 공격 방지
-    return crypto.timingSafeEqual(
-      Buffer.from(signature, 'hex'),
-      Buffer.from(expectedSignature, 'hex')
+    // 시크릿에서 whsec_ 접두어 제거 후 base64 디코딩
+    const secretBytes = Buffer.from(
+      secret.startsWith('whsec_') ? secret.slice(6) : secret,
+      'base64'
     )
-  } catch {
+
+    // 서명할 메시지: {id}.{timestamp}.{body}
+    const signedContent = `${webhookId}.${webhookTimestamp}.${payload}`
+
+    // HMAC-SHA256으로 서명 생성
+    const expectedSignature = crypto
+      .createHmac('sha256', secretBytes)
+      .update(signedContent, 'utf8')
+      .digest('base64')
+
+    // webhook-signature 헤더는 "v1,{base64_signature}" 형식
+    // 여러 서명이 있을 수 있으므로 모두 확인
+    const signatures = webhookSignature.split(' ')
+    for (const sig of signatures) {
+      const [version, signatureValue] = sig.split(',')
+      if (version === 'v1' && signatureValue) {
+        // Timing-safe 비교
+        const expected = Buffer.from(expectedSignature, 'base64')
+        const received = Buffer.from(signatureValue, 'base64')
+        if (expected.length === received.length &&
+            crypto.timingSafeEqual(expected, received)) {
+          return true
+        }
+      }
+    }
+
+    return false
+  } catch (error) {
+    logger.error('signature_verification_error', { error: String(error) })
     return false
   }
 }
@@ -218,9 +244,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   const startTime = Date.now()
 
   try {
-    // 1. 페이로드 읽기
+    // 1. 페이로드 및 Standard Webhooks 헤더 읽기
     const payload = await request.text()
-    const signature = request.headers.get('x-portone-signature') || ''
+    const webhookId = request.headers.get('webhook-id') || ''
+    const webhookTimestamp = request.headers.get('webhook-timestamp') || ''
+    const webhookSignature = request.headers.get('webhook-signature') || ''
 
     // 2. 웹훅 시크릿 확인
     const webhookSecret = env.server.portone.webhookSecret
@@ -236,10 +264,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       logger.warn('webhook_secret_missing_dev_mode', { message: 'Skipping signature verification in development' })
     }
 
-    // 3. 서명 검증 (프로덕션 필수, 개발 환경에서는 시크릿 있을 때만)
-    if (webhookSecret && !verifyWebhookSignature(payload, signature, webhookSecret)) {
+    // 3. 서명 검증 (Standard Webhooks 스펙)
+    if (webhookSecret && !verifyWebhookSignature(payload, webhookId, webhookTimestamp, webhookSignature, webhookSecret)) {
       logger.warn('webhook_signature_invalid', {
-        signatureLength: signature.length,
+        webhookId,
+        webhookTimestamp,
+        signatureLength: webhookSignature.length,
         payloadLength: payload.length,
       })
       return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
