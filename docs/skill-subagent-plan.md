@@ -1,6 +1,34 @@
 # 스킬/서브에이전트 생성 계획
 
 > UI/UX 개선 작업을 통해 도출된 필요 스킬 및 서브에이전트 목록
+>
+> **검토일**: 2026-01-31
+> **상태**: 검토 완료 - 최적화된 계획
+
+---
+
+## 0. 요약 (Executive Summary)
+
+### 최종 권장 사항
+
+| 구분 | 항목 | 우선순위 | 상태 |
+|------|------|----------|------|
+| **스킬** | `theme-migrate` | P0 | 신규 생성 |
+| **스킬** | `component-refactor` | P1 | 신규 생성 |
+| **스킬** | `db-migration` | P2 | 신규 생성 |
+| **에이전트** | `DesignSystem-Agent` | P1 | 신규 생성 |
+| **기존 활용** | `frontend-design` | - | 활용 강화 |
+| **기존 활용** | `deep-review` | - | 활용 강화 |
+
+### 제외된 항목 (과잉/중복)
+
+| 항목 | 제외 이유 | 대안 |
+|------|----------|------|
+| `animation-apply` | animations.ts로 표준화됨 | CLAUDE.md 가이드 |
+| `accessibility-audit` | Alpha 단계에서 불필요 | Lighthouse 활용 |
+| `responsive-check` | DevTools로 충분 | 수동 체크리스트 |
+| `Animation-Agent` | frontend-design과 중복 | 기존 스킬 활용 |
+| `Quality-Agent` | ESLint/TS가 커버 | CI/CD 통합 |
 
 ---
 
@@ -8,22 +36,24 @@
 
 ### 반복된 작업 패턴
 
-| 패턴 | 빈도 | 자동화 가치 |
-|------|------|------------|
-| 컴포넌트 분리/리팩토링 | 높음 | ★★★★★ |
-| Framer Motion 애니메이션 적용 | 높음 | ★★★★☆ |
-| 테마 변수 적용 (CSS 변수) | 매우 높음 | ★★★★★ |
-| 접근성(ARIA) 속성 추가 | 중간 | ★★★☆☆ |
-| TypeScript 타입 정의 | 높음 | ★★★★☆ |
-| 반응형 스타일 적용 | 높음 | ★★★★☆ |
+| 패턴 | 빈도 | 자동화 가치 | 권장 |
+|------|------|------------|------|
+| 테마 변수 적용 (CSS 변수) | 매우 높음 | ★★★★★ | ✅ 스킬 생성 |
+| 컴포넌트 분리/리팩토링 | 높음 | ★★★★★ | ✅ 스킬 생성 |
+| DB 스키마 마이그레이션 | 중간 | ★★★★☆ | ✅ 스킬 생성 |
+| Framer Motion 애니메이션 | 높음 | ★★★☆☆ | ❌ 문서화로 충분 |
+| 접근성(ARIA) 속성 | 중간 | ★★☆☆☆ | ❌ 정식 출시 전 검토 |
+| 반응형 스타일 | 높음 | ★★☆☆☆ | ❌ DevTools 활용 |
 
-### 현재 사용 중인 스킬
+### 현재 사용 중인 스킬 (활용 강화)
 
-- `frontend-design` - 프론트엔드 UI 구현
-- `fix-types` - TypeScript 오류 수정
-- `deep-review` - 코드 리뷰
-- `generate-docs` - 문서 생성
-- `feature-dev` - 기능 개발
+| 스킬 | 현재 활용 | 권장 활용 |
+|------|----------|----------|
+| `frontend-design` | 중간 | **UI 구현 전 필수 호출** + 애니메이션 가이드 포함 |
+| `fix-types` | 낮음 | **TypeScript 오류 시 즉시 호출** |
+| `deep-review` | 낮음 | **커밋 전 필수 실행** |
+| `generate-docs` | 낮음 | API 변경 시 호출 |
+| `feature-dev` | 중간 | 복잡한 기능 시 호출 |
 
 ---
 
@@ -233,16 +263,24 @@ Top files to migrate:
 
 ---
 
-## 4. 구현 우선순위
+## 4. 구현 우선순위 (수정됨)
 
-| 순위 | 스킬/에이전트 | 이유 |
-|------|--------------|------|
-| 1 | `theme-migrate` | 즉시 효과, 높은 빈도 |
-| 2 | `component-refactor` | 유지보수성 향상 |
-| 3 | `animation-apply` | 일관된 UX |
-| 4 | `DesignSystem-Agent` | 장기적 품질 |
-| 5 | `accessibility-audit` | 법적 요구사항 |
-| 6 | `responsive-check` | QA 효율화 |
+| 순위 | 스킬/에이전트 | 이유 | 예상 효과 |
+|------|--------------|------|----------|
+| **P0** | `theme-migrate` | 즉시 효과, 50+ 파일 적용 필요 | 작업 시간 80% 단축 |
+| **P1** | `component-refactor` | 유지보수성 향상, mypage 분리 성공 사례 | 코드 품질 향상 |
+| **P1** | `DesignSystem-Agent` | Design System v3.3 일관성 | 브랜드 톤 유지 |
+| **P2** | `db-migration` | 스키마 변경 안전성 | 데이터 무결성 |
+
+### 제외된 항목
+
+| 항목 | 제외 이유 |
+|------|----------|
+| `animation-apply` | `lib/animations.ts` 표준화로 충분, 문서화가 더 효과적 |
+| `accessibility-audit` | Alpha 단계에서 ROI 낮음, 정식 출시 전 Lighthouse 활용 |
+| `responsive-check` | 브라우저 DevTools로 충분, 자동화 ROI 낮음 |
+| `Animation-Agent` | `frontend-design` 스킬이 이미 커버 가능 |
+| `Quality-Agent` | ESLint + TypeScript가 역할 수행, CI/CD 통합 권장 |
 
 ---
 
@@ -291,14 +329,43 @@ Top files to migrate:
 
 ---
 
-## 7. 다음 단계
+## 7. 다음 단계 (수정됨)
 
-1. **즉시**: `theme-migrate` 스킬 프로토타입 작성
-2. **1주 내**: `component-refactor` 스킬 구현
-3. **2주 내**: `DesignSystem-Agent` 설계 및 테스트
-4. **지속적**: 기존 스킬 활용 패턴 문서화
+### 즉시 실행 (비용 0)
+
+1. **CLAUDE.md 업데이트**: 애니메이션 가이드 추가 (animation-apply 대체)
+2. **기존 스킬 활용 규칙화**: `deep-review` 커밋 전 필수
+
+### 단기 (1-2주)
+
+3. **`theme-migrate` 스킬 프로토타입**: 테마 변수 마이그레이션 자동화
+4. **`component-refactor` 스킬 구현**: 대형 컴포넌트 분리 자동화
+
+### 중기 (Beta 전)
+
+5. **`DesignSystem-Agent` 설계**: Design System v3.3 일관성 에이전트
+6. **`db-migration` 스킬 검토**: 스키마 변경 자동화 필요성 재평가
+
+### 지속적
+
+7. 기존 스킬 활용 패턴 문서화
+8. 스킬 효과 측정 및 개선
+
+---
+
+## 8. 비용-효과 분석
+
+| 접근 방식 | 비용 | 효과 | ROI |
+|----------|------|------|-----|
+| 기존 스킬 활용 강화 | 0 | 중간 | ⭐⭐⭐⭐⭐ |
+| CLAUDE.md 가이드 추가 | 낮음 | 중간 | ⭐⭐⭐⭐⭐ |
+| theme-migrate 스킬 | 중간 | 높음 | ⭐⭐⭐⭐ |
+| component-refactor | 중간 | 높음 | ⭐⭐⭐⭐ |
+| DesignSystem-Agent | 높음 | 높음 | ⭐⭐⭐ |
+| accessibility-audit | 높음 | 낮음 (현 단계) | ⭐ |
 
 ---
 
 *작성일: 2026-01-31*
+*검토일: 2026-01-31*
 *작성자: Claude Code (UI/UX 개선 작업 기반)*
