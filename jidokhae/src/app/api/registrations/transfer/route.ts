@@ -45,27 +45,59 @@ export async function POST(request: Request) {
       throw new AppError(ErrorCode.MEETING_NOT_FOUND)
     }
 
-    // 2. 모임 상태 확인
-    if (meeting.status !== 'open') {
-      throw new AppError(ErrorCode.MEETING_CLOSED)
-    }
-
-    // 3. 정원 확인 (pending_transfer도 정원에 포함)
-    if (meeting.current_participants >= meeting.capacity) {
-      throw new AppError(ErrorCode.CAPACITY_EXCEEDED)
-    }
-
-    // 4. 중복 신청 확인
-    const { data: existingReg } = await supabase
-      .from('registrations')
-      .select('id, status')
-      .eq('user_id', authUser!.id)
-      .eq('meeting_id', meetingId)
-      .neq('status', 'cancelled')
+    // 2. 정원 확인 및 예약 (FOR UPDATE 락 사용)
+    // 동시 요청에서 정원 초과를 방지하기 위한 원자적 체크
+    const { data: capacityCheck, error: capacityError } = await supabaseAdmin
+      .rpc('check_and_reserve_capacity', {
+        p_meeting_id: meetingId,
+        p_user_id: authUser!.id
+      })
       .single()
 
-    if (existingReg) {
-      throw new AppError(ErrorCode.REGISTRATION_ALREADY_EXISTS)
+    if (capacityError) {
+      logger.error('Capacity check RPC failed', {
+        error: capacityError.message,
+        meetingId,
+        userId: authUser!.id
+      })
+      throw new AppError(ErrorCode.DATABASE_ERROR, { message: capacityError.message })
+    }
+
+    // RPC 결과 처리
+    if (!capacityCheck?.success) {
+      const errorMessage = capacityCheck?.message || 'UNKNOWN_ERROR'
+      switch (errorMessage) {
+        case 'MEETING_NOT_FOUND':
+          throw new AppError(ErrorCode.MEETING_NOT_FOUND)
+        case 'MEETING_CLOSED':
+          throw new AppError(ErrorCode.MEETING_CLOSED)
+        case 'CAPACITY_EXCEEDED':
+          throw new AppError(ErrorCode.CAPACITY_EXCEEDED)
+        case 'ALREADY_REGISTERED':
+          throw new AppError(ErrorCode.REGISTRATION_ALREADY_EXISTS)
+        default:
+          throw new AppError(ErrorCode.DATABASE_ERROR, { message: errorMessage })
+      }
+    }
+
+    // RPC가 이미 pending 상태의 registration을 생성했으므로, 해당 레코드 조회
+    const { data: pendingReg, error: pendingError } = await supabaseAdmin
+      .from('registrations')
+      .select('id')
+      .eq('user_id', authUser!.id)
+      .eq('meeting_id', meetingId)
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single()
+
+    if (pendingError || !pendingReg) {
+      logger.error('Failed to find pending registration after RPC', {
+        error: pendingError?.message,
+        meetingId,
+        userId: authUser!.id
+      })
+      throw new AppError(ErrorCode.DATABASE_ERROR)
     }
 
     // 5. 사용자 정보 조회
@@ -80,13 +112,11 @@ export async function POST(request: Request) {
       Number(process.env.TRANSFER_DEADLINE_HOURS) || DEFAULT_TRANSFER_DEADLINE_HOURS
     )
 
-    // 7. 신청 생성 (pending_transfer 상태)
-    // 트리거가 current_participants를 +1 해줌
+    // 3. RPC가 생성한 pending 상태를 pending_transfer로 업데이트
+    // 트리거가 current_participants를 관리함
     const { data: registration, error: regError } = await supabaseAdmin
       .from('registrations')
-      .insert({
-        user_id: authUser!.id,
-        meeting_id: meetingId,
+      .update({
         status: 'pending_transfer',
         payment_status: 'pending',
         payment_method: 'transfer',
@@ -94,14 +124,16 @@ export async function POST(request: Request) {
         transfer_sender_name: senderName,
         transfer_deadline: deadline.toISOString(),
       })
+      .eq('id', pendingReg.id)
       .select()
       .single()
 
     if (regError) {
-      logger.error('Failed to create transfer registration', {
+      logger.error('Failed to update transfer registration', {
         error: regError.message,
         userId: authUser!.id,
         meetingId,
+        registrationId: pendingReg.id,
       })
       throw new AppError(ErrorCode.DATABASE_ERROR, { message: regError.message })
     }

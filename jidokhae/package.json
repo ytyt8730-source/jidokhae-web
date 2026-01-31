@@ -18,6 +18,7 @@
     "screenshot:install": "npx playwright install chromium"
   },
   "dependencies": {
+    "@sentry/nextjs": "^10.38.0",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.90.1",
     "canvas-confetti": "^1.9.4",

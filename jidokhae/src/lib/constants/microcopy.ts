@@ -175,6 +175,20 @@ export const MICROCOPY = {
     // 완료 메시지
     complete: '다음에 꼭 만나요',
     completeSub: '언제든 다시 함께할 수 있어요. 다음 모임에서 뵙기를 기대할게요',
+
+    // 마음 돌리기 설득 요소 (PRD 섹션 6 요구사항)
+    persuasion: {
+      withOthers: (names: string[]) =>
+        names.length === 1
+          ? `${names[0]}님도 함께 참여해요`
+          : names.length === 2
+            ? `${names[0]}님, ${names[1]}님도 함께 참여해요`
+            : `${names[0]}님 외 ${names.length - 1}명이 함께 참여해요`,
+      soonMeeting: (days: number) =>
+        days === 0 ? '오늘 모임이에요!' : days === 1 ? '내일 모임이에요' : `${days}일 뒤에 만나요`,
+      almostFull: (remaining: number) =>
+        remaining <= 2 ? `자리가 ${remaining}개 남았어요` : '',
+    },
   },
 } as const;
 

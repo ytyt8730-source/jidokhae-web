@@ -23,8 +23,12 @@ const serverOnlyEnvVars = {
 
 const optionalEnvVars = {
   NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+  // Sentry 설정 (Beta 출시 조건)
+  NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
   SENTRY_DSN: process.env.SENTRY_DSN,
   SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,
+  SENTRY_ORG: process.env.SENTRY_ORG,
+  SENTRY_PROJECT: process.env.SENTRY_PROJECT,
 } as const
 
 // 타입 정의
@@ -102,8 +106,10 @@ export const env = {
         apiSecret: serverOnlyEnvVars.SOLAPI_API_SECRET ?? '',
       },
       sentry: {
-        dsn: optionalEnvVars.SENTRY_DSN ?? '',
+        dsn: optionalEnvVars.SENTRY_DSN ?? optionalEnvVars.NEXT_PUBLIC_SENTRY_DSN ?? '',
         authToken: optionalEnvVars.SENTRY_AUTH_TOKEN ?? '',
+        org: optionalEnvVars.SENTRY_ORG ?? '',
+        project: optionalEnvVars.SENTRY_PROJECT ?? '',
       },
     }
   },
@@ -124,7 +130,7 @@ export function isConfigured(service: 'supabase' | 'portone' | 'solapi' | 'sentr
     case 'solapi':
       return typeof window === 'undefined' && !!(env.server.solapi.apiKey && env.server.solapi.apiSecret)
     case 'sentry':
-      return !!optionalEnvVars.SENTRY_DSN
+      return !!(optionalEnvVars.SENTRY_DSN || optionalEnvVars.NEXT_PUBLIC_SENTRY_DSN)
     default:
       return false
   }

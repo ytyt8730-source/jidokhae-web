@@ -1,3 +1,5 @@
+import * as Sentry from '@sentry/nextjs'
+
 /**
  * 로그 레벨
  */
@@ -133,10 +135,31 @@ function log(entry: LogEntry): void {
       break
   }
 
-  // TODO: 프로덕션에서는 Sentry, DataDog 등으로 전송
-  // if (process.env.NODE_ENV === 'production' && entry.level === LogLevel.ERROR) {
-  //   Sentry.captureException(entry.error)
-  // }
+  // 프로덕션에서 에러를 Sentry로 전송
+  if (process.env.NODE_ENV === 'production') {
+    if (entry.level === LogLevel.ERROR && entry.error) {
+      Sentry.captureException(new Error(entry.error.message), {
+        tags: {
+          service: entry.service,
+          action: entry.action,
+        },
+        extra: {
+          ...entry.metadata,
+          errorCode: entry.error.code,
+        },
+        user: entry.userId ? { id: entry.userId } : undefined,
+      })
+    } else if (entry.level === LogLevel.WARN) {
+      Sentry.captureMessage(`[${entry.service}] ${entry.action}`, {
+        level: 'warning',
+        tags: {
+          service: entry.service,
+          action: entry.action,
+        },
+        extra: entry.metadata,
+      })
+    }
+  }
 }
 
 // =============================================
@@ -158,17 +181,62 @@ export interface Logger {
 }
 
 /**
- * 서비스별 로거 생성
+ * userId가 설정된 로거 생성 (내부 헬퍼)
  */
-export function createLogger(service: LogService): Logger {
-  let currentUserId: string | undefined
-
+function createLoggerWithUser(service: LogService, userId: string): Logger {
   const baseEntry = (level: LogLevel, action: string, metadata?: Record<string, unknown>) => ({
     timestamp: new Date().toISOString(),
     level,
     service,
     action,
-    userId: currentUserId,
+    userId,
+    metadata,
+  })
+
+  return {
+    debug(action: string, metadata?: Record<string, unknown>) {
+      log(baseEntry(LogLevel.DEBUG, action, metadata))
+    },
+    info(action: string, metadata?: Record<string, unknown>) {
+      log(baseEntry(LogLevel.INFO, action, metadata))
+    },
+    warn(action: string, metadata?: Record<string, unknown>) {
+      log(baseEntry(LogLevel.WARN, action, metadata))
+    },
+    error(action: string, metadata?: Record<string, unknown>) {
+      log(baseEntry(LogLevel.ERROR, action, metadata))
+    },
+    withUser(newUserId: string): Logger {
+      return createLoggerWithUser(service, newUserId)
+    },
+    startTimer(): TimerResult {
+      const start = Date.now()
+      return {
+        elapsed(): number {
+          return Date.now() - start
+        },
+        done(action: string, metadata?: Record<string, unknown>): void {
+          const duration = Date.now() - start
+          log({
+            ...baseEntry(LogLevel.INFO, action, metadata),
+            duration,
+          })
+        },
+      }
+    },
+  }
+}
+
+/**
+ * 서비스별 로거 생성
+ */
+export function createLogger(service: LogService): Logger {
+  const baseEntry = (level: LogLevel, action: string, metadata?: Record<string, unknown>) => ({
+    timestamp: new Date().toISOString(),
+    level,
+    service,
+    action,
+    userId: undefined,
     metadata,
   })
 
@@ -190,9 +258,7 @@ export function createLogger(service: LogService): Logger {
     },
 
     withUser(userId: string): Logger {
-      const childLogger = createLogger(service)
-      currentUserId = userId
-      return childLogger
+      return createLoggerWithUser(service, userId)
     },
 
     startTimer(): TimerResult {

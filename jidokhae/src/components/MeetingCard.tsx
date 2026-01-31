@@ -1,23 +1,44 @@
 'use client'
 
 import Link from 'next/link'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Calendar, Clock, MapPin, Users, ChevronRight, BookOpen } from 'lucide-react'
 import Badge from '@/components/ui/Badge'
 import { KongIcon } from '@/components/icons/KongIcon'
 import { formatFee } from '@/lib/utils'
 import { cardHoverTap, staggerItem, pulseAnimation } from '@/lib/animations'
+import { useMeetingParticipants } from '@/hooks/useMeetingParticipants'
 import type { MeetingWithStatus } from '@/types/database'
 
 interface MeetingCardProps {
   meeting: MeetingWithStatus
+  /** Realtime 구독 활성화 여부 (기본: true) */
+  enableRealtime?: boolean
+}
+
+// 숫자 변경 애니메이션
+const countAnimation = {
+  initial: { opacity: 0, y: -10 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: 10 },
+  transition: { duration: 0.2 }
 }
 
 /**
  * MeetingCard - Design System v3.3 (목업 반영)
  * Atmospheric Cover 영역 + 메타 정보 + 가격
+ * Beta: Realtime 참가 인원 업데이트
  */
-export default function MeetingCard({ meeting }: MeetingCardProps) {
+export default function MeetingCard({ meeting, enableRealtime = true }: MeetingCardProps) {
+  // Realtime 참가 인원 구독
+  const { participantCount } = useMeetingParticipants({
+    meetingId: meeting.id,
+    initialCount: meeting.current_participants,
+  })
+
+  // Realtime이 비활성화된 경우 원본 값 사용
+  const displayCount = enableRealtime ? participantCount : meeting.current_participants
+
   const getStatusBadge = () => {
     switch (meeting.displayStatus) {
       case 'closing_soon':
@@ -110,7 +131,14 @@ export default function MeetingCard({ meeting }: MeetingCardProps) {
               </span>
               <span className="flex items-center gap-1">
                 <Users size={14} strokeWidth={1.5} />
-                {meeting.current_participants}명 참여
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={displayCount}
+                    {...countAnimation}
+                  >
+                    {displayCount}명 참여
+                  </motion.span>
+                </AnimatePresence>
               </span>
             </div>
 

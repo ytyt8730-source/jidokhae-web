@@ -12,7 +12,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Calendar, AlertCircle } from 'lucide-react'
+import { X, Calendar, AlertCircle, Users, Clock } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import RefundAccountModal from '@/components/RefundAccountModal'
 import { formatMeetingDate, formatFee } from '@/lib/utils'
@@ -24,12 +24,19 @@ import type { Meeting, Registration, RefundRule, RefundAccountInfo } from '@/typ
 
 const logger = createLogger('payment')
 
+/** 함께 참가하는 회원 정보 */
+interface OtherParticipant {
+  name: string
+}
+
 interface CancelModalProps {
   isOpen: boolean
   onClose: () => void
   meeting: Meeting
   registration: Registration
   refundRules: RefundRule[]
+  /** 함께 참가하는 다른 회원 목록 (마음 돌리기 설득용) */
+  otherParticipants?: OtherParticipant[]
 }
 
 const CANCEL_REASONS = [
@@ -45,6 +52,7 @@ export default function CancelModal({
   meeting,
   registration,
   refundRules,
+  otherParticipants = [],
 }: CancelModalProps) {
   const router = useRouter()
   const [selectedReason, setSelectedReason] = useState('')
@@ -62,6 +70,16 @@ export default function CancelModal({
   const refundPercent = getRefundPercentText(new Date(meeting.datetime), refundRules)
   const paymentAmount = registration.payment_amount || meeting.fee
   const refundAmount = Math.floor(paymentAmount * (parseInt(refundPercent) / 100))
+
+  // 마음 돌리기 설득 요소 계산 (PRD 섹션 6)
+  const meetingDate = new Date(meeting.datetime)
+  const now = new Date()
+  const daysUntilMeeting = Math.ceil(
+    (meetingDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+  )
+  const isSoonMeeting = daysUntilMeeting <= 3
+  const remainingSpots = meeting.capacity - meeting.current_participants
+  const hasOtherParticipants = otherParticipants.length > 0
 
   // ESC 키로 모달 닫기
   useEffect(() => {
@@ -199,6 +217,45 @@ export default function CancelModal({
 
               {/* 본문 */}
               <div className="p-4 space-y-4">
+                {/* 마음 돌리기 설득 섹션 (PRD 섹션 6: 취소 마찰) */}
+                {(hasOtherParticipants || isSoonMeeting || remainingSpots <= 2) && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-brand-50 border border-brand-100 rounded-xl p-4 space-y-2"
+                  >
+                    {/* 함께 참가하는 회원 */}
+                    {hasOtherParticipants && (
+                      <div className="flex items-center gap-2 text-sm text-brand-700">
+                        <Users size={16} strokeWidth={1.5} className="text-brand-500" />
+                        <span>
+                          {MICROCOPY.cancel.persuasion.withOthers(
+                            otherParticipants.slice(0, 3).map(p => p.name)
+                          )}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* 모임 임박 */}
+                    {isSoonMeeting && (
+                      <div className="flex items-center gap-2 text-sm text-brand-700">
+                        <Clock size={16} strokeWidth={1.5} className="text-brand-500" />
+                        <span className={daysUntilMeeting === 0 ? 'font-semibold' : ''}>
+                          {MICROCOPY.cancel.persuasion.soonMeeting(daysUntilMeeting)}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* 자리 거의 다 참 */}
+                    {remainingSpots <= 2 && remainingSpots > 0 && (
+                      <div className="flex items-center gap-2 text-sm text-amber-700">
+                        <AlertCircle size={16} strokeWidth={1.5} className="text-amber-500" />
+                        <span>{MICROCOPY.cancel.persuasion.almostFull(remainingSpots)}</span>
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+
                 {/* 모임 정보 */}
                 <div className="bg-gray-50 rounded-xl p-4">
                   <div className="flex items-start justify-between">
