@@ -138,7 +138,7 @@ export async function notifyWaitlistSpot(
     templateCode: NOTIFICATION_TEMPLATES.WAITLIST_SPOT,
     phone: target.phone,
     variables: {
-      회원명: target.userName,
+      이름: target.userName,
       모임명: target.meetingTitle,
       응답시간: getResponseTimeText(target.meetingDatetime),
     },

@@ -1,7 +1,7 @@
-import MeetingCard from '@/components/MeetingCard'
 import { createClient } from '@/lib/supabase/server'
 import { calculateMeetingStatus } from '@/lib/utils'
 import { CalendarDays } from 'lucide-react'
+import MeetingsListWithFilter from '@/components/MeetingsListWithFilter'
 import type { Meeting } from '@/types/database'
 
 export const metadata = {
@@ -9,6 +9,13 @@ export const metadata = {
   description: '지독해 독서모임 일정을 확인하세요.',
 }
 
+/**
+ * MeetingsPage - 모임 목록 페이지
+ *
+ * Design Enhancement (Phase 2-1):
+ * - 필터 UI로 유형별 탐색
+ * - Spring Stagger 애니메이션으로 리스트 진입 효과
+ */
 export default async function MeetingsPage() {
   const supabase = await createClient()
 
@@ -26,31 +33,17 @@ export default async function MeetingsPage() {
     <div className="max-w-5xl mx-auto px-4 py-8">
       {/* 페이지 헤더 */}
       <div className="mb-8">
-        <h1 className="flex items-center gap-3 text-2xl font-bold heading-themed text-brand-800 mb-2">
-          <CalendarDays className="text-brand-600" size={28} strokeWidth={1.5} />
+        <h1 className="flex items-center gap-3 text-2xl font-bold heading-themed text-text mb-2">
+          <CalendarDays className="text-primary" size={28} strokeWidth={1.5} />
           모임 일정
         </h1>
-        <p className="text-gray-600">
+        <p className="text-text-muted">
           다가오는 모임을 확인하고 참여해보세요.
         </p>
       </div>
 
-      {/* 모임 목록 */}
-      {meetingsWithStatus.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {meetingsWithStatus.map((meeting) => (
-            <MeetingCard key={meeting.id} meeting={meeting} />
-          ))}
-        </div>
-      ) : (
-        <div className="card p-12 text-center">
-          <p className="text-gray-500 mb-2">등록된 모임이 없습니다.</p>
-          <p className="text-sm text-gray-400">
-            곧 새로운 모임이 등록될 예정이에요.
-          </p>
-        </div>
-      )}
+      {/* 모임 목록 (필터 + Stagger 애니메이션) */}
+      <MeetingsListWithFilter meetings={meetingsWithStatus} />
     </div>
   )
 }
-

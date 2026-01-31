@@ -140,7 +140,7 @@ async function sendWelcomeNotification(target: WelcomeTarget): Promise<boolean> 
   })
 
   const message = template.message_template
-    .replace(/#{회원명}/g, target.userName)
+    .replace(/#{이름}/g, target.userName)
     .replace(/#{시간}/g, meetingTime)
     .replace(/#{장소}/g, target.meetingLocation)
     .replace(/#{참가비}/g, String(target.meetingFee))

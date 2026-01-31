@@ -11,6 +11,7 @@ import { Calendar, MapPin, Users, ArrowLeft, Medal } from 'lucide-react'
 import { KongIcon } from '@/components/icons/KongIcon'
 import RefundRulesSection from '@/components/RefundRulesSection'
 import AtmospherePreview from '@/components/AtmospherePreview'
+import MobileStickyCTA from '@/components/MobileStickyCTA'
 import type { Metadata } from 'next'
 import type { User, Meeting, RefundPolicy } from '@/types/database'
 
@@ -146,8 +147,11 @@ export default async function MeetingDetailPage({ params }: PageProps) {
   // 환불 규정 데이터 추출
   const refundRules = refundPolicy?.rules as { days_before: number; refund_percent: number }[] | undefined
 
+  // Mobile Sticky CTA 표시 여부
+  const showStickyCTA = !alreadyRegistered && !userWaitlist && meetingWithStatus.displayStatus !== 'closed'
+
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
+    <div className="max-w-3xl mx-auto px-4 py-8 pb-24 md:pb-8">
       {/* 뒤로 가기 */}
       <Link
         href="/meetings"
@@ -274,6 +278,23 @@ export default async function MeetingDetailPage({ params }: PageProps) {
           </div>
         </div>
       </article>
+
+      {/* Mobile Sticky CTA (Sarah Chen: 모바일 전환율 최적화) */}
+      <MobileStickyCTA show={showStickyCTA}>
+        {meetingWithStatus.displayStatus === 'waitlist_available' ? (
+          <WaitlistButton
+            meeting={meeting}
+            user={currentUser}
+            className="w-full"
+          />
+        ) : (
+          <PaymentButton
+            meeting={meeting}
+            user={currentUser}
+            className="w-full"
+          />
+        )}
+      </MobileStickyCTA>
     </div>
   )
 }

@@ -251,7 +251,7 @@ export async function processSegmentReminders(): Promise<{
       templateCode: NOTIFICATION_TEMPLATES.ELIGIBILITY_WARNING,
       phone: target.phone,
       variables: {
-        회원명: target.userName,
+        이름: target.userName,
       },
       userId: target.userId,
     })
@@ -281,7 +281,7 @@ export async function processSegmentReminders(): Promise<{
       templateCode: NOTIFICATION_TEMPLATES.DORMANT_RISK,
       phone: target.phone,
       variables: {
-        회원명: target.userName,
+        이름: target.userName,
       },
       userId: target.userId,
     })
@@ -311,7 +311,7 @@ export async function processSegmentReminders(): Promise<{
       templateCode: NOTIFICATION_TEMPLATES.ONBOARDING_RISK,
       phone: target.phone,
       variables: {
-        회원명: target.userName,
+        이름: target.userName,
       },
       userId: target.userId,
     })
@@ -354,7 +354,7 @@ export async function processMonthlyEncourage(): Promise<{
       templateCode: NOTIFICATION_TEMPLATES.MONTHLY_ENCOURAGE,
       phone: target.phone,
       variables: {
-        회원명: target.userName,
+        이름: target.userName,
       },
       userId: target.userId,
     })

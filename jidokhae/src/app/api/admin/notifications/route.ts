@@ -199,7 +199,7 @@ export async function POST(request: NextRequest) {
         templateCode: NOTIFICATION_TEMPLATES.ADMIN_NOTICE,
         phone: target.phone,
         variables: {
-          회원명: target.userName,
+          이름: target.userName,
           메시지: message,
         },
         userId: target.userId,

@@ -264,7 +264,6 @@ export async function sendReminder(
     templateCode,
     phone: target.phone,
     variables: {
-      회원명: target.userName,
       이름: target.userName,
       모임명: target.meetingTitle,
       날짜: formatMeetingDate(target.meetingDatetime),

@@ -146,7 +146,7 @@ async function sendFollowupNotification(target: FollowupTarget): Promise<boolean
   }
 
   let message = template.message_template
-    .replace(/#{회원명}/g, target.userName)
+    .replace(/#{이름}/g, target.userName)
     .replace(/#{모임명}/g, target.firstMeetingTitle)
 
   // 다음 모임 정보 추가

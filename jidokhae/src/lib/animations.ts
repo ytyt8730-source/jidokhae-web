@@ -512,3 +512,145 @@ export const bentoItem: Variants = {
     },
   },
 }
+
+// ============================================
+// Design System v3.3: Spring 기반 페이지 진입 애니메이션
+// ============================================
+
+/**
+ * Spring 페이지 페이드인 (Yuki Tanaka: 물리 기반 자연스러운 모션)
+ * - 페이지 전체 또는 주요 섹션의 진입 효과
+ * - scale과 함께 사용하여 3D 느낌 부여
+ */
+export const springFadeIn: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 20,
+    scale: 0.98,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      type: 'spring',
+      stiffness: 200,
+      damping: 20,
+      mass: 0.8,
+    },
+  },
+}
+
+/**
+ * Spring 카드 진입 (부드러운 탄성 효과)
+ * - 개별 카드나 컨텐츠 블록에 사용
+ */
+export const springCard: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 30,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 150,
+      damping: 15,
+    },
+  },
+}
+
+/**
+ * Spring Stagger 컨테이너 (카드 리스트용)
+ * - 자식 요소들이 순차적으로 Spring 애니메이션
+ */
+export const springStaggerContainer: Variants = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.1,
+    },
+  },
+}
+
+/**
+ * Spring Stagger 아이템
+ * - springStaggerContainer의 자식으로 사용
+ */
+export const springStaggerItem: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 24,
+    scale: 0.96,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      type: 'spring',
+      stiffness: 180,
+      damping: 18,
+    },
+  },
+}
+
+/**
+ * Spring 섹션 진입 (더 큰 요소용)
+ * - Hero 섹션이나 주요 컨텐츠 블록에 사용
+ */
+export const springSectionFadeIn: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 40,
+    scale: 0.97,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      type: 'spring',
+      stiffness: 120,
+      damping: 20,
+      mass: 1,
+    },
+  },
+}
+
+/**
+ * Spring 모달/Sheet 진입
+ * - Bottom Sheet, Modal 등에 사용
+ */
+export const springModalEnter: Variants = {
+  hidden: {
+    opacity: 0,
+    scale: 0.9,
+    y: 20,
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 300,
+      damping: 25,
+      mass: 0.8,
+    },
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.95,
+    y: 10,
+    transition: {
+      duration: 0.15,
+      ease: 'easeIn',
+    },
+  },
+}

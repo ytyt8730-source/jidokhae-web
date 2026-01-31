@@ -58,7 +58,7 @@ async function sendWarningNotification(user: {
   }
 
   const message = template.message_template
-    .replace(/#{회원명}/g, user.name)
+    .replace(/#{이름}/g, user.name)
     .replace(/#{남은일수}/g, String(user.daysRemaining))
 
   // TODO: 실제 알림톡 발송 (Solapi)

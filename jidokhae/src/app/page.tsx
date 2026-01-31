@@ -83,12 +83,20 @@ export default async function HomePage() {
               <br className="hidden sm:block" />
               책을 통해 인사이트를 나누고, 사유를 확장합니다.
             </p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <Link href="/meetings" className="hero-btn-primary font-semibold rounded-xl px-6 py-4 transition-all duration-200 hover:-translate-y-[1px] active:scale-[0.98]">
-                모임 일정 보기
+            {/* Sarah Chen: 단일 CTA로 전환율 극대화 - 인지 부하 감소 */}
+            <div className="mt-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <Link
+                href="/meetings"
+                className="hero-btn-primary inline-flex items-center gap-2 font-semibold rounded-xl px-8 py-4 transition-all duration-200 hover:-translate-y-[1px] hover:shadow-lg active:scale-[0.98]"
+              >
+                모임 둘러보기
+                <ArrowRight size={18} strokeWidth={2} />
               </Link>
-              <Link href="/about" className="hero-btn-secondary font-medium rounded-xl px-6 py-4 border transition-all duration-200 active:scale-[0.98]">
-                멤버십 안내
+              <Link
+                href="/about"
+                className="text-[var(--text-muted)] hover:text-[var(--text)] font-medium transition-colors"
+              >
+                멤버십 안내 →
               </Link>
             </div>
           </div>
@@ -115,15 +123,15 @@ export default async function HomePage() {
       {authUser && myRegistrations.length > 0 && (
         <section className="bg-[var(--bg-surface)] border-b border-[var(--border)]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="bg-gradient-to-r from-brand-50 to-brand-100/30 rounded-2xl p-6 lg:p-8">
+            <div className="bg-gradient-to-r from-primary/5 to-primary/10 rounded-2xl p-6 lg:p-8">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="flex items-center gap-2 text-lg font-semibold text-brand-800">
-                  <CheckCircle className="text-brand-600" size={20} strokeWidth={1.5} />
+                <h2 className="flex items-center gap-2 text-lg font-semibold text-text">
+                  <CheckCircle className="text-primary" size={20} strokeWidth={1.5} />
                   예정된 참여 일정
                 </h2>
                 <Link
                   href="/mypage"
-                  className="text-sm text-brand-600 hover:text-brand-700 font-medium"
+                  className="text-sm text-primary hover:text-primary/80 font-medium transition-colors"
                 >
                   전체 보기
                 </Link>
@@ -133,13 +141,13 @@ export default async function HomePage() {
                   <Link
                     key={reg.id}
                     href={`/meetings/${reg.meeting_id}`}
-                    className="flex items-center justify-between p-4 bg-white rounded-xl hover:shadow-card transition-all duration-200"
+                    className="flex items-center justify-between p-4 bg-[var(--bg-base)] rounded-xl hover:shadow-card transition-all duration-200"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <Badge variant="success">{getDday(reg.meetings.datetime)}</Badge>
-                      <span className="font-medium text-brand-800 truncate">{reg.meetings.title}</span>
+                      <span className="font-medium text-text truncate">{reg.meetings.title}</span>
                     </div>
-                    <span className="text-sm text-gray-500 flex-shrink-0 ml-2">
+                    <span className="text-sm text-text-muted flex-shrink-0 ml-2">
                       {formatMeetingDate(reg.meetings.datetime)}
                     </span>
                   </Link>
@@ -156,12 +164,12 @@ export default async function HomePage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-brand-100 rounded-xl flex items-center justify-center">
-                  <CalendarDays className="text-brand-600" size={20} strokeWidth={1.5} />
+                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                  <CalendarDays className="text-primary" size={20} strokeWidth={1.5} />
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold text-brand-800">이번 주 모임</h2>
-                  <p className="text-sm text-gray-500">곧 시작되는 세션</p>
+                  <h2 className="text-xl font-semibold text-text">이번 주 모임</h2>
+                  <p className="text-sm text-text-muted">곧 시작되는 세션</p>
                 </div>
               </div>
             </div>
@@ -175,19 +183,19 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm">
-                <Sparkles className="text-brand-600" size={20} strokeWidth={1.5} />
+              <div className="w-10 h-10 bg-[var(--bg-surface)] rounded-xl flex items-center justify-center shadow-sm">
+                <Sparkles className="text-primary" size={20} strokeWidth={1.5} />
               </div>
               <div>
-                <h2 className="text-xl font-semibold text-brand-800">
+                <h2 className="text-xl font-semibold text-text">
                   {thisWeekMeetings.length > 0 ? '다가오는 모임' : '모임 일정'}
                 </h2>
-                <p className="text-sm text-gray-500">큐레이션된 독서 경험</p>
+                <p className="text-sm text-text-muted">큐레이션된 독서 경험</p>
               </div>
             </div>
             <Link
               href="/meetings"
-              className="flex items-center gap-1 text-sm text-brand-600 hover:text-brand-700 font-medium"
+              className="flex items-center gap-1 text-sm text-primary hover:text-primary/80 font-medium transition-colors"
             >
               전체 일정
               <ArrowRight size={16} strokeWidth={1.5} />
@@ -208,8 +216,8 @@ export default async function HomePage() {
       <section className="bg-bg-surface border-t border-[var(--border)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
           <div className="max-w-3xl mx-auto text-center">
-            <div className="w-16 h-16 bg-brand-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <Users className="text-brand-600" size={28} strokeWidth={1.5} />
+            <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <Users className="text-primary" size={28} strokeWidth={1.5} />
             </div>
             <h3 className="heading-themed text-2xl lg:text-3xl font-bold text-text mb-4">
               지독해 멤버십
