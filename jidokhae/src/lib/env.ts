@@ -16,6 +16,7 @@ const serverOnlyEnvVars = {
   SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
   PORTONE_API_KEY: process.env.PORTONE_API_KEY,
   PORTONE_API_SECRET: process.env.PORTONE_API_SECRET,
+  PORTONE_WEBHOOK_SECRET: process.env.PORTONE_WEBHOOK_SECRET,
   SOLAPI_API_KEY: process.env.SOLAPI_API_KEY,
   SOLAPI_API_SECRET: process.env.SOLAPI_API_SECRET,
 } as const
@@ -94,6 +95,7 @@ export const env = {
       portone: {
         apiKey: serverOnlyEnvVars.PORTONE_API_KEY ?? '',
         apiSecret: serverOnlyEnvVars.PORTONE_API_SECRET ?? '',
+        webhookSecret: serverOnlyEnvVars.PORTONE_WEBHOOK_SECRET ?? '',
       },
       solapi: {
         apiKey: serverOnlyEnvVars.SOLAPI_API_KEY ?? '',

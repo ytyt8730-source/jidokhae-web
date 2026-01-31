@@ -28,6 +28,10 @@ NEXT_PUBLIC_PORTONE_CHANNEL_KEY=channel-key-xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 # 서버 전용 (환불/취소 처리에 필요)
 # 포트원 관리자 → 결제연동 → 연동 정보에서 확인
 PORTONE_API_SECRET=PortOneSecret-xxxxx
+
+# 웹훅 시크릿 (결제 완료/취소 이벤트 검증용)
+# 포트원 관리자 → 결제연동 → 웹훅 설정에서 발급
+# 웹훅 URL: https://도메인/api/payments/webhook
 PORTONE_WEBHOOK_SECRET=whsec_xxxxx
 
 # ============================================
@@ -81,8 +85,21 @@ LOG_LEVEL=debug
 |--------|----------|
 | Supabase | https://supabase.com/dashboard → 프로젝트 → Settings → API |
 | 포트원 V2 | https://admin.portone.io → 결제연동 → 연동 정보 → **V2 API** 탭 |
+| 포트원 웹훅 | https://admin.portone.io → 결제연동 → 웹훅 설정 → V2 웹훅 |
 | 계좌이체 | 운영자에게 입금 받을 계좌 정보 확인 |
 | 솔라피 | https://console.solapi.com → 설정 → API 키 관리 |
+
+---
+
+## 포트원 웹훅 설정
+
+프로덕션 배포 시 필수 설정:
+
+1. **admin.portone.io** 접속
+2. **결제연동 → 웹훅 설정** 이동
+3. V2 웹훅 URL 입력: `https://도메인/api/payments/webhook`
+4. 이벤트 선택: `Transaction.Paid`, `Transaction.Cancelled`
+5. 저장 후 **웹훅 시크릿 키** 복사 → `.env.local`에 설정
 
 ---
 

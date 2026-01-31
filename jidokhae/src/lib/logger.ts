@@ -14,6 +14,7 @@ export enum LogLevel {
 export type LogService =
   | 'auth'
   | 'payment'
+  | 'webhook'
   | 'notification'
   | 'meeting'
   | 'registration'
