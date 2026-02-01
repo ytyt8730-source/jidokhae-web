@@ -106,9 +106,9 @@ export function generateTicketId(date: Date, seatNumber: number): string {
  * 티켓 이미지 다운로드용 캔버스 생성
  * (실제 구현은 Phase 9.4에서)
  */
-export async function generateTicketImage(ticketData: TicketData): Promise<Blob | null> {
+export async function generateTicketImage(_ticketData: TicketData): Promise<Blob | null> {
   // TODO: Phase 9.4에서 html2canvas 또는 dom-to-image 사용
-  console.log('generateTicketImage not implemented yet', ticketData)
+  // 구현 전까지 null 반환
   return null
 }
 
