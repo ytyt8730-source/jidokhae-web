@@ -222,7 +222,7 @@ const INTEGRITY_CHECKS: IntegrityCheck[] = [
       const authIds = new Set(authUsers.users.map((u) => u.id))
       const publicIds = new Set((publicUsers || []).map((u) => u.id))
 
-      const missingInPublic = [...authIds].filter((id) => !publicIds.has(id))
+      const missingInPublic = Array.from(authIds).filter((id) => !publicIds.has(id))
 
       if (missingInPublic.length > 0) {
         return {

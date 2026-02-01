@@ -28,11 +28,29 @@ const config: Config = {
         border: "var(--border)",
         overlay: "var(--overlay)",
 
-        // 상태 색상 (고정)
-        success: "#10B981",
-        warning: "#F59E0B",
-        danger: "#EF4444",
-        info: "#2563EB",
+        // 상태 색상 (CSS Variable 기반 - Semantic Colors)
+        success: {
+          DEFAULT: "var(--success)",
+          fg: "var(--success-fg)",
+          bg: "var(--success-bg)",
+        },
+        warning: {
+          DEFAULT: "var(--warning)",
+          fg: "var(--warning-fg)",
+          bg: "var(--warning-bg)",
+        },
+        error: {
+          DEFAULT: "var(--error)",
+          fg: "var(--error-fg)",
+          bg: "var(--error-bg)",
+        },
+        info: {
+          DEFAULT: "var(--info)",
+          fg: "var(--info-fg)",
+          bg: "var(--info-bg)",
+        },
+        // 하위 호환성 (danger → error)
+        danger: "var(--error)",
 
         // 기존 호환성 유지
         brand: {

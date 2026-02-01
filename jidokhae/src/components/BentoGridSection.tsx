@@ -27,7 +27,7 @@ export default function BentoGridSection({
     if (!thisWeekMeeting) return null
 
     return (
-      <section className="border-b border-[var(--border)]" style={{ backgroundColor: 'var(--bg-base)' }}>
+      <section className="border-b border-[var(--border)] bg-bg-base">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <BentoGrid>
             <WeeklyCuratorCard meeting={thisWeekMeeting} />
@@ -38,7 +38,7 @@ export default function BentoGridSection({
   }
 
   return (
-    <section className="border-b border-[var(--border)]" style={{ backgroundColor: 'var(--bg-base)' }}>
+    <section className="border-b border-[var(--border)] bg-bg-base">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <BentoGrid>
           {/* Weekly Curator - 2열 차지 */}

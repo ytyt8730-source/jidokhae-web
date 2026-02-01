@@ -73,8 +73,7 @@ export default function GrowthCard({
             <span className="text-xs text-slate-400">Progress</span>
             <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
               <motion.div
-                className="h-full rounded-full"
-                style={{ backgroundColor: 'var(--accent)' }}
+                className="h-full rounded-full bg-accent"
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.8, ease: 'easeOut' }}

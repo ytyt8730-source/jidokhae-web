@@ -29,10 +29,7 @@ export default function ThemeToggle({ className = '', showLabel = true }: ThemeT
 
       <button
         onClick={toggleTheme}
-        className="relative w-16 h-8 rounded-full p-1 transition-colors duration-300"
-        style={{
-          backgroundColor: isWarm ? 'var(--primary)' : 'var(--primary)',
-        }}
+        className="relative w-16 h-8 rounded-full p-1 transition-colors duration-300 bg-primary"
         aria-label={`${isWarm ? '낮' : '밤'} 모드로 전환`}
         role="switch"
         aria-checked={isWarm}
@@ -51,13 +48,11 @@ export default function ThemeToggle({ className = '', showLabel = true }: ThemeT
         <div className="absolute inset-1 flex items-center justify-between px-1.5">
           <Sun
             size={14}
-            className={`transition-opacity duration-200 ${isWarm ? 'opacity-30' : 'opacity-70'}`}
-            style={{ color: 'white' }}
+            className={`transition-opacity duration-200 text-white ${isWarm ? 'opacity-30' : 'opacity-70'}`}
           />
           <Moon
             size={14}
-            className={`transition-opacity duration-200 ${isWarm ? 'opacity-70' : 'opacity-30'}`}
-            style={{ color: 'white' }}
+            className={`transition-opacity duration-200 text-white ${isWarm ? 'opacity-70' : 'opacity-30'}`}
           />
         </div>
 

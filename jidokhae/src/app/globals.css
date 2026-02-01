@@ -15,6 +15,20 @@
   --border: #E2E8F0;
   --overlay: rgba(0, 0, 0, 0.5);
 
+  /* Status Colors (Semantic) */
+  --success: #10B981;
+  --success-fg: #166534;
+  --success-bg: #DCFCE7;
+  --warning: #F59E0B;
+  --warning-fg: #92400E;
+  --warning-bg: #FEF3C7;
+  --error: #EF4444;
+  --error-fg: #991B1B;
+  --error-bg: #FEE2E2;
+  --info: #2563EB;
+  --info-fg: #1E40AF;
+  --info-bg: #DBEAFE;
+
   /* Font Variables */
   --font-pretendard: 'Pretendard', system-ui, sans-serif;
   --font-noto-serif: 'Noto Serif KR', Georgia, serif;
@@ -32,6 +46,20 @@
   --text-muted: #64748B;
   --border: #E7E5E4;
   --overlay: rgba(15, 23, 42, 0.6);
+
+  /* Status Colors - Warm theme (같은 값, 필요시 오버라이드) */
+  --success: #10B981;
+  --success-fg: #166534;
+  --success-bg: #DCFCE7;
+  --warning: #F59E0B;
+  --warning-fg: #92400E;
+  --warning-bg: #FEF3C7;
+  --error: #EF4444;
+  --error-fg: #991B1B;
+  --error-bg: #FEE2E2;
+  --info: #2563EB;
+  --info-fg: #1E40AF;
+  --info-bg: #DBEAFE;
 }
 
 /* Warm 테마 Noise Texture */
@@ -282,15 +310,15 @@
   }
 
   .badge-success {
-    @apply bg-green-50 text-success;
+    @apply bg-success-bg text-success-fg;
   }
 
   .badge-warning {
-    @apply bg-amber-50 text-warning;
+    @apply bg-warning-bg text-warning-fg;
   }
 
   .badge-danger {
-    @apply bg-red-50 text-danger;
+    @apply bg-error-bg text-error-fg;
   }
 
   .badge-muted {

@@ -10,39 +10,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ---
 
-## Repository Structure
-
-```
-/core                  # Core documentation (PRD, system architecture, tech stack)
-/docs                  # Technical docs (ADR, runbook, testing, code quality)
-/roadmap               # Development milestones and work packages
-  /work-packages       # WP-M1, WP-M2, etc.
-  /scenarios           # SC-M1, SC-M2, etc.
-/jidokhae              # Next.js application (main codebase)
-  /src
-    /app               # Next.js App Router pages
-    /components        # React components
-    /lib               # Utilities, Supabase clients, API helpers
-    /types             # TypeScript type definitions
-  /supabase            # Database schema (schema.sql)
-/log                   # Development logs and current state
-```
-
----
-
 ## Commands
 
 All commands run from `/jidokhae` directory:
 
 ```bash
-npm run dev      # Start development server (default: localhost:3000)
-npm run build    # Production build
-npm run lint     # ESLint check
-npx tsc --noEmit # TypeScript type check (must pass with 0 errors)
-```
+# Development
+npm run dev          # Start dev server (localhost:3000)
+npm run build        # Production build
+npm run lint         # ESLint check
+npx tsc --noEmit     # TypeScript check (must pass with 0 errors)
 
-Supabase type generation:
-```bash
+# Testing
+npm test             # Run vitest
+npm run test:watch   # Watch mode
+npm run test:coverage # Coverage report
+
+# Pre-commit (REQUIRED)
+npx tsc --noEmit && npm run build
+
+# Supabase types
 npx supabase gen types typescript --project-id $PROJECT_ID > src/types/database.ts
 ```
 
@@ -50,18 +37,19 @@ npx supabase gen types typescript --project-id $PROJECT_ID > src/types/database.
 
 ## Tech Stack
 
-| Category | Technology | Notes |
-|----------|------------|-------|
-| Framework | **Next.js 14** | App Router (NOT Pages Router) |
-| UI | **React 18** | Server Components by default |
-| Language | **TypeScript 5** | Strict mode enabled |
-| Styling | **Tailwind CSS 3.4** | NOT v4 (different config format) |
-| Animation | **Framer Motion** | Stagger, hover, micro-interactions |
-| Backend | **Supabase** | PostgreSQL, Auth, Realtime |
-| Payment | **PortOne** | KakaoPay, TossPay integration |
-| Notifications | **Solapi** | Kakao Alimtalk |
-| Icons | **lucide-react** | Consistent icon set |
-| Dates | **date-fns 4** | Date manipulation |
+| Category | Technology | Version/Notes |
+|----------|------------|---------------|
+| Framework | Next.js | 14 (App Router, NOT Pages Router) |
+| UI | React | 18 (Server Components default) |
+| Language | TypeScript | 5 (Strict mode) |
+| Styling | Tailwind CSS | 3.4 (NOT v4) |
+| Animation | Framer Motion | 12.x |
+| Backend | Supabase | PostgreSQL, Auth, Realtime |
+| Payment | PortOne | V2 API |
+| Notifications | Solapi | Kakao Alimtalk |
+| Icons | lucide-react | strokeWidth=1.5 |
+| Dates | date-fns | 4.x |
+| Monitoring | Sentry | Error tracking |
 
 ---
 
@@ -74,11 +62,9 @@ npx supabase gen types typescript --project-id $PROJECT_ID > src/types/database.
 | Server Components | `@/lib/supabase/server` | SSR data fetching |
 | API Routes | `@/lib/supabase/server` | Backend operations |
 | Client Components | `@/lib/supabase/client` | Browser interactions |
-| Admin operations | `createServiceClient()` | Service role access (bypasses RLS) |
+| Admin operations | `createServiceClient()` | Service role (bypasses RLS) |
 
 ### API Response Pattern
-
-Use standardized helpers from `@/lib/api.ts`:
 
 ```typescript
 import { successResponse, errorResponse, withErrorHandler } from '@/lib/api'
@@ -91,153 +77,158 @@ export async function GET() {
 }
 ```
 
-Response format: `{ success: boolean, data?: T, error?: { code, message }, meta?: object }`
+Response: `{ success: boolean, data?: T, error?: { code, message } }`
 
-### Error Handling
-
-Use error codes from `@/lib/errors.ts`:
+### Error Codes
 
 | Range | Category | Examples |
 |-------|----------|----------|
-| 1xxx | Authentication | 1001 (Unauthorized), 1002 (Token expired) |
+| 1xxx | Auth | 1001 (Unauthorized), 1002 (Token expired) |
 | 2xxx | Payment | 2001 (Payment failed), 2002 (Refund failed) |
-| 3xxx | External services | 3001 (Alimtalk failed) |
-| 4xxx | Business logic | 4001 (Meeting full), 4002 (Already registered) |
-| 5xxx | System errors | 5001 (DB error), 5002 (Unknown) |
+| 3xxx | External | 3001 (Alimtalk failed) |
+| 4xxx | Business | 4001 (Meeting full), 4002 (Already registered) |
+| 5xxx | System | 5001 (DB error) |
 
 ### Logging
-
-Use structured logger from `@/lib/logger.ts`:
 
 ```typescript
 import { createLogger } from '@/lib/logger'
 const logger = createLogger('payment')
-
 logger.info('Payment initiated', { userId, amount })
-logger.error('Payment failed', { error, context })
 ```
 
 **NEVER use `console.log`** - always use the logger.
 
-### Component Guidelines
-
-- Server Components are default; add `'use client'` only when needed
-- Keep page components under 200 lines; split if exceeded
-- Use API routes under 200 lines; extract to service layer if exceeded
-
 ---
 
-## Design System
+## Design System v3.3
 
-### Grid System
+### No-Emoji Policy (CRITICAL)
 
-- **8px baseline grid** for all spacing and sizing
-- Use Tailwind spacing: `p-2` (8px), `p-4` (16px), `gap-6` (24px)
-- All dimensions should be multiples of 8px
+> **All emoji usage is prohibited.** Emojis render differently across OS/browsers, breaking brand consistency.
 
-### Colors
+| Forbidden | Replacement |
+|-----------|-------------|
+| Beans (콩) | `<KongIcon />` (custom SVG) |
+| Trophy | `<Trophy />` (Lucide) |
+| Calendar | `<Calendar />` (Lucide) |
+| Location | `<MapPin />` (Lucide) |
+| Any emoji | Lucide React icon |
 
-Defined in `tailwind.config.ts`:
+### Theme System
 
-```
-Warm Neutrals (Primary):
-  warm-50 to warm-900  (cream/beige tones for backgrounds, text)
+Two switchable themes via CSS variables (`data-theme` attribute):
 
-Brand Accent:
-  brand-500: #c77654   (terracotta - main brand color)
-  brand-600: #b55f3e   (hover state)
-  brand-700: #974c33   (active state)
+| Property | Electric (Default) | Warm |
+|----------|-------------------|------|
+| Background | `#F8FAFC` | `#F5F5F0` (Sand + Noise) |
+| Primary | `#0047FF` (Cobalt) | `#0F172A` (Navy) |
+| Accent | `#CCFF00` (Lime) | `#EA580C` (Orange) |
+| Logo Font | Sans (Outfit) | Serif (Noto Serif KR) |
 
-Status Colors:
-  success: #059669     (green)
-  warning: #d97706     (orange)
-  error: #dc2626       (red)
-  info: #2563eb        (blue)
-```
+**CSS Variables** (in `globals.css`):
+- `--bg-base`, `--bg-surface`, `--primary`, `--accent`
+- `--text`, `--text-muted`, `--border`
 
-Use Tailwind classes: `bg-warm-100`, `text-brand-600`, `border-warm-200`
+**Theme Toggle Location:**
+- Desktop: Sidebar bottom
+- Mobile: Settings or header icon
+- Storage: `localStorage('jidokhae-theme')`
 
 ### Typography
 
-| Font | Usage | CSS Variable |
-|------|-------|--------------|
-| **Pretendard** | Body text, UI | `--font-pretendard` |
-| **Noto Serif KR** | Quotes, book titles, emphasis | `--font-serif` |
+| Font | Usage |
+|------|-------|
+| **Pretendard / Noto Sans KR** | Body text, UI |
+| **Noto Serif KR** | Quotes, book titles (Warm theme headlines) |
+| **Outfit** | Electric theme headlines |
 
-Load via `next/font/google` in `app/layout.tsx`.
+### Spacing
 
-### Animations (Framer Motion)
-
-| Effect | Usage | Timing |
-|--------|-------|--------|
-| **Stagger** | Card lists, item reveals | 0.1s delay between items |
-| **Hover** | Cards, buttons | scale(1.02), shadow increase |
-| **Click** | Buttons, interactive | scale(0.98) feedback |
-| **Pulse** | Urgent badges | Continuous subtle animation |
-| **Confetti** | Badge earned, achievements | On trigger event |
-| **Spring** | Modal open/close | physics-based motion |
-
-Common animation variants should be defined in `/lib/animations.ts`.
+**8px baseline grid** - Use Tailwind: `p-2` (8px), `p-4` (16px), `gap-6` (24px)
 
 ---
 
-## Code Conventions
+## Code Rules
+
+### MUST Follow
+
+- Server Components by default; `'use client'` only when needed
+- Page/API routes under 200 lines; split if exceeded
+- Mobile-first responsive (360px baseline)
+- Korean for user-facing text; English for code/comments
+- All icons: `strokeWidth={1.5}`
+
+### PROHIBITED
+
+| Pattern | Alternative |
+|---------|-------------|
+| `as any` | Proper types or `unknown` |
+| `console.log` | Logger from `@/lib/logger.ts` |
+| Inline styles | Tailwind classes |
+| Hardcoded values | Constants or DB config |
+| Emojis | Lucide React icons |
+| `warm-*` classes | CSS variables (`var(--primary)`) |
 
 ### File Naming
 
 | Type | Convention | Example |
 |------|------------|---------|
 | Components | PascalCase | `MeetingCard.tsx` |
-| Utilities/Services | camelCase | `payment.ts` |
-| Route folders | kebab-case | `my-page/` |
-| Types | PascalCase | `Meeting.ts` |
-
-### Key Rules
-
-- ❌ No `as any` - use proper types or `unknown`
-- ❌ No hardcoded values - use constants or DB config
-- ❌ No `console.log` - use logger from `@/lib/logger.ts`
-- ❌ No inline styles - use Tailwind classes
-- ✅ Mobile-first responsive design (360px baseline)
-- ✅ Korean language for user-facing text
-- ✅ English for code, comments, and technical docs
-
-### Git Commit Format
-
-```
-[WP-M1] feat: 회원가입 폼 UI 구현
-```
-
-Types: `feat`, `fix`, `refactor`, `perf`, `docs`, `style`, `test`, `chore`
-
-Branch naming: `feature/wp-m1-auth`, `fix/login-error`
+| Utilities | camelCase | `payment.ts` |
+| Routes | kebab-case | `my-page/` |
 
 ---
 
 ## Key Business Logic
 
-### Refund Policies
+### Refund Policies (DB-driven, NEVER hardcode)
 
-- **NEVER hardcode** - stored in DB (`refund_policies` table)
-- Regular meetings: 100% (3+ days before), 50% (2 days), 0% (1 day or less)
-- Discussion meetings: 100% (2+ weeks before), 50% (7+ days), 0% (less than 7 days)
+- Regular: 100% (3+ days), 50% (2 days), 0% (1 day)
+- Discussion: 100% (14+ days), 50% (7+ days), 0% (<7 days)
 
 ### Capacity Management
 
-- Display format: **"O명 참여"** (hide max capacity)
-- Use database transactions with `FOR UPDATE` locks for concurrent registration
-- Show "마감임박" badge when ≤3 spots remaining
-
-### Member Eligibility
-
-- `is_new_member` flag for first-time members
-- 6-month regular meeting participation required for eligibility
-- Track via `last_regular_meeting_at` field
+- Display: **"O명 참여"** (hide max capacity)
+- Use `FOR UPDATE` locks for concurrent registration
+- Badge: "마감임박" when ≤3 spots
 
 ### Currency
 
-- All amounts displayed as **"콩"** (beans), not ₩
-- 1 콩 = 1 원 (internal conversion)
+All amounts: **"콩"** (beans), not ₩. Use `<KongIcon />` + "N콩"
+
+---
+
+## Git Workflow
+
+### Branch & Commit
+
+```bash
+# Branch naming
+feature/m[번호]-[작업명]
+fix/[설명]
+
+# Commit format
+[M번호] 타입: 한글 설명
+
+# Example
+[M9] feat: 티켓 발권 애니메이션 구현
+```
+
+Types: `feat`, `fix`, `refactor`, `docs`, `chore`, `WIP`
+
+### Pre-commit Required
+
+```bash
+npx tsc --noEmit && npm run build
+```
+
+### Prohibited
+
+- Direct work on `main` branch
+- Committing `.env.local`
+- `git push --force`
+- Merge/delete without user confirmation
 
 ---
 
@@ -251,16 +242,39 @@ NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 
-# Payment (M2)
+# PortOne (V2 API)
 PORTONE_API_KEY=
 PORTONE_API_SECRET=
+NEXT_PUBLIC_PORTONE_STORE_ID=
 
-# Notifications (M3)
+# Solapi
 SOLAPI_API_KEY=
 SOLAPI_API_SECRET=
+SOLAPI_SENDER_NUMBER=
+
+# Sentry (optional)
+NEXT_PUBLIC_SENTRY_DSN=
 ```
 
-See `jidokhae/ENV_TEMPLATE.md` for full list with descriptions.
+See `jidokhae/.env.example` for full list.
+
+---
+
+## Database Schema
+
+Source of truth: `jidokhae/supabase/schema-complete.sql`
+
+Key tables:
+- `users` - Member profiles (synced from `auth.users` via trigger)
+- `meetings` - Meeting definitions
+- `registrations` - Registrations with payment status, seat_number
+- `waitlists` - Waitlist entries with position
+- `refund_policies` - Configurable refund rules (JSONB)
+- `praises`, `badges`, `bookshelf`, `reviews` - Engagement features
+- `notification_templates`, `notification_logs` - Alimtalk system
+- `admin_permissions` - 7 granular admin permissions
+
+All tables have RLS policies enabled.
 
 ---
 
@@ -268,52 +282,42 @@ See `jidokhae/ENV_TEMPLATE.md` for full list with descriptions.
 
 | Milestone | Focus | Status |
 |-----------|-------|--------|
-| **M1** | Infrastructure, auth, basic UI | ✅ Functional |
-| **M1.5** | Design System (Framer Motion, fonts, 8px grid) | 🔄 Pending |
-| **M2** | Payment (PortOne), refunds, waitlist | ⏳ Next |
-| **M3** | Notifications (Solapi alimtalk) | ⏳ Planned |
-| **M4** | Engagement (praise, badges, bookshelf) | ⏳ Planned |
-| **M5** | Admin tools (dashboard, permissions) | ⏳ Planned |
-| **M6** | Landing page, launch prep | ⏳ Planned |
+| M1-M7 | MVP (Auth, Payment, Notifications, Engagement, Admin) | ✅ Complete |
+| M8 | Ritual Foundation (Micro-Copy, No-Emoji, Sound/Haptic) | ✅ Complete |
+| M9 | Commitment Ritual (Ticket System, Animations) | ✅ Complete |
+| M10-M12 | Experience Enhancement | ⏳ WP done, code pending |
+| M13-M17 | Backoffice MVP | ⏳ WP done, code pending |
 
-See `/roadmap/milestones.md` for detailed breakdown.
+Current: **Beta-ready** (M1-M9 complete)
 
 ---
 
-## Database Schema
+## Repository Structure
 
-Single source of truth: `jidokhae/supabase/schema.sql`
-
-Key tables:
-- `users` - Member profiles (synced from `auth.users` via trigger)
-- `meetings` - Meeting definitions
-- `registrations` - Meeting registrations with payment status
-- `waitlist` - Waitlist entries
-- `refund_policies` - Configurable refund rules
-- `praises` - Member-to-member praise
-- `badges` - Achievement badges
-
-All tables have RLS (Row Level Security) policies enabled.
-
----
-
-## Testing Strategy
-
-| Phase | Type | Scope |
-|-------|------|-------|
-| Development | Manual + Browser tools | Feature verification |
-| M1 Complete | Alpha | Operators + 3-5 members |
-| M3 Complete | Beta | 20-30 active members |
-| M5 Complete | Production | All members |
+```
+/core              # PRD, system architecture
+/docs              # ADR, design-system.md, runbook
+/roadmap           # Milestones, work-packages/, scenarios/
+/jidokhae          # Next.js app
+  /src/app         # App Router pages
+  /src/components  # React components (65+)
+  /src/lib         # Utilities, Supabase clients
+  /src/hooks       # Custom hooks (useFeedback, useTickets, etc.)
+  /src/types       # TypeScript definitions
+  /supabase        # schema-complete.sql
+  /scripts         # Validation scripts
+/log               # current-state.md
+/scripts           # Shell scripts (status.sh, etc.)
+```
 
 ---
 
 ## Quick Reference
 
-### Creating a new page
+### Creating a Server Component Page
 
 ```typescript
-// app/meetings/[id]/page.tsx (Server Component)
+// app/meetings/[id]/page.tsx
 import { createClient } from '@/lib/supabase/server'
 
 export default async function MeetingPage({ params }: { params: { id: string } }) {
@@ -323,12 +327,12 @@ export default async function MeetingPage({ params }: { params: { id: string } }
     .select('*')
     .eq('id', params.id)
     .single()
-  
+
   return <MeetingDetail meeting={meeting} />
 }
 ```
 
-### Creating an API route
+### Creating an API Route
 
 ```typescript
 // app/api/meetings/route.ts
@@ -344,84 +348,20 @@ export async function GET() {
 }
 ```
 
-### Adding animation
+### Using Icons (No Emoji!)
 
-```typescript
-// With Framer Motion
-import { motion } from 'framer-motion'
+```tsx
+import { Calendar, MapPin, Users } from 'lucide-react'
+import { KongIcon } from '@/components/icons/KongIcon'
 
-<motion.div
-  initial={{ opacity: 0, y: 20 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.3 }}
->
-  Content
-</motion.div>
-```
-
----
-
-## 컨텍스트 로딩 프로토콜
-
-> **핵심**: 파일을 직접 열지 말고, 에이전트나 스크립트를 사용하라.
-
-### 프로젝트 파악 요청 시
-```bash
-# 비효율적 (토큰 낭비)
-cat CLAUDE.md
-ls -la jidokhae/src/
-find . -name "*.tsx"
-
-# 효율적
-@agent-컨텍스트 전체 파악해줘
-@agent-컨텍스트 최근 변경분만
-```
-
-### 컨텍스트 로딩 우선순위
-
-| 상황 | 사용할 것 | 토큰 |
-|------|----------|------|
-| 새 대화 시작 | `@agent-컨텍스트 전체 파악해줘` | ~30K |
-| 이어서 작업 | `@agent-컨텍스트 최근 변경분만` | ~5K |
-| 빠른 확인 | `bash scripts/status.sh` | ~1K |
-
-### 에이전트 vs 내장 기능
-
-| 용도 | 사용할 것 |
-|------|----------|
-| 프로젝트 현황 파악 | `@agent-컨텍스트` |
-| 코드 검색/탐색 | 내장 `Explore` (자동) |
-| 계획 수립 | 내장 `Plan` (자동) |
-| 코드 구현 | `@agent-코딩` |
-
----
-
-## Git Workflow (필수 준수)
-
-> 📋 **상세 규칙**: [/docs/git-workflow.md](/docs/git-workflow.md)
-
-### 핵심 규칙 요약
-
-| 상황 | 필수 행동 |
-|------|----------|
-| 세션 시작 | `git fetch && git pull` |
-| 새 작업 | `git checkout -b feature/m[번호]-[작업명]` |
-| 커밋 전 | `npx tsc --noEmit && npm run build` |
-| 커밋 메시지 | `[M번호] 타입: 한글 설명` |
-| 머지 | **사용자 확인 후에만** |
-
-### 절대 금지
-
-```
-❌ .env.local 커밋
-❌ git push --force
-❌ main 브랜치에서 직접 작업
-❌ 사용자 확인 없이 머지/삭제
+<Calendar size={16} strokeWidth={1.5} />
+<KongIcon size={16} />
+<span>5,000콩</span>
 ```
 
 ---
 
 ## Version
 
-Last updated: 2026-01-22
-Document version: 1.3
+Last updated: 2026-02-01
+Document version: 2.0

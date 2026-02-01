@@ -1,4 +1,4 @@
-import MeetingList from '@/components/MeetingList'
+import { Suspense } from 'react'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { calculateMeetingStatus, formatMeetingDate } from '@/lib/utils'
 import { getDday } from '@/lib/payment'
@@ -7,6 +7,7 @@ import Link from 'next/link'
 import Badge from '@/components/ui/Badge'
 import { BannerSlide } from '@/components/BannerSlide'
 import BentoGridSection from '@/components/BentoGridSection'
+import HomePageClient from '@/components/HomePageClient'
 import type { Meeting, Registration, User as UserType } from '@/types/database'
 
 export default async function HomePage() {
@@ -158,10 +159,23 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* 이번 주 모임 */}
-      {thisWeekMeetings.length > 0 && (
-        <section className="bg-[var(--bg-surface)] border-b border-[var(--border)]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+      {/* 모임 섹션 - One-Page Architecture with Bottom Sheet */}
+      <Suspense fallback={
+        <div className="bg-bg-base py-12 lg:py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="animate-pulse grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="bg-[var(--bg-surface)] rounded-2xl h-64" />
+              ))}
+            </div>
+          </div>
+        </div>
+      }>
+        <HomePageClient
+          thisWeekMeetings={thisWeekMeetings}
+          upcomingMeetings={upcomingMeetings}
+          user={userData}
+          thisWeekTitle={
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
@@ -173,44 +187,31 @@ export default async function HomePage() {
                 </div>
               </div>
             </div>
-            <MeetingList meetings={thisWeekMeetings} />
-          </div>
-        </section>
-      )}
-
-      {/* 다가오는 모임 */}
-      <section className="bg-bg-base">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[var(--bg-surface)] rounded-xl flex items-center justify-center shadow-sm">
-                <Sparkles className="text-primary" size={20} strokeWidth={1.5} />
+          }
+          upcomingTitle={
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-[var(--bg-surface)] rounded-xl flex items-center justify-center shadow-sm">
+                  <Sparkles className="text-primary" size={20} strokeWidth={1.5} />
+                </div>
+                <div>
+                  <h2 className="text-xl font-semibold text-text">
+                    {thisWeekMeetings.length > 0 ? '다가오는 모임' : '모임 일정'}
+                  </h2>
+                  <p className="text-sm text-text-muted">큐레이션된 독서 경험</p>
+                </div>
               </div>
-              <div>
-                <h2 className="text-xl font-semibold text-text">
-                  {thisWeekMeetings.length > 0 ? '다가오는 모임' : '모임 일정'}
-                </h2>
-                <p className="text-sm text-text-muted">큐레이션된 독서 경험</p>
-              </div>
+              <Link
+                href="/meetings"
+                className="flex items-center gap-1 text-sm text-primary hover:text-primary/80 font-medium transition-colors"
+              >
+                전체 일정
+                <ArrowRight size={16} strokeWidth={1.5} />
+              </Link>
             </div>
-            <Link
-              href="/meetings"
-              className="flex items-center gap-1 text-sm text-primary hover:text-primary/80 font-medium transition-colors"
-            >
-              전체 일정
-              <ArrowRight size={16} strokeWidth={1.5} />
-            </Link>
-          </div>
-
-          {upcomingMeetings.length > 0 ? (
-            <MeetingList meetings={upcomingMeetings} />
-          ) : thisWeekMeetings.length === 0 ? (
-            <div className="bg-[var(--bg-surface)] rounded-2xl p-12 text-center shadow-sm">
-              <p className="text-[var(--text-muted)]">현재 예정된 모임이 없습니다.</p>
-            </div>
-          ) : null}
-        </div>
-      </section>
+          }
+        />
+      </Suspense>
 
       {/* CTA 섹션 */}
       <section className="bg-bg-surface border-t border-[var(--border)]">

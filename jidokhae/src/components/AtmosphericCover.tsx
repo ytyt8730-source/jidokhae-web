@@ -48,12 +48,12 @@ export default function AtmosphericCover({
       <div className={`relative ${styles.container} ${className}`}>
         <div className={`
           ${styles.cover}
-          bg-gradient-to-br from-warm-100 to-warm-200
+          bg-gradient-to-br from-[var(--bg-base)] to-[var(--bg-surface)]
           rounded-lg flex items-center justify-center
           shadow-md
         `}>
           <BookOpen
-            className="text-warm-400"
+            className="text-[var(--text-muted)]"
             size={size === 'lg' ? 32 : size === 'md' ? 24 : 16}
             strokeWidth={1.5}
           />

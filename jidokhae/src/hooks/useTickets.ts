@@ -109,6 +109,7 @@ export function useTickets(userId: string): UseTicketsResult {
   useEffect(() => {
     if (!userId) return
     fetchTickets()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId])
 
   return {

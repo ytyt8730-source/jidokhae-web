@@ -153,8 +153,8 @@ const PRD_CHECKS: PRDCheck[] = [
     category: 'design',
     priority: 'P1',
     check: () => {
-      // 이모지 패턴 검사 (간단한 검사)
-      const emojiPattern = /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]/u
+      // 이모지 패턴 검사 (서로게이트 쌍 기반, ES5 호환)
+      const emojiPattern = /[\uD83C-\uDBFF][\uDC00-\uDFFF]|[\u2600-\u27FF]/
       const filesWithEmoji = searchInDir('components', emojiPattern)
       return {
         status: filesWithEmoji.length === 0 ? 'pass' : 'fail',

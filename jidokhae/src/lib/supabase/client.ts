@@ -30,6 +30,7 @@ function createDummyClient() {
   return {
     auth: {
       getUser: () => Promise.resolve({ data: { user: null }, error: null }),
+      getSession: () => Promise.resolve({ data: { session: null }, error: null }),
       signInWithPassword: () => Promise.resolve({
         data: { user: null, session: null },
         error: { message: 'Supabase가 설정되지 않았습니다. 환경 변수를 확인해주세요.' }
@@ -43,6 +44,9 @@ function createDummyClient() {
         error: { message: 'Supabase가 설정되지 않았습니다. 환경 변수를 확인해주세요.' }
       }),
       signOut: () => Promise.resolve({ error: null }),
+      onAuthStateChange: () => ({
+        data: { subscription: { unsubscribe: () => {} } },
+      }),
     },
     from: () => dummyQuery,
   }

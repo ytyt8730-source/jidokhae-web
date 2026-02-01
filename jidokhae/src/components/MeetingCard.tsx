@@ -14,6 +14,10 @@ interface MeetingCardProps {
   meeting: MeetingWithStatus
   /** Realtime 구독 활성화 여부 (기본: true) */
   enableRealtime?: boolean
+  /** 카드 동작 모드: 'link'=페이지 이동, 'sheet'=Bottom Sheet 열기 */
+  mode?: 'link' | 'sheet'
+  /** mode='sheet'일 때 카드 클릭 핸들러 */
+  onSelect?: (meeting: MeetingWithStatus) => void
 }
 
 // 숫자 변경 애니메이션
@@ -28,8 +32,17 @@ const countAnimation = {
  * MeetingCard - Design System v3.3 (목업 반영)
  * Atmospheric Cover 영역 + 메타 정보 + 가격
  * Beta: Realtime 참가 인원 업데이트
+ *
+ * One-Page Architecture 지원:
+ * - mode='link' (기본): 상세 페이지로 이동
+ * - mode='sheet': Bottom Sheet 열기 (onSelect 호출)
  */
-export default function MeetingCard({ meeting, enableRealtime = true }: MeetingCardProps) {
+export default function MeetingCard({
+  meeting,
+  enableRealtime = true,
+  mode = 'link',
+  onSelect,
+}: MeetingCardProps) {
   // Realtime 참가 인원 구독
   const { participantCount } = useMeetingParticipants({
     meetingId: meeting.id,
@@ -74,6 +87,104 @@ export default function MeetingCard({ meeting, enableRealtime = true }: MeetingC
   const dateStr = datetime.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' })
   const timeStr = datetime.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false })
 
+  // 카드 내용 (공통)
+  const cardContent = (
+    <article className="card overflow-hidden group cursor-pointer">
+      {/* Atmospheric Cover Area */}
+      <div className="session-cover relative h-40">
+        {/* Atmospheric Blur Background (placeholder gradient) */}
+        <div
+          className="absolute inset-[-30px] bg-gradient-to-br from-[var(--bg-surface)] via-[var(--bg-base)] to-[var(--border)]"
+          style={{ filter: 'blur(25px) saturate(1.3)' }}
+        />
+
+        {/* Book Cover Placeholder */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-auto h-[140px] aspect-[3/4] bg-white/90 rounded shadow-lg flex items-center justify-center">
+            <BookOpen
+              className="text-[var(--text-muted)]"
+              size={32}
+              strokeWidth={1.5}
+            />
+          </div>
+        </div>
+
+        {/* Badges */}
+        <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5">
+          {getMeetingTypeBadge()}
+          {getStatusBadge()}
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="p-5">
+        {/* Title */}
+        <h3 className="font-semibold text-[var(--text)] text-[1.1rem] mb-3 truncate group-hover:text-[var(--primary)] transition-colors">
+          {meeting.title}
+        </h3>
+
+        {/* Meta Info */}
+        <div className="flex flex-wrap gap-3 text-[13px] text-[var(--text-muted)] mb-4">
+          <span className="flex items-center gap-1">
+            <Calendar size={14} strokeWidth={1.5} />
+            {dateStr}
+          </span>
+          <span className="flex items-center gap-1">
+            <Clock size={14} strokeWidth={1.5} />
+            {timeStr}
+          </span>
+          <span className="flex items-center gap-1">
+            <MapPin size={14} strokeWidth={1.5} />
+            {meeting.location.split(' ')[0]}
+          </span>
+          <span className="flex items-center gap-1">
+            <Users size={14} strokeWidth={1.5} />
+            <AnimatePresence mode="wait">
+              <motion.span
+                key={displayCount}
+                {...countAnimation}
+              >
+                {displayCount}명 참여
+              </motion.span>
+            </AnimatePresence>
+          </span>
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center justify-between pt-4 border-t border-[var(--border)]">
+          <div className="flex items-center gap-1.5">
+            <KongIcon size={18} />
+            <span className="font-semibold text-[var(--text)]">{formatFee(meeting.fee)}</span>
+          </div>
+          <ChevronRight size={20} className="text-[var(--text-muted)]" />
+        </div>
+      </div>
+    </article>
+  )
+
+  // Sheet 모드: 클릭 시 onSelect 호출
+  if (mode === 'sheet') {
+    return (
+      <motion.div
+        variants={staggerItem}
+        whileHover={cardHoverTap.hover}
+        whileTap={cardHoverTap.tap}
+        onClick={() => onSelect?.(meeting)}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            onSelect?.(meeting)
+          }
+        }}
+      >
+        {cardContent}
+      </motion.div>
+    )
+  }
+
+  // Link 모드 (기본): 상세 페이지로 이동
   return (
     <motion.div
       variants={staggerItem}
@@ -81,77 +192,7 @@ export default function MeetingCard({ meeting, enableRealtime = true }: MeetingC
       whileTap={cardHoverTap.tap}
     >
       <Link href={`/meetings/${meeting.id}`}>
-        <article className="card overflow-hidden group cursor-pointer">
-          {/* Atmospheric Cover Area */}
-          <div className="session-cover relative h-40">
-            {/* Atmospheric Blur Background (placeholder gradient) */}
-            <div
-              className="absolute inset-[-30px] bg-gradient-to-br from-warm-200 via-warm-100 to-warm-300"
-              style={{ filter: 'blur(25px) saturate(1.3)' }}
-            />
-
-            {/* Book Cover Placeholder */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-auto h-[140px] aspect-[3/4] bg-white/90 rounded shadow-lg flex items-center justify-center">
-                <BookOpen
-                  className="text-warm-400"
-                  size={32}
-                  strokeWidth={1.5}
-                />
-              </div>
-            </div>
-
-            {/* Badges */}
-            <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5">
-              {getMeetingTypeBadge()}
-              {getStatusBadge()}
-            </div>
-          </div>
-
-          {/* Content */}
-          <div className="p-5">
-            {/* Title */}
-            <h3 className="font-semibold text-[var(--text)] text-[1.1rem] mb-3 truncate group-hover:text-[var(--primary)] transition-colors">
-              {meeting.title}
-            </h3>
-
-            {/* Meta Info */}
-            <div className="flex flex-wrap gap-3 text-[13px] text-[var(--text-muted)] mb-4">
-              <span className="flex items-center gap-1">
-                <Calendar size={14} strokeWidth={1.5} />
-                {dateStr}
-              </span>
-              <span className="flex items-center gap-1">
-                <Clock size={14} strokeWidth={1.5} />
-                {timeStr}
-              </span>
-              <span className="flex items-center gap-1">
-                <MapPin size={14} strokeWidth={1.5} />
-                {meeting.location.split(' ')[0]}
-              </span>
-              <span className="flex items-center gap-1">
-                <Users size={14} strokeWidth={1.5} />
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={displayCount}
-                    {...countAnimation}
-                  >
-                    {displayCount}명 참여
-                  </motion.span>
-                </AnimatePresence>
-              </span>
-            </div>
-
-            {/* Footer */}
-            <div className="flex items-center justify-between pt-4 border-t border-[var(--border)]">
-              <div className="flex items-center gap-1.5">
-                <KongIcon size={18} />
-                <span className="font-semibold text-[var(--text)]">{formatFee(meeting.fee)}</span>
-              </div>
-              <ChevronRight size={20} className="text-[var(--text-muted)]" />
-            </div>
-          </div>
-        </article>
+        {cardContent}
       </Link>
     </motion.div>
   )

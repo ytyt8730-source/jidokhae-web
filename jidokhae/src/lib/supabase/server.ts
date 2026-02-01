@@ -22,8 +22,12 @@ function createDummyClient() {
     gte: () => dummyQuery,
     lt: () => dummyQuery,
     lte: () => dummyQuery,
+    or: () => dummyQuery,
+    in: () => dummyQuery,
+    is: () => dummyQuery,
     order: () => dummyQuery,
     limit: () => dummyQuery,
+    maybeSingle: () => Promise.resolve(emptyResponse),
     single: () => Promise.resolve(emptyResponse),
     then: (resolve: (value: typeof emptyResponse) => void) => Promise.resolve(emptyResponse).then(resolve),
   }
