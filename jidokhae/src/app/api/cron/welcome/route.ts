@@ -10,6 +10,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { cronLogger } from '@/lib/logger'
+import { NOTIFICATION_TEMPLATES } from '@/lib/notification/types'
 import { addDays, startOfDay, endOfDay } from 'date-fns'
 
 // Vercel Cron 인증 헤더
@@ -124,7 +125,7 @@ async function sendWelcomeNotification(target: WelcomeTarget): Promise<boolean> 
   const { data: template } = await supabase
     .from('notification_templates')
     .select('*')
-    .eq('code', 'NEW_MEMBER_WELCOME')
+    .eq('code', NOTIFICATION_TEMPLATES.NEW_MEMBER_WELCOME)
     .eq('is_active', true)
     .single()
 
@@ -158,7 +159,7 @@ async function sendWelcomeNotification(target: WelcomeTarget): Promise<boolean> 
   // 알림 로그 저장
   await supabase.from('notification_logs').insert({
     user_id: target.userId,
-    template_code: 'NEW_MEMBER_WELCOME',
+    template_code: NOTIFICATION_TEMPLATES.NEW_MEMBER_WELCOME,
     phone_number: target.userPhone,
     status: 'sent', // TODO: 실제 발송 결과로 변경
     meeting_id: target.meetingId,

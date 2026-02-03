@@ -1,6 +1,7 @@
 import { createServiceClient } from '@/lib/supabase/server'
 import { successResponse, withErrorHandler } from '@/lib/api'
 import { createLogger } from '@/lib/logger'
+import { NOTIFICATION_TEMPLATES } from '@/lib/notification/types'
 
 const logger = createLogger('cron')
 
@@ -84,7 +85,7 @@ export async function GET(request: Request) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              templateCode: 'TRANSFER_EXPIRED',
+              templateCode: NOTIFICATION_TEMPLATES.TRANSFER_EXPIRED,
               userId: reg.user_id,
               meetingId: reg.meeting_id,
               variables: {
@@ -140,7 +141,7 @@ export async function GET(request: Request) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              templateCode: 'TRANSFER_DEADLINE_WARNING',
+              templateCode: NOTIFICATION_TEMPLATES.TRANSFER_DEADLINE_WARNING,
               userId: reg.user_id,
               meetingId: reg.meeting_id,
               variables: {

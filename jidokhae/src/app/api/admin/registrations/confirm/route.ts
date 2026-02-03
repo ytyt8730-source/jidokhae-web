@@ -2,6 +2,7 @@ import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { successResponse, withErrorHandler, validateRequired, requireAdmin } from '@/lib/api'
 import { ErrorCode, AppError } from '@/lib/errors'
 import { createLogger } from '@/lib/logger'
+import { NOTIFICATION_TEMPLATES } from '@/lib/notification/types'
 
 const logger = createLogger('payment')
 
@@ -91,7 +92,7 @@ export async function POST(request: Request) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          templateCode: 'TRANSFER_CONFIRMED',
+          templateCode: NOTIFICATION_TEMPLATES.TRANSFER_CONFIRMED,
           userId: registration.user_id,
           meetingId: registration.meeting_id,
           variables: {
