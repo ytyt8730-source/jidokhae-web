@@ -285,7 +285,22 @@ CREATE TABLE banners (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- 15. payment_logs
+-- 15. gallery_images (About 페이지 갤러리)
+CREATE TABLE gallery_images (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  image_url TEXT NOT NULL,
+  alt_text VARCHAR(200) NOT NULL,
+  is_active BOOLEAN DEFAULT true,
+  display_order INTEGER DEFAULT 0,
+  created_by UUID REFERENCES users(id) ON DELETE SET NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX idx_gallery_images_display_order ON gallery_images(display_order);
+CREATE INDEX idx_gallery_images_active ON gallery_images(is_active);
+
+-- 16. payment_logs
 CREATE TABLE payment_logs (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   registration_id UUID REFERENCES registrations(id) ON DELETE SET NULL,
@@ -413,7 +428,12 @@ ALTER TABLE banners ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "banners_select_active" ON banners FOR SELECT USING (is_active = true);
 CREATE POLICY "banners_admin_all" ON banners FOR ALL USING (public.is_admin());
 
--- 15. payment_logs
+-- 15. gallery_images
+ALTER TABLE gallery_images ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "gallery_images_select_active" ON gallery_images FOR SELECT USING (is_active = true);
+CREATE POLICY "gallery_images_admin_all" ON gallery_images FOR ALL USING (public.is_admin());
+
+-- 16. payment_logs
 ALTER TABLE payment_logs ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "payment_logs_admin_select" ON payment_logs FOR SELECT USING (public.is_admin());
 CREATE POLICY "payment_logs_insert_admin" ON payment_logs FOR INSERT WITH CHECK (public.is_admin());

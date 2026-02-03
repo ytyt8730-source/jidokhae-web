@@ -116,14 +116,14 @@ export function BannerSlide({ banners, autoPlayInterval = 5000 }: BannerSlidePro
             className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 hover:bg-white flex items-center justify-center shadow-md transition-colors z-10"
             aria-label="이전 배너"
           >
-            <ChevronLeft size={24} className="text-gray-700" />
+            <ChevronLeft size={24} className="text-gray-700" strokeWidth={1.5} />
           </button>
           <button
             onClick={next}
             className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 hover:bg-white flex items-center justify-center shadow-md transition-colors z-10"
             aria-label="다음 배너"
           >
-            <ChevronRight size={24} className="text-gray-700" />
+            <ChevronRight size={24} className="text-gray-700" strokeWidth={1.5} />
           </button>
         </>
       )}

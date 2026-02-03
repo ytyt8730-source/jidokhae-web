@@ -21,29 +21,30 @@ const BASE_URL = process.env.BASE_URL || 'http://localhost:3001'
 const OUTPUT_DIR = path.join(__dirname, '../screenshots')
 
 // 기능별 섹션으로 분류된 페이지 목록
+// animationDelay: Framer Motion 애니메이션이 많은 페이지는 더 긴 대기 시간 설정
 const PAGES = [
   // ========== 01-landing (랜딩/홈) ==========
-  { path: '/', name: 'home', description: '홈페이지', folder: '01-landing' },
-  { path: '/about', name: 'about', description: '소개 페이지', folder: '01-landing' },
+  { path: '/', name: 'home', description: '홈페이지', folder: '01-landing', animationDelay: 3000 },
+  { path: '/about', name: 'about', description: '소개 페이지', folder: '01-landing', animationDelay: 3500 },
 
   // ========== 02-auth (인증) ==========
   { path: '/auth/login', name: 'login', description: '로그인', folder: '02-auth' },
   { path: '/auth/signup', name: 'signup', description: '회원가입', folder: '02-auth' },
 
   // ========== 03-meetings (모임) ==========
-  { path: '/meetings', name: 'meetings-list', description: '모임 목록', folder: '03-meetings' },
+  { path: '/meetings', name: 'meetings-list', description: '모임 목록', folder: '03-meetings', animationDelay: 2500 },
   // 동적 페이지는 실제 모임 ID로 대체 필요
-  { path: '/meetings/{meetingId}', name: 'meeting-detail', description: '모임 상세', folder: '03-meetings', dynamic: true },
-  { path: '/meetings/{meetingId}/transfer-pending', name: 'transfer-pending', description: '입금대기 안내', folder: '03-meetings', dynamic: true, requiresAuth: true },
-  { path: '/meetings/{meetingId}/payment-complete', name: 'payment-complete', description: '결제 완료', folder: '03-meetings', dynamic: true, requiresAuth: true },
+  { path: '/meetings/{meetingId}', name: 'meeting-detail', description: '모임 상세', folder: '03-meetings', dynamic: true, animationDelay: 3000 },
+  { path: '/meetings/{meetingId}/transfer-pending', name: 'transfer-pending', description: '입금대기 안내', folder: '03-meetings', dynamic: true, requiresAuth: true, animationDelay: 2500 },
+  { path: '/meetings/{meetingId}/payment-complete', name: 'payment-complete', description: '결제 완료', folder: '03-meetings', dynamic: true, requiresAuth: true, animationDelay: 3000 },
 
   // ========== 04-mypage (마이페이지) ==========
-  { path: '/mypage', name: 'mypage-main', description: '마이페이지 메인', folder: '04-mypage', requiresAuth: true },
-  { path: '/mypage/tickets', name: 'mypage-tickets', description: '티켓 보관함', folder: '04-mypage', requiresAuth: true },
-  { path: '/mypage/bookshelf', name: 'mypage-bookshelf', description: '나의 책장', folder: '04-mypage', requiresAuth: true },
+  { path: '/mypage', name: 'mypage-main', description: '마이페이지 메인', folder: '04-mypage', requiresAuth: true, animationDelay: 2500 },
+  { path: '/mypage/tickets', name: 'mypage-tickets', description: '티켓 보관함', folder: '04-mypage', requiresAuth: true, animationDelay: 3000 },
+  { path: '/mypage/bookshelf', name: 'mypage-bookshelf', description: '나의 책장', folder: '04-mypage', requiresAuth: true, animationDelay: 2500 },
 
   // ========== 05-admin-dashboard (관리자 대시보드) ==========
-  { path: '/admin', name: 'admin-dashboard', description: '관리자 대시보드', folder: '05-admin-dashboard', requiresAuth: true, requiresAdmin: true },
+  { path: '/admin', name: 'admin-dashboard', description: '관리자 대시보드', folder: '05-admin-dashboard', requiresAuth: true, requiresAdmin: true, animationDelay: 2500 },
 
   // ========== 06-admin-meetings (모임 관리) ==========
   { path: '/admin/meetings', name: 'admin-meetings-list', description: '모임 목록', folder: '06-admin-meetings', requiresAuth: true, requiresAdmin: true },
@@ -154,8 +155,27 @@ async function takeScreenshot(page, pageConfig, viewport, meetingId = null) {
     return
   }
 
-  // 추가 로딩 대기
-  await page.waitForTimeout(800)
+  // 페이지 끝까지 스크롤하여 lazy-load 및 애니메이션 트리거
+  await page.evaluate(async () => {
+    await new Promise((resolve) => {
+      let totalHeight = 0
+      const distance = 300
+      const timer = setInterval(() => {
+        const scrollHeight = document.body.scrollHeight
+        window.scrollBy(0, distance)
+        totalHeight += distance
+        if (totalHeight >= scrollHeight) {
+          clearInterval(timer)
+          window.scrollTo(0, 0) // 맨 위로 복귀
+          resolve()
+        }
+      }, 100)
+    })
+  })
+
+  // Framer Motion 애니메이션 완료 대기 (기본 2초, 복잡한 페이지는 더 길게)
+  const animationDelay = pageConfig.animationDelay || 2000
+  await page.waitForTimeout(animationDelay)
 
   // 폴더 생성
   const folderPath = path.join(OUTPUT_DIR, pageConfig.folder)

@@ -1,17 +1,18 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, type ReactNode } from 'react'
 import Link from 'next/link'
 import {
   Calendar, Users, TrendingUp, Banknote, RefreshCcw,
   Clock, CreditCard, ChevronLeft, ChevronRight,
   type LucideIcon
 } from 'lucide-react'
+import { Price } from '@/components/ui/Price'
 import { DashboardStats } from '@/app/api/admin/stats/route'
 
 interface StatCardProps {
   label: string
-  value: string | number
+  value: ReactNode
   subValue?: string
   icon: LucideIcon
   color: string
@@ -110,10 +111,6 @@ export default function DashboardClient() {
     fetchStats()
   }, [fetchStats])
 
-  const formatCurrency = (amount: number) => {
-    return amount.toLocaleString() + '콩'
-  }
-
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr)
     return date.toLocaleDateString('ko-KR', {
@@ -193,14 +190,14 @@ export default function DashboardClient() {
         />
         <StatCard
           label="수입"
-          value={formatCurrency(stats.income.total)}
+          value={<Price amount={stats.income.total} size="lg" />}
           icon={Banknote}
           color="text-green-500"
           bg="bg-green-50"
         />
         <StatCard
           label="환불"
-          value={formatCurrency(stats.income.refunded)}
+          value={<Price amount={stats.income.refunded} size="lg" />}
           subValue={`${stats.income.refundCount}건`}
           icon={RefreshCcw}
           color="text-orange-500"

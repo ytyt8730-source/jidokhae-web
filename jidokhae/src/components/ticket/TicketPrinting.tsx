@@ -9,6 +9,7 @@
 
 import { motion } from 'framer-motion'
 import { Calendar, MapPin, User } from 'lucide-react'
+import { useBrandText } from '@/components/ui/BrandLogo'
 import { useTypewriter } from '@/hooks/useTypewriter'
 import { useFeedback } from '@/hooks/useFeedback'
 import {
@@ -38,6 +39,7 @@ export function TicketPrinting({
   onComplete,
   className = '',
 }: TicketPrintingProps) {
+  const brandText = useBrandText()
   const { feedback } = useFeedback()
   const ticketId = generateTicketId(data.meetingDate, data.seatNumber)
 
@@ -101,7 +103,9 @@ export function TicketPrinting({
         <div className="bg-brand-600 text-white px-5 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-medium opacity-80">지독해</span>
+              <span className="text-xs font-medium opacity-80">
+                {brandText}
+              </span>
               <span className="text-xs opacity-60">|</span>
               <span className="text-xs opacity-80">경주/포항 독서모임</span>
             </div>

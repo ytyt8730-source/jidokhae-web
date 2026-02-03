@@ -6,6 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { BookOpen, Users, Heart, MapPin, Calendar, Quote } from 'lucide-react'
 import Button from '@/components/ui/Button'
+import { useTheme } from '@/providers/ThemeProvider'
 import {
   sectionFadeIn,
   staggerContainer,
@@ -29,20 +30,27 @@ interface PublicReview {
   }
 }
 
+interface GalleryImage {
+  id: string
+  image_url: string
+  alt_text: string
+}
+
 interface LandingContentProps {
   stats: {
     memberCount: number
     meetingCount: number
   }
   reviews: PublicReview[]
+  galleryImages: GalleryImage[]
 }
 
-// 갤러리 이미지 (플레이스홀더 - 실제 이미지로 교체 필요)
-const galleryImages = [
-  { src: '/images/gallery/meeting-1.jpg', alt: '독서 모임 풍경 1' },
-  { src: '/images/gallery/meeting-2.jpg', alt: '독서 모임 풍경 2' },
-  { src: '/images/gallery/meeting-3.jpg', alt: '독서 모임 풍경 3' },
-  { src: '/images/gallery/meeting-4.jpg', alt: '독서 모임 풍경 4' },
+// 기본 갤러리 이미지 (DB에 이미지가 없을 때 사용)
+const defaultGalleryImages: GalleryImage[] = [
+  { id: 'default-1', image_url: '/images/gallery/meeting-1.jpg', alt_text: '독서 모임 풍경 1' },
+  { id: 'default-2', image_url: '/images/gallery/meeting-2.jpg', alt_text: '독서 모임 풍경 2' },
+  { id: 'default-3', image_url: '/images/gallery/meeting-3.jpg', alt_text: '독서 모임 풍경 3' },
+  { id: 'default-4', image_url: '/images/gallery/meeting-4.jpg', alt_text: '독서 모임 풍경 4' },
 ]
 
 // 스크롤 트리거 섹션 래퍼
@@ -69,9 +77,13 @@ function AnimatedSection({
   )
 }
 
-export default function LandingContent({ stats, reviews }: LandingContentProps) {
+export default function LandingContent({ stats, reviews, galleryImages }: LandingContentProps) {
+  const { theme } = useTheme()
   const heroRef = useRef(null)
   const heroInView = useInView(heroRef, { once: true })
+
+  // DB 이미지가 없으면 기본 이미지 사용
+  const displayGalleryImages = galleryImages.length > 0 ? galleryImages : defaultGalleryImages
 
   return (
     <div className="min-h-screen">
@@ -267,15 +279,15 @@ export default function LandingContent({ stats, reviews }: LandingContentProps) 
             viewport={{ once: true, margin: '-50px' }}
             className="grid grid-cols-2 md:grid-cols-4 gap-4"
           >
-            {galleryImages.map((image, index) => (
+            {displayGalleryImages.map((image) => (
               <motion.div
-                key={index}
+                key={image.id}
                 variants={galleryItem}
                 className="relative aspect-square rounded-xl overflow-hidden bg-gray-200 group"
               >
                 <Image
-                  src={image.src}
-                  alt={image.alt}
+                  src={image.image_url}
+                  alt={image.alt_text}
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                   onError={(e) => {
@@ -377,7 +389,7 @@ export default function LandingContent({ stats, reviews }: LandingContentProps) 
                   className="bg-white rounded-2xl p-6 shadow-card hover:shadow-card-hover transition-shadow duration-300"
                 >
                   <Quote className="text-brand-200 mb-4" size={32} strokeWidth={1.5} />
-                  <p className="text-gray-700 leading-relaxed mb-4 line-clamp-4 font-serif">
+                  <p className={`text-gray-700 leading-relaxed mb-4 line-clamp-4 ${theme === 'warm' ? 'font-serif' : ''}`}>
                     &ldquo;{review.content}&rdquo;
                   </p>
                   <div className="flex items-center justify-between text-sm text-gray-500">

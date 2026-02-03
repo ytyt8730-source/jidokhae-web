@@ -14,6 +14,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Search, Check, Clock, CreditCard, AlertTriangle, RefreshCw } from 'lucide-react'
+import { Price } from '@/components/ui/Price'
 import { getRemainingTime, maskAccountNumber } from '@/lib/transfer'
 
 type Tab = 'pending' | 'refund'
@@ -185,8 +186,6 @@ export default function TransfersClient() {
     return 'normal'
   }
 
-  const formatAmount = (amount: number) => amount.toLocaleString() + '콩'
-
   if (loading) {
     return (
       <div className="space-y-6">
@@ -311,8 +310,8 @@ export default function TransfersClient() {
                           <span className="font-mono text-gray-700">{reg.transfer_sender_name}</span>
                         </td>
                         <td className="py-3 px-4 text-gray-600">{reg.meetings.title}</td>
-                        <td className="py-3 px-4 text-right font-medium text-brand-800">
-                          {formatAmount(reg.payment_amount)}
+                        <td className="py-3 px-4 text-right">
+                          <Price amount={reg.payment_amount} size="sm" className="text-brand-800" />
                         </td>
                         <td className="py-3 px-4 text-center">
                           <span
@@ -378,8 +377,8 @@ export default function TransfersClient() {
                         <span className="font-medium text-brand-800">{reg.users.name}</span>
                       </td>
                       <td className="py-3 px-4 text-gray-600">{reg.meetings.title}</td>
-                      <td className="py-3 px-4 text-right font-medium text-brand-800">
-                        {formatAmount(reg.payment_amount)}
+                      <td className="py-3 px-4 text-right">
+                        <Price amount={reg.payment_amount} size="sm" className="text-brand-800" />
                       </td>
                       <td className="py-3 px-4">
                         {reg.refund_info ? (

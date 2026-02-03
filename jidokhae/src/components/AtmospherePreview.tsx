@@ -32,7 +32,7 @@ export default function AtmospherePreview({ reviews }: AtmospherePreviewProps) {
     >
       {/* 헤더 */}
       <div className="flex items-center gap-2 mb-3">
-        <MessageCircle size={16} className="text-brand-600" />
+        <MessageCircle size={16} className="text-brand-600" strokeWidth={1.5} />
         <h3 className="text-sm font-medium text-gray-700">
           지난 모임의 분위기
         </h3>
@@ -58,7 +58,7 @@ export default function AtmospherePreview({ reviews }: AtmospherePreviewProps) {
         className="inline-flex items-center gap-1 text-xs text-brand-600 hover:text-brand-700 transition-colors"
       >
         지독해 더 알아보기
-        <ArrowRight size={12} />
+        <ArrowRight size={12} strokeWidth={1.5} />
       </Link>
     </motion.div>
   )

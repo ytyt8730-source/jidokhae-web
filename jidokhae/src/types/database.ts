@@ -232,6 +232,38 @@ export interface Database {
           created_at?: string
         }
       }
+      gallery_images: {
+        Row: {
+          id: string
+          image_url: string
+          alt_text: string
+          is_active: boolean
+          display_order: number
+          created_by: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          image_url: string
+          alt_text: string
+          is_active?: boolean
+          display_order?: number
+          created_by?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          image_url?: string
+          alt_text?: string
+          is_active?: boolean
+          display_order?: number
+          created_by?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never
@@ -363,5 +395,15 @@ export interface EligibilityCheckResult {
   expiresAt: string | null
   daysRemaining: number | null
   status: EligibilityStatus
+}
+
+// 갤러리 이미지 타입
+export type GalleryImage = Database['public']['Tables']['gallery_images']['Row']
+
+// 갤러리 이미지 (공개용 - 활성 이미지만)
+export interface PublicGalleryImage {
+  id: string
+  image_url: string
+  alt_text: string
 }
 

@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { LayoutDashboard, Calendar, Users, Settings, Bell, CreditCard, FileText, Shield, MessageSquare, Image } from 'lucide-react'
+import { LayoutDashboard, Calendar, Users, Settings, Bell, CreditCard, FileText, Shield, MessageSquare, Image, Images } from 'lucide-react'
 
 interface AdminLayoutProps {
   children: React.ReactNode
@@ -35,6 +35,7 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
     { href: '/admin/users', label: '회원 관리', icon: Users },
     { href: '/admin/requests', label: '요청함', icon: MessageSquare },
     { href: '/admin/banners', label: '배너 관리', icon: Image },
+    { href: '/admin/gallery', label: '갤러리 관리', icon: Images },
     { href: '/admin/notifications', label: '알림 발송', icon: Bell },
     { href: '/admin/templates', label: '알림 템플릿', icon: FileText },
     ...(isSuperAdmin ? [{ href: '/admin/permissions', label: '권한 관리', icon: Shield }] : []),

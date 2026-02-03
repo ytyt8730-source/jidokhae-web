@@ -1,8 +1,11 @@
+'use client'
+
 import Link from 'next/link'
-import { BookOpen } from 'lucide-react'
+import { BrandLogo, useBrandText } from '@/components/ui/BrandLogo'
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
+  const brandText = useBrandText()
 
   return (
     <footer className="bg-bg-base border-t border-[var(--border)]">
@@ -10,8 +13,7 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           {/* 브랜드 */}
           <div className="flex items-center gap-2">
-            <BookOpen size={20} strokeWidth={1.5} className="text-primary" />
-            <span className="font-semibold text-text">지독해</span>
+            <BrandLogo variant="simple" />
             <span className="text-sm text-text-muted">경주·포항 독서모임</span>
           </div>
 
@@ -35,7 +37,7 @@ export default function Footer() {
         {/* 저작권 */}
         <div className="mt-6 pt-6 border-t border-[var(--border)]">
           <p className="text-xs text-text-muted opacity-60 text-center md:text-left">
-            © {currentYear} 지독해. All rights reserved.
+            © {currentYear} {brandText}. All rights reserved.
           </p>
         </div>
       </div>

@@ -9,6 +9,7 @@
 
 import { motion } from 'framer-motion'
 import { Calendar, MapPin, User } from 'lucide-react'
+import { useBrandText } from '@/components/ui/BrandLogo'
 import {
   formatSeatNumber,
   formatParticipationCount,
@@ -28,6 +29,7 @@ export default function Ticket({
   onTear,
   className = '',
 }: TicketProps) {
+  const brandText = useBrandText()
   const ticketId = generateTicketId(data.meetingDate, data.seatNumber)
   const isPending = data.status === 'pending_payment' || data.status === 'pending_transfer'
   const isConfirmed = data.status === 'confirmed'
@@ -58,7 +60,9 @@ export default function Ticket({
         <div className="bg-brand-600 text-white px-5 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-medium opacity-80">지독해</span>
+              <span className="text-xs font-medium opacity-80">
+                {brandText}
+              </span>
               <span className="text-xs opacity-60">|</span>
               <span className="text-xs opacity-80">경주·포항 독서모임</span>
             </div>

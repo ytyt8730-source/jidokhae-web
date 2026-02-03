@@ -39,6 +39,13 @@ interface PublicReview {
   }
 }
 
+// 갤러리 이미지 타입
+interface GalleryImage {
+  id: string
+  image_url: string
+  alt_text: string
+}
+
 // 통계 데이터 조회
 async function getStats() {
   const supabase = await createClient()
@@ -58,6 +65,19 @@ async function getStats() {
     memberCount: memberCount || 0,
     meetingCount: meetingCount || 0,
   }
+}
+
+// 갤러리 이미지 조회
+async function getGalleryImages(): Promise<GalleryImage[]> {
+  const supabase = await createClient()
+
+  const { data: images } = await supabase
+    .from('gallery_images')
+    .select('id, image_url, alt_text')
+    .eq('is_active', true)
+    .order('display_order', { ascending: true })
+
+  return images || []
 }
 
 // 공개 후기 조회
@@ -120,10 +140,11 @@ async function getPublicReviews(): Promise<PublicReview[]> {
 }
 
 export default async function AboutPage() {
-  const [stats, reviews] = await Promise.all([
+  const [stats, reviews, galleryImages] = await Promise.all([
     getStats(),
     getPublicReviews(),
+    getGalleryImages(),
   ])
 
-  return <LandingContent stats={stats} reviews={reviews} />
+  return <LandingContent stats={stats} reviews={reviews} galleryImages={galleryImages} />
 }

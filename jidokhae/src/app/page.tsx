@@ -91,7 +91,7 @@ export default async function HomePage() {
                 className="hero-btn-primary inline-flex items-center gap-2 font-semibold rounded-xl px-8 py-4 transition-all duration-200 hover:-translate-y-[1px] hover:shadow-lg active:scale-[0.98]"
               >
                 모임 둘러보기
-                <ArrowRight size={18} strokeWidth={2} />
+                <ArrowRight size={18} strokeWidth={1.5} />
               </Link>
               <Link
                 href="/about"

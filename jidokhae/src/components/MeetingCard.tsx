@@ -156,7 +156,7 @@ export default function MeetingCard({
             <KongIcon size={18} />
             <span className="font-semibold text-[var(--text)]">{formatFee(meeting.fee)}</span>
           </div>
-          <ChevronRight size={20} className="text-[var(--text-muted)]" />
+          <ChevronRight size={20} className="text-[var(--text-muted)]" strokeWidth={1.5} />
         </div>
       </div>
     </article>

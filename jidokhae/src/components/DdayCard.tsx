@@ -91,7 +91,7 @@ export default function DdayCard({ registration, className = '' }: DdayCardProps
         {/* Link */}
         <span className="mt-3 inline-flex items-center gap-1 text-xs font-medium dday-link underline">
           준비물 확인하기
-          <ArrowRight size={12} />
+          <ArrowRight size={12} strokeWidth={1.5} />
         </span>
       </Link>
     </motion.div>

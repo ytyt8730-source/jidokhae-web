@@ -10,6 +10,7 @@
 import { useRef, useState } from 'react'
 import { toPng } from 'html-to-image'
 import { Download, Loader2 } from 'lucide-react'
+import { useBrandText } from '@/components/ui/BrandLogo'
 
 interface QuoteCardGeneratorProps {
   quote: string
@@ -27,6 +28,7 @@ const GRADIENTS = [
 ]
 
 export default function QuoteCardGenerator({ quote, bookTitle, author }: QuoteCardGeneratorProps) {
+  const brandText = useBrandText()
   const cardRef = useRef<HTMLDivElement>(null)
   const [isGenerating, setIsGenerating] = useState(false)
   const [gradient] = useState(() => GRADIENTS[Math.floor(Math.random() * GRADIENTS.length)])
@@ -92,7 +94,9 @@ export default function QuoteCardGenerator({ quote, bookTitle, author }: QuoteCa
           {/* 하단 로고 */}
           <div className="absolute bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
             <div className="w-16 h-[2px] bg-gray-300" />
-            <p className="text-xl text-gray-400 tracking-widest">지독해 JIDOKHAE</p>
+            <p className="text-xl text-gray-400 tracking-widest">
+              {brandText}
+            </p>
           </div>
         </div>
       </div>

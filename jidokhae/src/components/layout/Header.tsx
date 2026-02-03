@@ -2,11 +2,11 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X, User, LogOut, BookOpen, Settings } from 'lucide-react'
+import { Menu, X, User, LogOut, Settings } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
-import { useTheme } from '@/providers/ThemeProvider'
+import { BrandLogo } from '@/components/ui/BrandLogo'
 import type { User as UserType } from '@/types/database'
 
 interface HeaderProps {
@@ -17,7 +17,6 @@ export default function Header({ user }: HeaderProps) {
   const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const supabase = createClient()
-  const { theme } = useTheme()
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
@@ -43,16 +42,8 @@ export default function Header({ user }: HeaderProps) {
     <header className="sticky top-0 z-50 bg-bg-surface/95 backdrop-blur-md border-b border-[var(--border)]">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         {/* 로고 */}
-        <Link href="/" className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-            <BookOpen className="text-white" size={16} strokeWidth={1.5} />
-          </div>
-          <span className={cn(
-            'font-bold text-xl text-text',
-            theme === 'warm' ? 'font-serif' : 'font-sans'
-          )}>
-            지독해
-          </span>
+        <Link href="/" className="flex items-center gap-2">
+          <BrandLogo variant="full" />
         </Link>
 
         {/* 데스크톱 네비게이션 */}
