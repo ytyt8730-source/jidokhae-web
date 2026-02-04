@@ -9,37 +9,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { processMonthlyEncourage } from '@/lib/segment-notification'
 import { cronLogger } from '@/lib/logger'
-
-const CRON_SECRET = process.env.CRON_SECRET
-
-function verifyCronRequest(request: NextRequest): boolean {
-  if (process.env.NODE_ENV === 'development') {
-    return true
-  }
-
-  const authHeader = request.headers.get('authorization')
-  if (authHeader === `Bearer ${CRON_SECRET}`) {
-    return true
-  }
-
-  const vercelCron = request.headers.get('x-vercel-cron')
-  if (vercelCron) {
-    return true
-  }
-
-  return false
-}
+import { verifyCronRequest, cronUnauthorizedResponse } from '@/lib/cron-auth'
 
 export async function GET(request: NextRequest) {
   const logger = cronLogger
   const timer = logger.startTimer()
 
   if (!verifyCronRequest(request)) {
-    logger.warn('cron_unauthorized', {
-      path: '/api/cron/monthly',
-      ip: request.headers.get('x-forwarded-for'),
-    })
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return cronUnauthorizedResponse('/api/cron/monthly', request)
   }
 
   logger.info('monthly_cron_started')

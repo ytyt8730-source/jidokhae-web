@@ -11,33 +11,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { processAllReminders } from '@/lib/reminder'
 import { cronLogger } from '@/lib/logger'
-
-// Vercel Cron 인증 헤더
-const CRON_SECRET = process.env.CRON_SECRET
-
-/**
- * Cron 요청 인증 확인
- */
-function verifyCronRequest(request: NextRequest): boolean {
-  // 개발 환경에서는 인증 스킵
-  if (process.env.NODE_ENV === 'development') {
-    return true
-  }
-
-  // Vercel Cron은 Authorization 헤더로 검증
-  const authHeader = request.headers.get('authorization')
-  if (authHeader === `Bearer ${CRON_SECRET}`) {
-    return true
-  }
-
-  // 또는 X-Vercel-Cron 헤더 체크
-  const vercelCron = request.headers.get('x-vercel-cron')
-  if (vercelCron) {
-    return true
-  }
-
-  return false
-}
+import { verifyCronRequest, cronUnauthorizedResponse } from '@/lib/cron-auth'
 
 export async function GET(request: NextRequest) {
   const logger = cronLogger
@@ -45,14 +19,7 @@ export async function GET(request: NextRequest) {
 
   // 인증 확인
   if (!verifyCronRequest(request)) {
-    logger.warn('cron_unauthorized', {
-      path: '/api/cron/reminder',
-      ip: request.headers.get('x-forwarded-for'),
-    })
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    )
+    return cronUnauthorizedResponse('/api/cron/reminder', request)
   }
 
   logger.info('reminder_cron_started')

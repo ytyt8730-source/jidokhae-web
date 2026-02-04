@@ -11,26 +11,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { cronLogger } from '@/lib/logger'
 import { subDays, startOfDay, endOfDay, addWeeks } from 'date-fns'
-
-const CRON_SECRET = process.env.CRON_SECRET
-
-function verifyCronRequest(request: NextRequest): boolean {
-  if (process.env.NODE_ENV === 'development') {
-    return true
-  }
-
-  const authHeader = request.headers.get('authorization')
-  if (authHeader === `Bearer ${CRON_SECRET}`) {
-    return true
-  }
-
-  const vercelCron = request.headers.get('x-vercel-cron')
-  if (vercelCron) {
-    return true
-  }
-
-  return false
-}
+import { verifyCronRequest, cronUnauthorizedResponse } from '@/lib/cron-auth'
 
 interface FollowupTarget {
   userId: string
@@ -190,8 +171,7 @@ export async function GET(request: NextRequest) {
   const timer = logger.startTimer()
 
   if (!verifyCronRequest(request)) {
-    logger.warn('cron_unauthorized', { path: '/api/cron/first-meeting-followup' })
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return cronUnauthorizedResponse('/api/cron/first-meeting-followup', request)
   }
 
   logger.info('followup_cron_started')

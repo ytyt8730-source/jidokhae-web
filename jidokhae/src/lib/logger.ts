@@ -30,6 +30,7 @@ export type LogService =
   | 'ticket-export'
   | 'useTickets'
   | 'tickets-page'
+  | 'onboarding'
 
 /**
  * 구조화된 로그 엔트리
@@ -291,4 +292,5 @@ export const registrationLogger = createLogger('registration')
 export const waitlistLogger = createLogger('waitlist')
 export const cronLogger = createLogger('cron')
 export const systemLogger = createLogger('system')
+export const onboardingLogger = createLogger('onboarding')
 

@@ -10,33 +10,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { cronLogger } from '@/lib/logger'
 import { sendAndLogNotification, isAlreadySent } from '@/lib/notification'
-
-// Vercel Cron 인증 헤더
-const CRON_SECRET = process.env.CRON_SECRET
+import { verifyCronRequest, cronUnauthorizedResponse } from '@/lib/cron-auth'
 
 // 템플릿 코드
 const AFTERGLOW_TEMPLATE = 'AFTERGLOW'
-
-/**
- * Cron 요청 인증 확인
- */
-function verifyCronRequest(request: NextRequest): boolean {
-  if (process.env.NODE_ENV === 'development') {
-    return true
-  }
-
-  const authHeader = request.headers.get('authorization')
-  if (authHeader === `Bearer ${CRON_SECRET}`) {
-    return true
-  }
-
-  const vercelCron = request.headers.get('x-vercel-cron')
-  if (vercelCron) {
-    return true
-  }
-
-  return false
-}
 
 /**
  * 모임 종료 시간 계산 (duration 기반)
@@ -52,11 +29,7 @@ export async function GET(request: NextRequest) {
 
   // 인증 확인
   if (!verifyCronRequest(request)) {
-    logger.warn('cron_unauthorized', {
-      path: '/api/cron/afterglow',
-      ip: request.headers.get('x-forwarded-for'),
-    })
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return cronUnauthorizedResponse('/api/cron/afterglow', request)
   }
 
   logger.info('afterglow_cron_started')

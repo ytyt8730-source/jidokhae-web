@@ -1,7 +1,9 @@
+import { NextRequest } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { successResponse, withErrorHandler } from '@/lib/api'
 import { createLogger } from '@/lib/logger'
 import { NOTIFICATION_TEMPLATES } from '@/lib/notification/types'
+import { verifyCronRequest, cronUnauthorizedResponse } from '@/lib/cron-auth'
 
 const logger = createLogger('cron')
 
@@ -16,16 +18,13 @@ const logger = createLogger('cron')
  *
  * 실행 주기: 매 시간 (Vercel Cron 또는 외부 호출)
  */
-export async function GET(request: Request) {
-  return withErrorHandler(async () => {
-    // 보안: Cron Secret 검증
-    const authHeader = request.headers.get('Authorization')
-    const cronSecret = process.env.CRON_SECRET
+export async function GET(request: NextRequest) {
+  // [보안] Cron 인증 확인
+  if (!verifyCronRequest(request)) {
+    return cronUnauthorizedResponse('/api/cron/transfer-timeout', request)
+  }
 
-    if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-      logger.warn('Unauthorized cron access attempt')
-      return successResponse({ processed: 0, warned: 0 }, { status: 401 })
-    }
+  return withErrorHandler(async () => {
 
     const supabase = await createServiceClient()
     const timer = logger.startTimer()

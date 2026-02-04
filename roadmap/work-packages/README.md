@@ -2,8 +2,9 @@
 
 ---
 
-**문서 버전:** 1.0  
-**작성일:** 2026-01-14  
+**문서 버전:** 2.0
+**작성일:** 2026-01-14
+**마지막 업데이트:** 2026-02-04
 **관련 문서:** [milestones.md](../milestones.md)
 
 ---
@@ -23,17 +24,51 @@
 
 ## 2. Work Package 목록
 
-| Milestone | Work Package | 기간 | Phase 수 | 핵심 가치 |
-|-----------|--------------|------|----------|----------|
-| M1 | [WP-M1-기반구축.md](./WP-M1-기반구축.md) | 1~2주 | 4 | 쉬운 연결 (기반) |
-| M2 | [WP-M2-핵심결제흐름.md](./WP-M2-핵심결제흐름.md) | 2~3주 | 5 | 쉬운 연결, 신뢰 |
-| M3 | [WP-M3-알림시스템.md](./WP-M3-알림시스템.md) | 1~2주 | 4 | 잊지 않게 |
-| M4 | [WP-M4-소속감기능.md](./WP-M4-소속감기능.md) | 2~3주 | 5 | 소속감 |
-| M5 | [WP-M5-운영자도구.md](./WP-M5-운영자도구.md) | 2주 | 4 | 신뢰 (운영 관점) |
-| M6 | [WP-M6-신규회원-출시.md](./WP-M6-신규회원-출시.md) | 2주 | 4 | 모든 가치 완성 |
+### 2.1 Part 1: Core MVP (M1~M9) - 완료
 
-**총 Phase 수:** 26개  
-**예상 총 기간:** 12~14주
+| Milestone | Work Package | 기간 | Phase 수 | 핵심 가치 | 상태 |
+|-----------|--------------|------|----------|----------|------|
+| M1 | [WP-M1-기반구축.md](./WP-M1-기반구축.md) | 1~2주 | 4 | 쉬운 연결 (기반) | 완료 |
+| M2 | [WP-M2-핵심결제흐름.md](./WP-M2-핵심결제흐름.md) | 2~3주 | 5 | 쉬운 연결, 신뢰 | 완료 |
+| M3 | [WP-M3-알림시스템.md](./WP-M3-알림시스템.md) | 1~2주 | 4 | 잊지 않게 | 완료 |
+| M4 | [WP-M4-소속감기능.md](./WP-M4-소속감기능.md) | 2~3주 | 5 | 소속감 | 완료 |
+| M5 | [WP-M5-운영자도구.md](./WP-M5-운영자도구.md) | 2주 | 4 | 신뢰 (운영 관점) | 완료 |
+| M6 | [WP-M6-신규회원-출시.md](./WP-M6-신규회원-출시.md) | 2주 | 4 | 모든 가치 완성 | 완료 |
+| M7 | [WP-M7-Polish-Growth.md](./WP-M7-Polish-Growth.md) | 1~2주 | - | UI 개선 | 완료 |
+| M8 | [WP-M8-Ritual-Foundation.md](./WP-M8-Ritual-Foundation.md) | 1~2주 | - | Ritual 기반 | 완료 |
+| M9 | [WP-M9-Commitment-Ritual.md](./WP-M9-Commitment-Ritual.md) | 1~2주 | - | 티켓 시스템 | 완료 |
+
+### 2.2 Part 2: Onboarding - 최우선
+
+> Scenario 번호 체계: `SC-M6-P[Phase]-[순번]` (확장 번호 체계 적용)
+
+| Milestone | Work Package | 기간 | Phase 수 | 핵심 가치 | 상태 |
+|-----------|--------------|------|----------|----------|------|
+| M6-Onboarding | [WP-M6-Onboarding.md](./WP-M6-Onboarding.md) | 2~3주 | 5 | 신규 회원 전환 70% | **진행 예정** |
+
+### 2.3 Part 3: Experience Enhancement (M10~M12)
+
+| Milestone | Work Package | 기간 | Phase 수 | 핵심 가치 | 상태 |
+|-----------|--------------|------|----------|----------|------|
+| M10 | [WP-M10-Connection-Memory.md](./WP-M10-Connection-Memory.md) | 2주 | - | 연결 & 기억 | 대기 |
+| M11 | [WP-M11-Community-Hub.md](./WP-M11-Community-Hub.md) | 2주 | - | 커뮤니티 허브 | 대기 |
+| M12 | [WP-M12-Admin-Evolution.md](./WP-M12-Admin-Evolution.md) | 1~2주 | - | 운영자 도구 진화 | 대기 |
+
+### 2.4 Part 4: Backoffice MVP (M13~M17)
+
+| Milestone | Work Package | 기간 | Phase 수 | 핵심 가치 | 상태 |
+|-----------|--------------|------|----------|----------|------|
+| M13 | [WP-M13-Admin-Foundation.md](./WP-M13-Admin-Foundation.md) | 1~2주 | - | 백오피스 기반 | 대기 |
+| M14 | [WP-M14-Payment-Operations.md](./WP-M14-Payment-Operations.md) | 1~2주 | - | 결제 운영 | 대기 |
+| M15 | [WP-M15-Meeting-Management.md](./WP-M15-Meeting-Management.md) | 1~2주 | - | 모임 관리 | 대기 |
+| M16 | [WP-M16-Member-Management.md](./WP-M16-Member-Management.md) | 1~2주 | - | 회원 관리 | 대기 |
+| M17 | [WP-M17-Settings-Management.md](./WP-M17-Settings-Management.md) | 1주 | - | 설정 관리 | 대기 |
+
+### 2.5 기타
+
+| Milestone | Work Package | 설명 |
+|-----------|--------------|------|
+| MX | [WP-MX-Bugfix.md](./WP-MX-Bugfix.md) | 버그 수정 |
 
 ---
 
@@ -202,4 +237,5 @@ M5-P4: banners, (suggestions 수정)
 | 날짜 | 버전 | 변경 내용 |
 |------|------|----------|
 | 2026-01-14 | 1.0 | Work Packages README 최초 작성 |
+| 2026-02-04 | 2.0 | Part 1~4 구조로 재편, M6-Onboarding~M17 추가, MX-Bugfix 추가, 확장 번호 체계 안내 |
 

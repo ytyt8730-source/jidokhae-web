@@ -18,10 +18,15 @@ import { env } from '@/lib/env'
 
 const logger = createLogger('webhook')
 
+// [보안] Replay Attack 방지: 타임스탬프 허용 오차 (5분)
+const WEBHOOK_TIMESTAMP_TOLERANCE_SECONDS = 300
+
 /**
  * 포트원 V2 웹훅 서명 검증
  * Standard Webhooks 스펙 준수
  * https://github.com/standard-webhooks/standard-webhooks
+ *
+ * [보안] Replay Attack 방지를 위해 타임스탬프 검증 추가
  */
 function verifyWebhookSignature(
   payload: string,
@@ -29,12 +34,29 @@ function verifyWebhookSignature(
   webhookTimestamp: string,
   webhookSignature: string,
   secret: string
-): boolean {
+): { valid: boolean; error?: string } {
   if (!webhookId || !webhookTimestamp || !webhookSignature || !secret) {
-    return false
+    return { valid: false, error: 'missing_headers' }
   }
 
   try {
+    // [보안] Replay Attack 방지: 타임스탬프 검증
+    const timestampSeconds = parseInt(webhookTimestamp, 10)
+    if (isNaN(timestampSeconds)) {
+      return { valid: false, error: 'invalid_timestamp_format' }
+    }
+
+    const nowSeconds = Math.floor(Date.now() / 1000)
+    const timeDiff = Math.abs(nowSeconds - timestampSeconds)
+    if (timeDiff > WEBHOOK_TIMESTAMP_TOLERANCE_SECONDS) {
+      logger.warn('webhook_timestamp_expired', {
+        webhookTimestamp: timestampSeconds,
+        now: nowSeconds,
+        diff: timeDiff,
+      })
+      return { valid: false, error: 'timestamp_expired' }
+    }
+
     // 시크릿에서 whsec_ 접두어 제거 후 base64 디코딩
     const secretBytes = Buffer.from(
       secret.startsWith('whsec_') ? secret.slice(6) : secret,
@@ -61,15 +83,15 @@ function verifyWebhookSignature(
         const received = Buffer.from(signatureValue, 'base64')
         if (expected.length === received.length &&
             crypto.timingSafeEqual(expected, received)) {
-          return true
+          return { valid: true }
         }
       }
     }
 
-    return false
+    return { valid: false, error: 'signature_mismatch' }
   } catch (error) {
     logger.error('signature_verification_error', { error: String(error) })
-    return false
+    return { valid: false, error: 'verification_exception' }
   }
 }
 
@@ -250,29 +272,27 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const webhookTimestamp = request.headers.get('webhook-timestamp') || ''
     const webhookSignature = request.headers.get('webhook-signature') || ''
 
-    // 2. 웹훅 시크릿 확인
+    // 2. 웹훅 시크릿 확인 - [보안] 개발환경 우회 제거
     const webhookSecret = env.server.portone.webhookSecret
     if (!webhookSecret) {
       logger.error('webhook_secret_not_configured')
-      // 개발 환경에서는 경고만 출력하고 계속 진행
-      if (process.env.NODE_ENV === 'production') {
-        return NextResponse.json(
-          { error: 'Webhook secret not configured' },
-          { status: 500 }
-        )
-      }
-      logger.warn('webhook_secret_missing_dev_mode', { message: 'Skipping signature verification in development' })
+      return NextResponse.json(
+        { error: 'Webhook secret not configured' },
+        { status: 500 }
+      )
     }
 
-    // 3. 서명 검증 (Standard Webhooks 스펙)
-    if (webhookSecret && !verifyWebhookSignature(payload, webhookId, webhookTimestamp, webhookSignature, webhookSecret)) {
+    // 3. 서명 검증 (Standard Webhooks 스펙 + Replay Attack 방지)
+    const verification = verifyWebhookSignature(payload, webhookId, webhookTimestamp, webhookSignature, webhookSecret)
+    if (!verification.valid) {
       logger.warn('webhook_signature_invalid', {
         webhookId,
         webhookTimestamp,
         signatureLength: webhookSignature.length,
         payloadLength: payload.length,
+        error: verification.error,
       })
-      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
+      return NextResponse.json({ error: `Invalid signature: ${verification.error}` }, { status: 401 })
     }
 
     // 4. 페이로드 파싱

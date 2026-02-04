@@ -2,8 +2,9 @@
 
 ---
 
-**문서 버전:** 1.0  
-**작성일:** 2026-01-14  
+**문서 버전:** 2.0
+**작성일:** 2026-01-14
+**마지막 업데이트:** 2026-02-04
 **관련 문서:** [work-packages/](../work-packages/)
 
 ---
@@ -27,6 +28,8 @@
 
 ## 2. Scenario 문서 목록
 
+### 2.1 Core MVP (M1~M6) - 완료
+
 | Milestone | 파일 | Scenario 수 | 성공 | 실패 |
 |-----------|------|------------|------|------|
 | M1 | [SC-M1-기반구축.md](./SC-M1-기반구축.md) | 39 | 33 | 6 |
@@ -35,11 +38,33 @@
 | M4 | [SC-M4-소속감기능.md](./SC-M4-소속감기능.md) | 47 | 42 | 5 |
 | M5 | [SC-M5-운영자도구.md](./SC-M5-운영자도구.md) | 39 | 36 | 3 |
 | M6 | [SC-M6-신규회원-출시.md](./SC-M6-신규회원-출시.md) | 45 | 42 | 3 |
-| **총계** | | **259** | **228** | **31** |
+| M7 | [SC-M7-Polish-Growth.md](./SC-M7-Polish-Growth.md) | - | - | - |
+| **소계** | | **259** | **228** | **31** |
+
+### 2.2 Onboarding (Phase별 분리) - 진행 중
+
+> 확장 번호 체계 적용: `SC-M6-P[Phase]-[순번]`
+
+| Phase | 파일 | Scenario 수 | 설명 |
+|-------|------|------------|------|
+| P1 | [SC-M6-Onboarding-P1.md](./SC-M6-Onboarding-P1.md) | 27 | DB 스키마 & 기반 인프라 |
+| P2 | [SC-M6-Onboarding-P2.md](./SC-M6-Onboarding-P2.md) | 28 | 온보딩 1~3단계 UI |
+| P3 | [SC-M6-Onboarding-P3.md](./SC-M6-Onboarding-P3.md) | 22 | 후킹 랜딩페이지 개선 |
+| P4 | [SC-M6-Onboarding-P4.md](./SC-M6-Onboarding-P4.md) | 22 | 가입 후 리마인드 시퀀스 |
+| P5 | [SC-M6-Onboarding-P5.md](./SC-M6-Onboarding-P5.md) | 18 | 첫 모임 후 리마인드 & Aha Moment |
+| **소계** | | **117** | |
+
+### 2.3 기타
+
+| Milestone | 파일 | Scenario 수 | 설명 |
+|-----------|------|------------|------|
+| MX | [SC-MX-Bugfix.md](./SC-MX-Bugfix.md) | - | 버그 수정 시나리오 |
 
 ---
 
 ## 3. Scenario 번호 체계
+
+### 3.1 기본 번호 체계
 
 ```
 Scenario [Milestone]-[순번]: [행동 기반 명칭]
@@ -48,6 +73,31 @@ Scenario [Milestone]-[순번]: [행동 기반 명칭]
 **예시:**
 - `M1-001`: M1의 첫 번째 Scenario
 - `M2-015`: M2의 15번째 Scenario
+
+**적용 대상:** 시나리오 수가 50개 미만인 일반 마일스톤
+
+### 3.2 확장 번호 체계 (Phase별 분리)
+
+복잡한 마일스톤의 경우 Phase별로 시나리오 파일을 분리하고, 확장된 번호 체계를 사용합니다.
+
+```
+SC-[Milestone]-P[Phase]-[순번]: [행동 기반 명칭]
+```
+
+**예시:**
+- `SC-M6-P1-001`: M6-Onboarding Phase 1의 첫 번째 Scenario
+- `SC-M6-P2-015`: M6-Onboarding Phase 2의 15번째 Scenario
+
+**적용 기준:**
+- 시나리오 수가 50개 이상일 때
+- 각 Phase가 독립적인 배포 단위일 때
+- Phase별 병렬 개발이 필요할 때
+
+**파일명 패턴:**
+| 유형 | 기본 | 확장 (Phase별 분리) |
+|------|------|---------------------|
+| 파일명 | `SC-M1-기반구축.md` | `SC-M6-Onboarding-P1.md` ~ `P5.md` |
+| 번호 | `M1-001` | `SC-M6-P1-001` |
 
 ---
 
@@ -108,6 +158,19 @@ Scenario [Milestone]-[순번]: [행동 기반 명칭]
 | Phase 2 | 신규 회원 플로우 | 11 |
 | Phase 3 | 자격 체크 & 유도 | 8 |
 | Phase 4 | 안정화 & 출시 | 16 |
+
+### M6-Onboarding: 5단계 온보딩 플로우 (확장 번호 체계)
+
+> 파일 분리: Phase별 독립 파일, 번호 체계: `SC-M6-P[Phase]-[순번]`
+
+| Phase | 설명 | Scenario 수 | 파일 |
+|-------|------|------------|------|
+| Phase 1 | DB 스키마 & 기반 인프라 | 27 | SC-M6-Onboarding-P1.md |
+| Phase 2 | 온보딩 1~3단계 UI | 28 | SC-M6-Onboarding-P2.md |
+| Phase 3 | 후킹 랜딩페이지 개선 | 22 | SC-M6-Onboarding-P3.md |
+| Phase 4 | 가입 후 리마인드 시퀀스 | 22 | SC-M6-Onboarding-P4.md |
+| Phase 5 | 첫 모임 후 리마인드 & Aha Moment | 18 | SC-M6-Onboarding-P5.md |
+| **총계** | | **117** | |
 
 ---
 
@@ -273,4 +336,5 @@ M5-020 (권한 관리)
 | 날짜 | 버전 | 변경 내용 |
 |------|------|----------|
 | 2026-01-14 | 1.0 | Scenarios README 최초 작성 |
+| 2026-02-04 | 2.0 | 확장 번호 체계 추가 (Phase별 분리), M6-Onboarding 시나리오 추가, MX-Bugfix 추가 |
 

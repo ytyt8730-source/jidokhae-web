@@ -40,6 +40,14 @@
     {
       "path": "/api/cron/afterglow",
       "schedule": "0,30 * * * *"
+    },
+    {
+      "path": "/api/cron/onboarding-signup",
+      "schedule": "0 1 * * *"
+    },
+    {
+      "path": "/api/cron/onboarding-first-meeting",
+      "schedule": "0 1 * * *"
     }
   ]
 }

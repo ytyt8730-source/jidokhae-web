@@ -12,30 +12,7 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { cronLogger } from '@/lib/logger'
 import { NOTIFICATION_TEMPLATES } from '@/lib/notification/types'
 import { addDays, startOfDay, endOfDay } from 'date-fns'
-
-// Vercel Cron 인증 헤더
-const CRON_SECRET = process.env.CRON_SECRET
-
-/**
- * Cron 요청 인증 확인
- */
-function verifyCronRequest(request: NextRequest): boolean {
-  if (process.env.NODE_ENV === 'development') {
-    return true
-  }
-
-  const authHeader = request.headers.get('authorization')
-  if (authHeader === `Bearer ${CRON_SECRET}`) {
-    return true
-  }
-
-  const vercelCron = request.headers.get('x-vercel-cron')
-  if (vercelCron) {
-    return true
-  }
-
-  return false
-}
+import { verifyCronRequest, cronUnauthorizedResponse } from '@/lib/cron-auth'
 
 interface WelcomeTarget {
   userId: string
@@ -173,8 +150,7 @@ export async function GET(request: NextRequest) {
   const timer = logger.startTimer()
 
   if (!verifyCronRequest(request)) {
-    logger.warn('cron_unauthorized', { path: '/api/cron/welcome' })
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return cronUnauthorizedResponse('/api/cron/welcome', request)
   }
 
   logger.info('welcome_cron_started')

@@ -55,10 +55,10 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // registration 조회 및 소유권 확인
+    // registration 조회 및 소유권 확인 (meeting 정보도 함께 조회)
     const { data: registration, error: regError } = await supabase
       .from('registrations')
-      .select('id, user_id, meeting_id, status')
+      .select('id, user_id, meeting_id, status, meetings(fee)')
       .eq('id', registrationId)
       .single()
 
@@ -79,6 +79,23 @@ export async function POST(request: NextRequest) {
 
     if (registration.status === 'cancelled') {
       return errorResponse(ErrorCode.VALIDATION_ERROR, { message: '취소된 신청입니다' })
+    }
+
+    // [보안] 서버 측 결제 금액 검증 - 클라이언트 금액을 신뢰하지 않음
+    const meeting = registration.meetings as { fee: number } | null
+    const expectedFee = meeting?.fee ?? 0
+
+    // 무료 모임(fee=0)이 아닌데 금액이 0이거나, 금액이 일치하지 않으면 거부
+    if (expectedFee > 0 && amount !== expectedFee) {
+      registrationLogger.warn('payment_amount_mismatch', {
+        registrationId,
+        clientAmount: amount,
+        expectedFee,
+        userId: authUser.id,
+      })
+      return errorResponse(ErrorCode.VALIDATION_ERROR, {
+        message: '결제 금액이 일치하지 않습니다'
+      })
     }
 
     // 결제 로그 저장
