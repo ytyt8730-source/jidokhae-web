@@ -138,19 +138,19 @@ describe('calculateMeetingStatus (모임 상태 계산)', () => {
     expect(result.remainingSpots).toBe(2)
   })
 
-  it('정원이 다 차면 closed 상태', () => {
+  it('정원이 다 차면 waitlist_available 상태', () => {
     const meeting = { ...baseMeeting, current_participants: 10 }
     const result = calculateMeetingStatus(meeting)
 
-    expect(result.displayStatus).toBe('closed')
+    expect(result.displayStatus).toBe('waitlist_available')
     expect(result.remainingSpots).toBe(0)
   })
 
-  it('정원 초과시에도 closed 상태', () => {
+  it('정원 초과시에도 waitlist_available 상태', () => {
     const meeting = { ...baseMeeting, current_participants: 12 }
     const result = calculateMeetingStatus(meeting)
 
-    expect(result.displayStatus).toBe('closed')
+    expect(result.displayStatus).toBe('waitlist_available')
     expect(result.remainingSpots).toBe(-2)
   })
 })

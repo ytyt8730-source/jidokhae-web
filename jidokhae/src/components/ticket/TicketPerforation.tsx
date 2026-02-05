@@ -2,14 +2,15 @@
 
 /**
  * 티켓 절취선 컴포넌트
- * M9 Phase 9.1: Commitment Ritual
+ * M9 Phase 9.3: Commitment Ritual
  *
- * 드래그하여 찢을 수 있는 절취선
+ * useTearGesture hook을 사용하여 드래그로 티켓 찢기
  */
 
-import { useState, useRef } from 'react'
-import { motion, PanInfo } from 'framer-motion'
+import { useEffect } from 'react'
+import { motion } from 'framer-motion'
 import { Scissors } from 'lucide-react'
+import { useTearGesture } from '@/hooks/useTearGesture'
 
 interface TicketPerforationProps {
   onTear?: () => void
@@ -20,26 +21,38 @@ export default function TicketPerforation({
   onTear,
   className = '',
 }: TicketPerforationProps) {
-  const [dragProgress, setDragProgress] = useState(0)
-  const [isTorn, setIsTorn] = useState(false)
-  const containerRef = useRef<HTMLDivElement>(null)
+  const {
+    dragProgress,
+    isTorn,
+    isDragging,
+    handleDragStart,
+    handleDrag,
+    handleDragEnd,
+    containerRef,
+  } = useTearGesture({
+    threshold: 150,
+    onTear,
+  })
 
-  const handleDrag = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    if (!containerRef.current || isTorn) return
+  // 글로벌 마우스/터치 이벤트 등록
+  useEffect(() => {
+    if (!isDragging) return
 
-    const containerWidth = containerRef.current.offsetWidth
-    const progress = Math.min(Math.max(info.offset.x / containerWidth, 0), 1)
-    setDragProgress(progress)
-  }
+    const handleMove = (e: MouseEvent | TouchEvent) => handleDrag(e)
+    const handleUp = () => handleDragEnd()
 
-  const handleDragEnd = () => {
-    if (dragProgress > 0.7 && !isTorn) {
-      setIsTorn(true)
-      onTear?.()
-    } else {
-      setDragProgress(0)
+    window.addEventListener('mousemove', handleMove)
+    window.addEventListener('touchmove', handleMove)
+    window.addEventListener('mouseup', handleUp)
+    window.addEventListener('touchend', handleUp)
+
+    return () => {
+      window.removeEventListener('mousemove', handleMove)
+      window.removeEventListener('touchmove', handleMove)
+      window.removeEventListener('mouseup', handleUp)
+      window.removeEventListener('touchend', handleUp)
     }
-  }
+  }, [isDragging, handleDrag, handleDragEnd])
 
   return (
     <div
@@ -67,21 +80,26 @@ export default function TicketPerforation({
       {/* 가위 아이콘 (드래그 핸들) */}
       {!isTorn && (
         <motion.div
-          drag="x"
-          dragConstraints={containerRef}
-          dragElastic={0}
-          onDrag={handleDrag}
-          onDragEnd={handleDragEnd}
-          className="absolute top-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing z-10"
+          onMouseDown={handleDragStart}
+          onTouchStart={handleDragStart}
+          className="absolute top-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing z-10 touch-none select-none"
           style={{ left: `${dragProgress * 100}%` }}
-          animate={{ x: 0 }}
+          animate={{
+            scale: isDragging ? 1.1 : 1,
+            x: 0,
+          }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         >
-          <div className="bg-white rounded-full p-1 shadow-md border border-gray-200">
+          <div className={`
+            bg-white rounded-full p-1 shadow-md border border-gray-200
+            ${isDragging ? 'ring-2 ring-brand-400 ring-opacity-50' : ''}
+          `}>
             <Scissors
               size={14}
               strokeWidth={1.5}
-              className="text-gray-500 transform rotate-90"
+              className={`transform rotate-90 transition-colors ${
+                dragProgress > 0.5 ? 'text-brand-600' : 'text-gray-500'
+              }`}
             />
           </div>
         </motion.div>

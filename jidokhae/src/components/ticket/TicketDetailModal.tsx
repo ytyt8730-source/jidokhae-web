@@ -22,6 +22,7 @@ interface TicketDetailModalProps {
   isOpen: boolean
   onClose: () => void
   onCancel?: (ticket: TicketData) => void
+  onTear?: (ticket: TicketData) => void
 }
 
 export default function TicketDetailModal({
@@ -29,6 +30,7 @@ export default function TicketDetailModal({
   isOpen,
   onClose,
   onCancel,
+  onTear,
 }: TicketDetailModalProps) {
   const ticketRef = useRef<HTMLDivElement>(null)
 
@@ -36,6 +38,8 @@ export default function TicketDetailModal({
 
   const isConfirmed = ticket.status === 'confirmed'
   const isPast = ticket.meetingDate < new Date()
+  // 확정된 미래 티켓만 절취선 표시 (찢기 가능)
+  const canTear = isConfirmed && !isPast && !!onTear
 
   return (
     <AnimatePresence>
@@ -74,10 +78,20 @@ export default function TicketDetailModal({
                 <Ticket
                   data={ticket}
                   variant="full"
-                  showPerforation={false}
+                  showPerforation={canTear}
+                  onTear={() => onTear?.(ticket)}
                   animated={false}
                 />
               </div>
+
+              {/* 찢기 힌트 (canTear일 때만) */}
+              {canTear && (
+                <div className="px-6 pb-2">
+                  <p className="text-xs text-center text-text-tertiary">
+                    가위를 밀어서 티켓을 뜯으면 스텁이 보관함에 저장됩니다
+                  </p>
+                </div>
+              )}
 
               {/* 액션 버튼 */}
               <div className="px-6 pb-4">

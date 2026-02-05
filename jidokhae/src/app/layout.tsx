@@ -8,6 +8,7 @@ import Sidebar from '@/components/layout/Sidebar'
 import Footer from '@/components/layout/Footer'
 import { ThemeProvider } from '@/providers/ThemeProvider'
 import AuthProvider from '@/components/providers/AuthProvider'
+import OnboardingRedirectProvider from '@/components/providers/OnboardingRedirectProvider'
 import { createClient } from '@/lib/supabase/server'
 
 // Pretendard - 본문용 (로컬 폰트)
@@ -83,6 +84,7 @@ export default async function RootLayout({
       <body className="font-sans min-h-screen bg-bg-base">
         <ThemeProvider>
           <AuthProvider>
+            <OnboardingRedirectProvider>
             {/* 데스크톱: 사이드바 + 콘텐츠 영역 */}
             <div className="lg:flex">
               {/* 고정 사이드바 (데스크톱 전용) */}
@@ -102,6 +104,7 @@ export default async function RootLayout({
                 <Footer />
               </div>
             </div>
+            </OnboardingRedirectProvider>
           </AuthProvider>
         </ThemeProvider>
         {/* 포트원 결제 SDK */}
