@@ -1,4 +1,4 @@
-# 지독해 디자인 시스템 v3.4
+# 지독해 디자인 시스템 v3.5
 
 > **"낮과 밤의 서재 (Day & Night Library)"**
 >
@@ -8,9 +8,9 @@
 
 ---
 
-**문서 버전:** 3.4
-**작성일:** 2026-02-01
-**업데이트 내용:** 전문가(BX, Tech, UX) 검토 의견 반영 및 최적화
+**문서 버전:** 3.5
+**작성일:** 2026-02-05
+**업데이트 내용:** 문서 간 교차 검토 — 내부 불일치 해소 (noise opacity 통일, borderRadius DEFAULT 추가)
 **디자인 컨셉:** Mood-Switchable Reading Club
 **기반 프레임워크:** Next.js 14 + React 18 + TypeScript
 **UI 라이브러리:** shadcn/ui + Framer Motion + Lucide React  
@@ -1044,7 +1044,7 @@ export default function HomePage() {
   inset: 0;
   z-index: -1; /* 콘텐츠 뒤로 보냄 (안전) - 터치 방해 금지 */
   background-image: url('/images/noise-pattern.png'); /* 100x100px 반복 패턴 */
-  opacity: 0.05;
+  opacity: 0.06;
   pointer-events: none;
 }
 ```
@@ -1204,6 +1204,7 @@ const config: Config = {
       
       // 모서리
       borderRadius: {
+        DEFAULT: '12px',
         'lg': '16px',
         'xl': '20px',
         '2xl': '24px',
@@ -1379,6 +1380,9 @@ body {
 | | | - 환불/취소 손실 회피 UX 추가 |
 | | | - Noise 성능 최적화 (SVG → PNG 패턴) |
 | | | - 체크리스트 3개 카테고리로 재구성 |
+| 2026-02-05 | 3.5 | **문서 간 교차 검토 — 내부 불일치 해소** |
+| | | - 10.1절 Noise opacity 0.05 → 0.06으로 통일 (3.4절·globals.css와 일치) |
+| | | - borderRadius에 DEFAULT: '12px' 추가 (기술 스택 문서와 통일) |
 
 ---
 

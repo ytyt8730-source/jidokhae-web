@@ -68,22 +68,10 @@ export async function POST(request: NextRequest) {
       throw new AppError(ErrorCode.REGISTRATION_NOT_FOUND)
     }
 
-    // 2. 이미 후기를 작성했는지 확인
-    const { data: existingReview } = await serviceClient
-      .from('reviews')
-      .select('id')
-      .eq('user_id', authUser.id)
-      .eq('meeting_id', meetingId)
-      .single()
-
-    if (existingReview) {
-      throw new AppError(ErrorCode.VALIDATION_ERROR, {
-        message: '이미 후기를 작성했습니다.',
-      })
-    }
-
-    // 3. 후기 저장
-    const { error: insertError } = await serviceClient
+    // 2-3. [보안] Race Condition 방지: 원자적 삽입
+    // 중복 체크와 삽입을 DB 레벨에서 처리 (UNIQUE 제약조건 활용)
+    // reviews 테이블에 (user_id, meeting_id) UNIQUE 제약조건 필요
+    const { data: insertedReview, error: insertError } = await serviceClient
       .from('reviews')
       .insert({
         user_id: authUser.id,
@@ -91,13 +79,26 @@ export async function POST(request: NextRequest) {
         content: content.trim(),
         is_public: isPublic,
       })
+      .select('id')
+      .single()
 
     if (insertError) {
+      // 유니크 제약 위반 = 이미 후기 작성함 (Race Condition 포함)
+      if (insertError.code === '23505') {
+        throw new AppError(ErrorCode.VALIDATION_ERROR, {
+          message: '이미 후기를 작성했습니다.',
+        })
+      }
       logger.error('review_insert_failed', {
         error: insertError.message,
+        code: insertError.code,
         userId: authUser.id,
         meetingId,
       })
+      throw new AppError(ErrorCode.DATABASE_ERROR)
+    }
+
+    if (!insertedReview) {
       throw new AppError(ErrorCode.DATABASE_ERROR)
     }
 

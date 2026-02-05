@@ -20,6 +20,7 @@ import { ErrorCode, AppError } from '@/lib/errors'
 import { registrationLogger } from '@/lib/logger'
 import { isValidPhraseId } from '@/lib/praise'
 import { checkAndAwardBadges } from '@/lib/badges'
+import { rateLimiters, checkRateLimit, rateLimitExceededResponse } from '@/lib/rate-limit'
 
 const logger = registrationLogger
 
@@ -30,6 +31,12 @@ interface PraiseRequestBody {
 }
 
 export async function POST(request: NextRequest) {
+  // [보안] Rate Limiting - 1분에 60회 제한
+  const rateLimitResult = checkRateLimit(request, rateLimiters.standard)
+  if (!rateLimitResult.success) {
+    return rateLimitExceededResponse(rateLimitResult)
+  }
+
   return withErrorHandler(async () => {
     const supabase = await createClient()
 
@@ -88,22 +95,12 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // 3. 이 모임에서 이미 칭찬했는지 확인
-    const { data: existingPraise } = await serviceClient
-      .from('praises')
-      .select('id')
-      .eq('from_user_id', authUser.id)
-      .eq('meeting_id', meetingId)
-      .single()
-
-    if (existingPraise) {
-      throw new AppError(ErrorCode.PRAISE_DUPLICATE_MEETING)
-    }
-
-    // 4. 3개월 내 같은 사람에게 칭찬했는지 확인
+    // 3-5. [보안] Race Condition 방지: UPSERT를 사용한 원자적 삽입
+    // 중복 체크와 삽입을 하나의 트랜잭션으로 처리
     const threeMonthsAgo = new Date()
     threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3)
 
+    // 3개월 내 같은 사람에게 칭찬했는지 먼저 확인 (이건 별도 체크 필요)
     const { data: recentPraise } = await serviceClient
       .from('praises')
       .select('id')
@@ -116,8 +113,9 @@ export async function POST(request: NextRequest) {
       throw new AppError(ErrorCode.PRAISE_DUPLICATE_PERSON)
     }
 
-    // 5. 칭찬 저장
-    const { error: insertError } = await serviceClient
+    // [보안] 원자적 삽입: DB 유니크 제약조건 + ON CONFLICT로 Race Condition 방지
+    // praises 테이블에 (from_user_id, meeting_id) UNIQUE 제약조건 필요
+    const { data: insertedPraise, error: insertError } = await serviceClient
       .from('praises')
       .insert({
         from_user_id: authUser.id,
@@ -125,14 +123,25 @@ export async function POST(request: NextRequest) {
         meeting_id: meetingId,
         message_type: phraseId,
       })
+      .select('id')
+      .single()
 
     if (insertError) {
+      // 유니크 제약 위반 = 이미 칭찬함 (Race Condition 포함)
+      if (insertError.code === '23505') {
+        throw new AppError(ErrorCode.PRAISE_DUPLICATE_MEETING)
+      }
       logger.error('praise_insert_failed', {
         error: insertError.message,
+        code: insertError.code,
         senderId: authUser.id,
         receiverId,
         meetingId,
       })
+      throw new AppError(ErrorCode.DATABASE_ERROR)
+    }
+
+    if (!insertedPraise) {
       throw new AppError(ErrorCode.DATABASE_ERROR)
     }
 

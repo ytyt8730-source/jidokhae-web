@@ -40,9 +40,14 @@ export async function POST(request: NextRequest) {
     const body = await request.json() as CompleteRequestBody
     const { registrationId, method } = body
 
-    // 유효한 방법인지 확인
-    const validMethods: ParticipationMethod[] = ['confirm', 'praise', 'review', 'auto', 'admin']
-    if (!validMethods.includes(method)) {
+    // [보안] 유효한 방법인지 확인 - 'auto', 'admin'은 시스템 전용 (클라이언트 사용 불가)
+    const clientAllowedMethods: ParticipationMethod[] = ['confirm', 'praise', 'review']
+    if (!clientAllowedMethods.includes(method)) {
+      logger.warn('invalid_participation_method', {
+        userId: authUser.id,
+        method,
+        allowed: clientAllowedMethods,
+      })
       throw new AppError(ErrorCode.PARTICIPATION_INVALID_METHOD)
     }
 

@@ -421,9 +421,9 @@ WHERE tablename = 'users'
 ```
 
 **완료 체크리스트:**
-- [ ] vercel.json에 Cron 설정 추가
-- [ ] Vercel 배포 후 Cron 등록 확인 (Vercel Dashboard > Crons)
-- [ ] CRON_SECRET 환경변수 설정 확인
+- [x] vercel.json에 Cron 설정 추가 ✅ 2026-02-04
+- [ ] Vercel 배포 후 Cron 등록 확인 (Vercel Dashboard > Crons) - 배포 후 확인
+- [x] CRON_SECRET 환경변수 설정 확인 ✅
 
 ---
 
@@ -458,7 +458,6 @@ WHERE tablename = 'users'
 |-------------|------|----------|------|
 | `WAITLIST_EXPIRED` | 대기 응답 기한 만료 | 높음 | 미등록 |
 | `TRANSFER_DEADLINE_WARNING` | 입금 기한 임박 (6시간 전) | 높음 | 미등록 |
-| `REMINDER_3D` | 3일 전 리마인드 | 낮음 (삭제됨) | - |
 | `ADMIN_NOTICE` | 관리자 공지 | 낮음 | 미등록 |
 | 세그먼트 알림들 | 월말 독려, 휴면 위험 등 | 낮음 | 미등록 |
 

@@ -21,12 +21,18 @@ npm run build            # Production build
 npm run lint             # ESLint check
 npm run typecheck        # TypeScript check
 
-# Testing (Vitest)
+# Testing (Vitest) - Coverage threshold: 60%
 npm run test             # Watch mode
 npm run test:run         # Run once
+npm run test:ui          # Interactive UI mode
 npm run test -- src/lib/utils.test.ts           # Single file
 npm run test -- --grep "payment"                # Pattern match
-npm run test:coverage    # With coverage
+npm run test:coverage    # With coverage report
+
+# Screenshots (Playwright)
+npm run screenshot              # All pages, mobile & desktop
+npm run screenshot:mobile       # Mobile only (360px)
+npm run screenshot:desktop      # Desktop only (1280px)
 
 # Pre-commit (REQUIRED before every commit)
 npx tsc --noEmit && npm run build
@@ -114,6 +120,28 @@ logger.error('Payment failed', { errorCode, message })
 | `@/lib/payment` | PortOne V2 payment processing |
 | `@/lib/ticket` | Digital ticket generation |
 | `@/lib/praise` | Member praise system |
+| `@/lib/onboarding/reminder` | Signup/first-meeting reminder targeting |
+| `@/lib/sound` | Sound effects (SoundManager singleton) |
+| `@/lib/animations` | Framer Motion animation presets |
+
+### Key Hooks
+
+| Hook | Purpose |
+|------|---------|
+| `@/hooks/useFeedback` | Unified sound + haptic feedback |
+| `@/hooks/useTypewriter` | Typewriter text animation |
+| `@/hooks/useTickets` | Ticket list management |
+| `@/hooks/useTearGesture` | Ticket tear drag gesture |
+
+### API Validation Helpers
+
+```typescript
+import { validateRequired, requireAuth, requireAdmin } from '@/lib/api'
+
+validateRequired(body, ['userId', 'amount'])  // Throws if missing
+requireAuth(userId)    // Asserts userId is string
+requireAdmin(role)     // Throws if not admin/super_admin
+```
 
 ---
 
@@ -267,11 +295,14 @@ export function Card() {
 
 | File | Purpose |
 |------|---------|
-| `/docs/design-system.md` | Full design system (v3.4) |
+| `/docs/design-system.md` | Full design system (v3.5) |
 | `/jidokhae/supabase/schema-complete.sql` | Database schema |
 | `/jidokhae/.env.example` | Environment variables template |
 | `/log/current-state.md` | Current development status |
 | `/roadmap/milestones.md` | Development roadmap |
+| `/roadmap/work-packages/WP-M*.md` | Work package definitions |
+| `/roadmap/scenarios/SC-M*.md` | Test scenarios per milestone |
+| `/core/AI_AGENT_GUIDE.md` | Document navigation guide |
 
 ---
 
@@ -305,4 +336,4 @@ export function Card() {
 
 ---
 
-Last updated: 2026-02-04 | v2.5
+Last updated: 2026-02-05 | v2.6

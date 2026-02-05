@@ -15,9 +15,16 @@ import { successResponse, errorResponse, validateRequired, requireAuth } from '@
 import { ErrorCode } from '@/lib/errors'
 import { checkMeetingQualification } from '@/lib/payment'
 import { registrationLogger } from '@/lib/logger'
+import { rateLimiters, checkRateLimit, rateLimitExceededResponse } from '@/lib/rate-limit'
 import type { User, Meeting, PreparePaymentResponse } from '@/types/database'
 
 export async function POST(request: NextRequest) {
+  // [보안] Rate Limiting - 결제 API는 1분에 5회 제한
+  const rateLimitResult = checkRateLimit(request, rateLimiters.payment)
+  if (!rateLimitResult.success) {
+    return rateLimitExceededResponse(rateLimitResult)
+  }
+
   try {
     const body = await request.json()
     validateRequired(body, ['meetingId'])
