@@ -92,3 +92,59 @@ export function calculateRefundAmount(
   return 0
 }
 
+/**
+ * 회원 레벨 계산 (PRD v1.7 섹션 4 "회원 세그먼트 정의" 기반)
+ *
+ * PRD 세그먼트 → 레벨 매핑:
+ * - 신규 (is_new_member=true, 참여 0회) → Lv.1 신규멤버
+ * - 온보딩 중 (참여 1회) → Lv.2 새싹멤버
+ * - 성장 중 (참여 2~4회) → Lv.3 성장멤버
+ * - 충성 (참여 5회+) → Lv.4 열정멤버
+ *
+ * 참고: 휴면 상태(3개월+ 미참여)는 별도 표시하지 않고 기존 레벨 유지
+ */
+export interface MemberLevel {
+  level: number
+  label: string
+  displayText: string
+  segment: 'new' | 'onboarding' | 'growing' | 'loyal'
+}
+
+export function getMemberLevel(
+  totalParticipations: number,
+  isNewMember: boolean = true
+): MemberLevel {
+  // PRD 기준: 참여 완료 횟수 + is_new_member 플래그 기반
+  if (isNewMember || totalParticipations === 0) {
+    return {
+      level: 1,
+      label: '신규멤버',
+      displayText: 'Lv.1 신규멤버',
+      segment: 'new'
+    }
+  }
+  if (totalParticipations === 1) {
+    return {
+      level: 2,
+      label: '새싹멤버',
+      displayText: 'Lv.2 새싹멤버',
+      segment: 'onboarding'
+    }
+  }
+  if (totalParticipations >= 2 && totalParticipations <= 4) {
+    return {
+      level: 3,
+      label: '성장멤버',
+      displayText: 'Lv.3 성장멤버',
+      segment: 'growing'
+    }
+  }
+  // 5회 이상: PRD "충성 (활성)" 세그먼트
+  return {
+    level: 4,
+    label: '열정멤버',
+    displayText: 'Lv.4 열정멤버',
+    segment: 'loyal'
+  }
+}
+

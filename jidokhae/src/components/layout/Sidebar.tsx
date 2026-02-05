@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Home, Calendar, BookOpen, User, Settings, LogOut, Zap, Coffee } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, getMemberLevel } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
 import { useTheme } from '@/providers/ThemeProvider'
 import type { User as UserType } from '@/types/database'
@@ -129,7 +129,9 @@ export default function Sidebar({ user }: SidebarProps) {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-bold text-text truncate">{user.name}</div>
-                <span className="user-level">Lv.2 열정멤버</span>
+                <span className="user-level">
+                  {getMemberLevel(user.total_participations ?? 0, user.is_new_member ?? true).displayText}
+                </span>
               </div>
             </div>
             <button
