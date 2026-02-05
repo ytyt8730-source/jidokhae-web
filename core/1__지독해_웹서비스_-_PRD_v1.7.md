@@ -1,12 +1,12 @@
-# 지독해 웹서비스 PRD v1.6
+# 지독해 웹서비스 PRD v1.7
 
 ---
 
 **관련 문서:**
-- 서비스 개요 v1.5
-- 기술 스택 및 개발 로드맵 v1.4
-- 시스템 구조 v1.4
-- 디자인 시스템 v3.3 (Source of Truth)
+- 서비스 개요 v1.6
+- 기술 스택 및 개발 로드맵 v1.5
+- 시스템 구조 v1.7
+- 디자인 시스템 v3.5 (Source of Truth)
 
 ---
 
@@ -218,7 +218,7 @@
 - Framer Motion `staggerChildren` 활용
 
 **테마 스위처**
-- 사이드바 하단(PC) 또는 설정(Mobile)에서 Electric/Warm 모드 전환
+- 사이드바 하단(PC) 또는 마이페이지 최상단/헤더 우측(Mobile)에서 Electric/Warm 모드 전환
 - `data-theme` 속성 기반 CSS Variables 전환
 
 #### 일정 확인
@@ -379,6 +379,7 @@
 - 익명으로 진행
 - **UI: 텍스트 중심의 우아한 디자인** (이모지/하트 아이콘 사용 금지)
 - 선택형 문구:
+  - 덕분에 좋은 시간이었어요
   - 이야기가 인상 깊었어요
   - 따뜻한 분위기를 만들어주셨어요
   - 새로운 관점을 알게 됐어요
@@ -574,8 +575,8 @@
 |:----:|:-----------------------:|:---------:|
 | **키워드** | 힙, 에너지, 라운지, 성장 | 지적, 차분함, 서재, 사유 |
 | **Background** | Clean White `#F8FAFC` | Warm Paper `#F5F5F0` (+ Noise Texture) |
-| **Primary** | Cobalt Blue `#0047AB` | Deep Navy `#1A237E` |
-| **Accent** | Acid Lime `#CCFF00` | Burnt Orange `#CC5500` |
+| **Primary** | Cobalt Blue `#0047FF` | Deep Navy `#0F172A` |
+| **Accent** | Acid Lime `#CCFF00` | Burnt Orange `#EA580C` |
 | **Headline Font** | **Outfit / Noto Sans KR** (Sans) | **Noto Serif KR** (Serif) |
 | **Body Font** | Noto Sans KR | Noto Sans KR |
 | **Icon Style** | Lucide `strokeWidth={1.5}` | Lucide `strokeWidth={1.5}` |
@@ -819,5 +820,6 @@
 | 2025-01-09 | 1.4 | 2차 기능 제외 항목 추가 (진행자 시스템, 오늘의 지독해) |
 | 2026-01-30 | 1.5 | 디자인 시스템 v3.3 전면 반영 |
 | 2026-02-03 | 1.6 | **온보딩/Growth 개선:** 섹션 1 내적 문제 추가, 섹션 4 Aha Moment 정의 및 활성화 지표 추가, 섹션 5 신규 회원 플로우 5단계 온보딩으로 확장, 섹션 5 리마인드에 Balfour 원칙 기반 알림 메시지 원칙 추가, 섹션 5 알림 중단 규칙 추가, 섹션 5 칭찬하기를 Aha Moment 트리거로 재정의, 첫 칭찬 보내기/받기 배지 추가, 섹션 6 알림 시퀀스 상세 신설, 섹션 8 데이터 요구사항에 온보딩/Aha 추적 필드 추가 |
+| 2026-02-05 | 1.7 | **문서 간 일관성 통일 (디자인 시스템 v3.5 기준):** 색상 코드를 디자인 시스템 Source of Truth 기준으로 통일 (Electric Primary #0047AB→#0047FF, Warm Primary #1A237E→#0F172A, Warm Accent #CC5500→#EA580C), 칭찬 문구 4개→5개 확정 ("덕분에 좋은 시간이었어요" 추가), 테마 스위처 모바일 위치를 "설정"에서 "마이페이지 최상단 또는 헤더 우측"으로 변경 (디자인 시스템 금지 사항 반영), 관련 문서 버전 참조 업데이트 |
 
 ---

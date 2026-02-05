@@ -121,6 +121,7 @@ logger.error('Payment failed', { errorCode, message })
 | `@/lib/ticket` | Digital ticket generation |
 | `@/lib/praise` | Member praise system |
 | `@/lib/onboarding/reminder` | Signup/first-meeting reminder targeting |
+| `@/lib/rate-limit` | API rate limiting (auth, payment, standard presets) |
 | `@/lib/sound` | Sound effects (SoundManager singleton) |
 | `@/lib/animations` | Framer Motion animation presets |
 
@@ -132,6 +133,7 @@ logger.error('Payment failed', { errorCode, message })
 | `@/hooks/useTypewriter` | Typewriter text animation |
 | `@/hooks/useTickets` | Ticket list management |
 | `@/hooks/useTearGesture` | Ticket tear drag gesture |
+| `@/hooks/useOnboardingRedirect` | Auto-redirect new members to onboarding |
 
 ### API Validation Helpers
 
@@ -289,6 +291,18 @@ export function Card() {
 }
 ```
 
+### Rate Limited API Route
+
+```typescript
+import { checkRateLimit, rateLimiters, rateLimitExceededResponse } from '@/lib/rate-limit'
+
+export async function POST(request: NextRequest) {
+  const result = checkRateLimit(request, rateLimiters.payment) // auth, standard, search
+  if (!result.success) return rateLimitExceededResponse(result)
+  // ... business logic
+}
+```
+
 ---
 
 ## Key Files
@@ -314,6 +328,10 @@ export function Card() {
 | `/api/cron/waitlist` | hourly | Process waitlist |
 | `/api/cron/auto-complete` | 03:00 daily | Complete past meetings |
 | `/api/cron/afterglow` | every 30min | Post-meeting followup |
+| `/api/cron/welcome` | 10:00 KST daily | New member welcome |
+| `/api/cron/post-meeting` | 10:00 KST daily | Post-meeting notifications |
+| `/api/cron/onboarding-signup` | 10:00 KST daily | Signup reminder (3/7 days) |
+| `/api/cron/onboarding-first-meeting` | 10:00 KST daily | First meeting followup |
 
 ## Project Structure
 
@@ -336,4 +354,4 @@ export function Card() {
 
 ---
 
-Last updated: 2026-02-05 | v2.6
+Last updated: 2026-02-05 | v2.7

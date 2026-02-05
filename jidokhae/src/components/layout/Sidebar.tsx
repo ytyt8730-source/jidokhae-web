@@ -143,7 +143,7 @@ export default function Sidebar({ user }: SidebarProps) {
         ) : (
           <Link
             href="/auth/login"
-            className="btn-primary w-full text-center text-sm"
+            className="btn-primary block w-full text-center text-sm"
           >
             멤버십 입장
           </Link>

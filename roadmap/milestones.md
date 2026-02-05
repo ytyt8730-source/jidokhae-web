@@ -7,7 +7,7 @@
 **마지막 업데이트:** 2026-02-04
 **관련 문서:** 서비스 개요 v1.5 / PRD v1.6 / 기술 스택 v1.4 / 시스템 구조 v1.6
 
-> **현재 상태:** M1-M9 코드 완료 (Beta-ready). **다음 단계: M6-Onboarding** (PRD v1.6 기반 온보딩 플로우)
+> **현재 상태:** M1-M9 + M6-Onboarding 코드 완료 (Beta-ready). **다음 단계: M10 Connection & Memory**
 
 ---
 
