@@ -47,12 +47,11 @@ export async function POST(request: Request) {
 
     // 2. 정원 확인 및 예약 (FOR UPDATE 락 사용)
     // 동시 요청에서 정원 초과를 방지하기 위한 원자적 체크
-    const { data: capacityCheck, error: capacityError } = await supabaseAdmin
+    const { data: capacityResult, error: capacityError } = await supabaseAdmin
       .rpc('check_and_reserve_capacity', {
         p_meeting_id: meetingId,
         p_user_id: authUser!.id
       })
-      .single()
 
     if (capacityError) {
       logger.error('Capacity check RPC failed', {
@@ -63,7 +62,8 @@ export async function POST(request: Request) {
       throw new AppError(ErrorCode.DATABASE_ERROR, { message: capacityError.message })
     }
 
-    // RPC 결과 처리
+    // RPC 결과 처리 (TABLE 형태로 반환되므로 배열의 첫 번째 요소 사용)
+    const capacityCheck = (capacityResult as { success: boolean; message: string }[] | null)?.[0]
     if (!capacityCheck?.success) {
       const errorMessage = capacityCheck?.message || 'UNKNOWN_ERROR'
       switch (errorMessage) {

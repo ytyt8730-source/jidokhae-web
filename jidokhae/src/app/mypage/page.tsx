@@ -72,8 +72,10 @@ export default async function MyPage() {
     .eq('user_id', authUser.id)
 
   // 데이터 분류
+  // confirmed: 결제 완료된 신청
+  // pending: 결제 진행 중인 신청 (간편결제 중)
   const confirmedRegistrations = (registrations || []).filter(
-    r => r.status === 'confirmed' && new Date(r.meetings.datetime) > new Date()
+    r => (r.status === 'confirmed' || r.status === 'pending') && new Date(r.meetings.datetime) > new Date()
   )
   const pendingTransferRegistrations = (registrations || []).filter(
     r => r.status === 'pending_transfer' && new Date(r.meetings.datetime) > new Date()

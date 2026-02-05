@@ -12,7 +12,8 @@ import { createClient } from '@/lib/supabase/server'
 import { successResponse, errorResponse, validateRequired, requireAuth } from '@/lib/api'
 import { ErrorCode } from '@/lib/errors'
 import { waitlistLogger } from '@/lib/logger'
-import type { Meeting } from '@/types/database'
+import { checkMeetingQualification } from '@/lib/payment'
+import type { Meeting, User } from '@/types/database'
 
 interface RegisterWaitlistRequest extends Record<string, unknown> {
   meetingId: string
@@ -46,6 +47,34 @@ export async function POST(request: NextRequest) {
 
     if (meetingError || !meeting) {
       return errorResponse(ErrorCode.MEETING_NOT_FOUND)
+    }
+
+    // 과거 모임 체크
+    if (new Date(meeting.datetime) < new Date()) {
+      return successResponse<RegisterWaitlistResponse>({
+        success: false,
+        message: '이미 종료된 모임입니다.',
+      })
+    }
+
+    // 사용자 정보 조회 (자격 검증용)
+    const { data: user } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', authUser.id)
+      .single() as { data: User | null }
+
+    if (!user) {
+      return errorResponse(ErrorCode.AUTH_UNAUTHORIZED)
+    }
+
+    // 자격 체크 (토론모임 등)
+    const qualification = checkMeetingQualification(user, meeting)
+    if (!qualification.eligible) {
+      return successResponse<RegisterWaitlistResponse>({
+        success: false,
+        message: qualification.reason || '자격이 필요합니다',
+      })
     }
 
     // 모임이 마감되었는지 확인

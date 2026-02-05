@@ -18,21 +18,27 @@ export function cn(...inputs: ClassValue[]) {
  */
 export function calculateMeetingStatus(meeting: Meeting): MeetingWithStatus {
   const remainingSpots = meeting.capacity - meeting.current_participants
+  const now = new Date()
+  const meetingDate = new Date(meeting.datetime)
 
   let displayStatus: MeetingWithStatus['displayStatus'] = 'open'
 
-  if (remainingSpots <= 0) {
+  // 과거 모임은 무조건 마감
+  if (meetingDate < now) {
+    displayStatus = 'closed'
+  } else if (meeting.status !== 'open') {
+    // 관리자가 마감 처리한 경우
+    displayStatus = 'closed'
+  } else if (remainingSpots <= 0) {
     // 정원 마감이지만 모임 status가 'open'이면 대기 신청 가능
-    displayStatus = meeting.status === 'open' ? 'waitlist_available' : 'closed'
+    displayStatus = 'waitlist_available'
   } else if (remainingSpots <= 3) {
     displayStatus = 'closing_soon'
   }
 
   // 이번 주 모임인지 확인
-  const now = new Date()
   const weekStart = startOfWeek(now, { weekStartsOn: 1 }) // 월요일 시작
   const weekEnd = endOfWeek(now, { weekStartsOn: 1 })
-  const meetingDate = new Date(meeting.datetime)
   const isThisWeek = isWithinInterval(meetingDate, { start: weekStart, end: weekEnd })
 
   return {

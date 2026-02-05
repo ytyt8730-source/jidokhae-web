@@ -51,8 +51,10 @@ export default function ProblemRecognition({
     }
   }
 
-  const firstSelection = selections[0]
-  const empathyMessage = firstSelection ? empathyMessages[firstSelection] : null
+  // 선택된 모든 항목의 공감 메시지
+  const selectedMessages = selections
+    .map((id) => empathyMessages[id])
+    .filter(Boolean)
 
   return (
     <div className="flex flex-col min-h-full">
@@ -119,16 +121,26 @@ export default function ProblemRecognition({
         })}
       </div>
 
-      {/* 공감 메시지 */}
+      {/* 공감 메시지 (복수 선택 시 모두 표시) */}
       <AnimatePresence>
-        {empathyMessage && (
+        {selectedMessages.length > 0 && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="mt-6 p-4 bg-accent/10 rounded-xl"
+            className="mt-6 p-4 bg-accent/10 rounded-xl space-y-2"
           >
-            <p className="text-sm text-text italic">{empathyMessage}</p>
+            {selectedMessages.map((message, index) => (
+              <motion.p
+                key={index}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="text-sm text-text italic"
+              >
+                {message}
+              </motion.p>
+            ))}
           </motion.div>
         )}
       </AnimatePresence>

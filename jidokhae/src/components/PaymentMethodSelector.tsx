@@ -11,6 +11,8 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { CreditCard, Building2, ArrowLeft, AlertCircle } from 'lucide-react'
 import Button from '@/components/ui/Button'
+import { useToast } from '@/components/ui/Toast'
+import IneligibilityModal from '@/components/IneligibilityModal'
 import TransferInfo from '@/components/TransferInfo'
 import {
   generateTransferSenderName,
@@ -67,11 +69,13 @@ export default function PaymentMethodSelector({
   onClose,
 }: PaymentMethodSelectorProps) {
   const router = useRouter()
+  const { showToast } = useToast()
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>('easy')
   const [step, setStep] = useState<'select' | 'transfer'>('select')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showTransferConfirm, setShowTransferConfirm] = useState(false)
+  const [showIneligibilityModal, setShowIneligibilityModal] = useState(false)
 
   // 계좌이체 정보
   const senderName = generateTransferSenderName(user.name)
@@ -124,6 +128,12 @@ export default function PaymentMethodSelector({
       const prepareResult = await preparePayment()
 
       if (!prepareResult.success) {
+        // 자격 부족 에러 시 모달 표시
+        if (prepareResult.message?.includes('자격')) {
+          setShowIneligibilityModal(true)
+          setIsLoading(false)
+          return
+        }
         setError(prepareResult.message)
         setIsLoading(false)
         return
@@ -211,7 +221,9 @@ export default function PaymentMethodSelector({
       const data = await res.json()
 
       if (data.data?.success) {
-        router.push(`/meetings/${meeting.id}/payment-complete`)
+        // PRD: 결제 완료 → Toast 메시지 + 모달 닫기
+        showToast('참여 확정!', 'success')
+        onClose?.()
         router.refresh()
       } else {
         setError(data.data?.message || '결제 완료 처리 중 오류가 발생했습니다.')
@@ -443,6 +455,14 @@ export default function PaymentMethodSelector({
           </div>
         </div>
       )}
+
+      {/* 자격 부족 모달 */}
+      <IneligibilityModal
+        isOpen={showIneligibilityModal}
+        onClose={() => setShowIneligibilityModal(false)}
+        lastRegularMeetingAt={user.last_regular_meeting_at}
+        daysRemaining={null}
+      />
     </div>
   )
 }

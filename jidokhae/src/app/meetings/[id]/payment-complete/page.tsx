@@ -45,13 +45,15 @@ export default async function PaymentCompletePage({ params }: PageProps) {
     .eq('id', resolvedParams.id)
     .single() as { data: Meeting | null }
 
-  // 신청 정보 조회
+  // 신청 정보 조회 (confirmed 또는 pending - 타이밍 이슈 대응)
   const { data: registration } = await supabase
     .from('registrations')
     .select('*')
     .eq('user_id', authUser.id)
     .eq('meeting_id', resolvedParams.id)
-    .eq('status', 'confirmed')
+    .in('status', ['confirmed', 'pending'])
+    .order('created_at', { ascending: false })
+    .limit(1)
     .single() as { data: Registration | null }
 
   if (!meeting || !registration) {

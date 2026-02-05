@@ -67,6 +67,14 @@ export async function POST(request: NextRequest) {
       })
     }
 
+    // 과거 모임 신청 차단
+    if (new Date(meeting.datetime) < new Date()) {
+      return successResponse<PreparePaymentResponse>({
+        success: false,
+        message: '이미 종료된 모임입니다',
+      })
+    }
+
     // 자격 체크 (M2-008~010)
     const qualification = checkMeetingQualification(user, meeting)
     if (!qualification.eligible) {

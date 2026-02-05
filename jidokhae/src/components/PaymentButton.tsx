@@ -17,6 +17,8 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Button from '@/components/ui/Button'
 import PaymentMethodSelector from '@/components/PaymentMethodSelector'
+import IneligibilityModal from '@/components/IneligibilityModal'
+import { useToast } from '@/components/ui/Toast'
 import { generateIdempotencyKey, PAYMENT_MESSAGES } from '@/lib/payment'
 import { MICROCOPY } from '@/lib/constants/microcopy'
 import type { Meeting, User, PreparePaymentResponse } from '@/types/database'
@@ -67,9 +69,11 @@ export default function PaymentButton({
   className = '',
 }: PaymentButtonProps) {
   const router = useRouter()
+  const { showToast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showPaymentModal, setShowPaymentModal] = useState(false)
+  const [showIneligibilityModal, setShowIneligibilityModal] = useState(false)
 
   // 결제 버튼 클릭
   const handlePaymentClick = async () => {
@@ -104,10 +108,17 @@ export default function PaymentButton({
       const prepareResult = prepareData.data as PreparePaymentResponse
 
       if (!prepareResult.success) {
+        // 자격 부족 에러 시 모달 표시
+        if (prepareResult.message?.includes('자격')) {
+          setShowIneligibilityModal(true)
+          setIsLoading(false)
+          return
+        }
+
         setError(prepareResult.message)
         setIsLoading(false)
 
-        if (prepareResult.message.includes('대기')) {
+        if (prepareResult.message?.includes('대기')) {
           const confirmWait = window.confirm(prepareResult.message)
           if (confirmWait) {
             router.push(`/meetings/${meeting.id}/waitlist`)
@@ -252,8 +263,9 @@ export default function PaymentButton({
       const completeData = await completeRes.json()
 
       if (completeData.data?.success) {
-        // 성공 (M2-017)
-        router.push(`/meetings/${meeting.id}/payment-complete`)
+        // PRD: 결제 완료 → Toast 메시지 + 모달 닫기
+        showToast('참여 확정!', 'success')
+        setShowPaymentModal(false)
         router.refresh()
       } else {
         setError(completeData.data?.message || '결제 완료 처리 중 오류가 발생했습니다.')
@@ -314,6 +326,14 @@ export default function PaymentButton({
           </div>
         </div>
       )}
+
+      {/* 자격 부족 모달 */}
+      <IneligibilityModal
+        isOpen={showIneligibilityModal}
+        onClose={() => setShowIneligibilityModal(false)}
+        lastRegularMeetingAt={user?.last_regular_meeting_at || null}
+        daysRemaining={null}
+      />
     </div>
   )
 }

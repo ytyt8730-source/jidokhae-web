@@ -224,8 +224,8 @@ export default async function MeetingDetailPage({ params }: PageProps) {
             />
           )}
 
-          {/* 신청 버튼 (M2-007) */}
-          <div className="pt-4 border-t border-[var(--border)]">
+          {/* 신청 버튼 (M2-007) - MobileStickyCTA 표시 시 모바일에서 숨김 */}
+          <div className={`pt-4 border-t border-[var(--border)] ${showStickyCTA ? 'hidden md:block' : ''}`}>
             {/* M7-002: 첫 방문 벳지 넣지 배너 (신규회원만) */}
             {currentUser?.is_new_member && !alreadyRegistered && meetingWithStatus.displayStatus !== 'closed' && (
               <div className="mb-4 p-3 bg-primary/5 rounded-xl flex items-center gap-3 animate-pulse-slow">
