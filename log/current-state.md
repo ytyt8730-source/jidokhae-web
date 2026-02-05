@@ -1,7 +1,7 @@
 # 현재 작업 상태 (AI 에이전트용)
 
-> **마지막 업데이트**: 2026-02-04
-> **버전**: 4.0
+> **마지막 업데이트**: 2026-02-05
+> **버전**: 4.1
 
 ---
 
@@ -17,6 +17,46 @@
 ---
 
 ## 마지막 완료 작업
+
+### 코드 정리 및 버그 수정 (2026-02-05)
+
+**커밋 5baaf56: 미사용 코드 정리 및 M9 티켓 찢기 기능 적용**
+
+삭제된 파일 (9개):
+- `src/hooks/useRegistrationStatus.ts` - 미사용 hook
+- `src/components/home/HeroSection.tsx` - 미사용 컴포넌트
+- `src/components/ui/ThemeToggle.tsx` - 미사용 컴포넌트
+- `src/components/icons/index.ts` - 미사용 barrel export
+- `src/components/effects/index.ts` - 미사용 barrel export
+- `src/components/issuance/` (폴더 전체) - 미사용 컴포넌트
+
+수정된 파일:
+- `src/components/providers/OnboardingRedirectProvider.tsx` - **신규 생성**, 회원가입 후 온보딩 리다이렉트 수정
+- `src/app/layout.tsx` - OnboardingRedirectProvider 추가
+- `src/components/ticket/TicketPerforation.tsx` - useTearGesture hook 적용 (피드백 통합)
+- `src/components/ticket/TicketDetailModal.tsx` - onTear prop 추가, 확정 티켓 절취선 표시
+- `src/__tests__/lib/utils.test.ts` - calculateMeetingStatus 대기자 기능 반영
+
+**커밋 6634a77: PRD 세그먼트 기반 회원 레벨 시스템 구현**
+
+수정된 파일:
+- `src/lib/utils.ts` - getMemberLevel() 함수 추가
+- `src/components/layout/Sidebar.tsx` - 하드코딩 제거, 실제 참여 횟수 기반 레벨 표시
+
+레벨 매핑 (PRD v1.7 섹션 4 기반):
+| PRD 세그먼트 | 조건 | 레벨 |
+|-------------|------|------|
+| 신규 | is_new_member=true 또는 참여 0회 | Lv.1 신규멤버 |
+| 온보딩 중 | 참여 1회 | Lv.2 새싹멤버 |
+| 성장 중 | 참여 2~4회 | Lv.3 성장멤버 |
+| 충성 | 참여 5회+ | Lv.4 열정멤버 |
+
+**검증:**
+- TypeScript: ✅ 통과
+- Build: ✅ 통과
+- Test: ✅ 66/66 통과
+
+---
 
 ### M6-Onboarding Phase 1 (2026-02-04)
 
@@ -220,7 +260,7 @@
 - `src/components/ticket/ConfirmStamp.tsx` - 확정 도장 애니메이션
 - `src/components/ticket/PendingIndicator.tsx` - 점 애니메이션 포함 대기 표시
 - `src/components/ticket/ConfirmationModal.tsx` - 확정 모달
-- `src/hooks/useTearGesture.ts` - 절취선 드래그 제스처
+- `src/hooks/useTearGesture.ts` - 절취선 드래그 제스처 (2026-02-05: TicketPerforation에 적용 완료)
 
 ### Phase 9.4: 티켓 보관함 + 취소 Flow 개선
 - `src/lib/ticket-export.ts` - 이미지 저장 및 ICS 생성
@@ -341,6 +381,9 @@ M10 시작
 | warm-* 색상 클래스 | 디자인 시스템 변경 | brand-*/gray-*로 전체 교체 |
 | 하드코딩 색상 | v2.1에서 남은 잔재 | CSS 변수 기반으로 전환 (v3.3) |
 | Coins 아이콘 | No-Emoji Policy 위반 | KongIcon으로 교체 |
+| 온보딩 리다이렉트 미작동 | useOnboardingRedirect 호출 안됨 | OnboardingRedirectProvider 생성 |
+| 회원 레벨 하드코딩 | "Lv.2 열정멤버" 고정 | PRD 세그먼트 기반 getMemberLevel() 구현 |
+| 티켓 찢기 기능 미적용 | useTearGesture 미사용 | TicketPerforation에 hook 적용 |
 
 ---
 
