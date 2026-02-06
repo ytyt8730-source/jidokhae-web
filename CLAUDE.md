@@ -501,10 +501,10 @@ All times in UTC. KST = UTC + 9.
 | `/api/cron/monthly` | 01:00, 25th | Monthly summary |
 | `/api/cron/segment-reminder` | 02:00 daily | Segment-based reminders |
 | `/api/cron/eligibility-warning` | 01:00 Mon | Eligibility warnings |
+| `/api/cron/first-meeting-followup` | 01:00 daily | First meeting D+1 feedback |
 | `/api/cron/onboarding-signup` | 01:00 daily | Signup reminder (3/7 days) |
 | `/api/cron/onboarding-first-meeting` | 01:00 daily | First meeting followup |
 | `/api/cron/praise-nudge` | 01:00 daily | Encourage praise giving |
-| `/api/cron/transfer-timeout` | hourly | Auto-cancel expired transfers |
 
 ---
 
@@ -543,4 +543,4 @@ When documents conflict, follow this order:
 
 ---
 
-Last updated: 2026-02-06 | v3.1
+Last updated: 2026-02-06 | v3.2
