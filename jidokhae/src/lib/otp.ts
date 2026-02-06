@@ -3,9 +3,20 @@
  * 전화번호 인증을 위한 OTP 생성, 저장, 검증
  */
 
-// OTP 저장소 (프로덕션에서는 Redis 권장)
-// Map<phone, { otp: string, expiresAt: number, attempts: number }>
-const otpStore = new Map<string, { otp: string; expiresAt: number; attempts: number }>()
+// OTP 저장소 타입
+type OtpStoreType = Map<string, { otp: string; expiresAt: number; attempts: number }>
+
+// 개발 환경에서는 global 객체를 사용하여 hot reload 시에도 데이터 유지
+// 프로덕션에서는 Redis 권장
+const globalForOtp = globalThis as unknown as {
+  otpStore: OtpStoreType | undefined
+}
+
+const otpStore: OtpStoreType = globalForOtp.otpStore ?? new Map()
+
+if (process.env.NODE_ENV !== 'production') {
+  globalForOtp.otpStore = otpStore
+}
 
 // OTP 만료 시간 (5분)
 const OTP_EXPIRY_MS = 5 * 60 * 1000
