@@ -103,8 +103,8 @@ export async function POST(request: NextRequest) {
     // OTP 생성
     const otp = generateOtp()
 
-    // OTP 저장
-    storeOtp(normalizedPhone, otp)
+    // OTP 저장 (Supabase)
+    await storeOtp(normalizedPhone, otp)
 
     // SMS 발송
     const message = `[낮과 밤의 서재] 인증번호 [${otp}]를 입력해주세요.`

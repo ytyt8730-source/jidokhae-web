@@ -23,8 +23,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: '올바른 전화번호를 입력해주세요.' }, { status: 400 })
     }
 
-    // OTP 검증
-    const verifyResult = verifyOtp(normalizedPhone, otp)
+    // OTP 검증 (Supabase)
+    const verifyResult = await verifyOtp(normalizedPhone, otp)
     if (!verifyResult.valid) {
       return NextResponse.json({ error: verifyResult.error }, { status: 400 })
     }
