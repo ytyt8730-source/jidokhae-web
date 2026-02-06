@@ -4,7 +4,7 @@ import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { BookOpen, Users, Heart, MapPin, Calendar, Quote } from 'lucide-react'
+import { BookOpen, Users, Heart, MapPin, ChevronDown } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import { useTheme } from '@/providers/ThemeProvider'
 import {
@@ -119,9 +119,9 @@ export default function LandingContent({ stats, reviews, galleryImages }: Landin
             transition={{ duration: 0.6, delay: 0.3 }}
             className={`text-4xl sm:text-5xl md:text-6xl font-bold text-text mb-6 leading-tight ${theme === 'warm' ? 'font-serif' : 'font-sans'}`}
           >
-            책을 사랑하는 사람들이
+            혼자 읽는 독서,
             <br />
-            <span className="text-primary">모이는 곳</span>
+            <span className="text-primary">조금 지루하지 않으세요?</span>
           </motion.h1>
 
           <motion.p
@@ -130,9 +130,9 @@ export default function LandingContent({ stats, reviews, galleryImages }: Landin
             transition={{ duration: 0.6, delay: 0.4 }}
             className="text-lg sm:text-xl text-text-muted mb-10 max-w-2xl mx-auto leading-relaxed"
           >
-            경주와 포항에서 매주 모여 책을 읽고 이야기를 나눕니다.
+            책 사놓고 안 읽은 지 몇 달째. 진지한 대화를 나눌 곳도 마땅치 않고.
             <br className="hidden sm:block" />
-            책 한 권을 읽고, 생각을 나누고, 친구가 됩니다.
+            바쁘다는 핑계가 벌써 몇 달째 이어지고 있다면, 당신만 그런 게 아닙니다.
           </motion.p>
 
           <motion.div
@@ -141,16 +141,20 @@ export default function LandingContent({ stats, reviews, galleryImages }: Landin
             transition={{ duration: 0.6, delay: 0.5 }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
-            <Link href="/auth/signup">
-              <Button size="lg" className="w-full sm:w-auto px-8">
-                지금 시작하기
-              </Button>
-            </Link>
             <Link href="/meetings">
-              <Button size="lg" variant="secondary" className="w-full sm:w-auto px-8">
-                일정 보러가기
+              <Button size="lg" className="w-full sm:w-auto px-8">
+                이번 달 일정 보기
               </Button>
             </Link>
+            <Button
+              size="lg"
+              variant="secondary"
+              className="w-full sm:w-auto px-8 inline-flex items-center gap-2"
+              onClick={() => document.getElementById('founder-story')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              3분 만에 알아보기
+              <ChevronDown size={16} strokeWidth={1.5} />
+            </Button>
           </motion.div>
 
           {/* 통계 */}
@@ -168,9 +172,9 @@ export default function LandingContent({ stats, reviews, galleryImages }: Landin
             </div>
             <div className="text-center">
               <p className="text-3xl sm:text-4xl font-display font-bold text-primary">
-                {stats.meetingCount > 0 ? stats.meetingCount : '100'}+
+                3년째
               </p>
-              <p className="text-sm text-text-muted mt-1">회의 모임</p>
+              <p className="text-sm text-text-muted mt-1">이어지는 모임</p>
             </div>
           </motion.div>
         </motion.div>
@@ -192,20 +196,54 @@ export default function LandingContent({ stats, reviews, galleryImages }: Landin
         </motion.div>
       </section>
 
-      {/* 우리의 이야기 */}
+      {/* 창업자 스토리 섹션 */}
+      <section id="founder-story" className="py-16 sm:py-24 bg-bg-base">
+        <div className="max-w-2xl mx-auto px-4 text-left">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className={`text-2xl font-bold text-text mb-8 ${theme === 'warm' ? 'font-serif' : 'font-sans'}`}
+          >
+            우리의 이야기
+          </motion.h2>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="space-y-6"
+          >
+            <p className="text-base text-text-muted leading-relaxed">
+              저도 그랬어요.
+              <br />
+              책 사놓고 안 읽은 지 몇 달째, 진지한 대화 나눌 곳도 없고.
+            </p>
+
+            <p className="text-base text-text-muted leading-relaxed">
+              그래서 4명이 모여봤습니다.
+              <br />
+              &apos;이별&apos;에 대해 이야기했는데, 다들 이별한 지 얼마 안 됐더라고요.
+            </p>
+
+            <p className={`text-xl font-bold text-text leading-snug ${theme === 'warm' ? 'font-serif' : 'font-sans'}`}>
+              그런데 우리는 웃고 있었어요.
+            </p>
+
+            <p className="text-base text-text-muted leading-relaxed">
+              혼자가 아니면 다르더라고요.
+              <br />
+              그 모임이 3년째 이어지고 있고, 지금은 매주 경주와 포항에서 만나고 있습니다.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* 특징 카드 섹션 */}
       <AnimatedSection className="py-20 sm:py-28 bg-bg-surface">
         <div className="max-w-4xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className={`text-2xl sm:text-3xl font-bold text-text mb-4 ${theme === 'warm' ? 'font-serif' : 'font-sans'}`}>
-              우리의 이야기
-            </h2>
-            <p className="text-text-muted max-w-2xl mx-auto leading-relaxed">
-              지독해는 &apos;지독하게 책을 읽는 사람들의 모임&apos;입니다.
-              <br />
-              2024년 시작되어 지금까지 함께 책을 읽고 있습니다.
-            </p>
-          </div>
-
           <motion.div
             variants={staggerContainer}
             initial="hidden"
@@ -215,45 +253,45 @@ export default function LandingContent({ stats, reviews, galleryImages }: Landin
           >
             <motion.div variants={staggerItem} className="card p-6 space-y-4">
               <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
-                <Users className="text-primary" size={24} strokeWidth={1.5} />
+                <Users className="text-primary" size={20} strokeWidth={1.5} />
               </div>
               <h3 className="text-xl font-semibold text-text">함께 읽는 즐거움</h3>
               <p className="text-text-muted leading-relaxed">
-                혼자 읽는 것도 좋지만, 함께 읽으면 더 깊어집니다.
-                같은 공간에서 각자의 책을 읽고, 마지막엔 서로의 책을 소개해요.
+                혼자서는 안 읽히던 책이, 모임 날짜에 맞춰 자연스럽게 읽혀요.
+                같은 공간에서 각자의 책을 읽고, 마지막엔 서로의 책을 소개합니다.
               </p>
             </motion.div>
 
             <motion.div variants={staggerItem} className="card p-6 space-y-4">
               <div className="w-12 h-12 bg-pink-50 rounded-xl flex items-center justify-center">
-                <Heart className="text-pink-500" size={24} strokeWidth={1.5} />
+                <Heart className="text-pink-500" size={20} strokeWidth={1.5} />
               </div>
               <h3 className="text-xl font-semibold text-text">따뜻한 분위기</h3>
               <p className="text-text-muted leading-relaxed">
-                처음 오시는 분도 편안하게 참여할 수 있어요.
-                경쟁 없이, 비교 없이, 그저 책을 좋아하는 사람들의 모임입니다.
+                처음 와도 어색하지 않아요. 책이 자연스러운 대화의 시작점이 되니까요.
+                걱정 없이, 비교 없이, 편안하게 참여할 수 있습니다.
               </p>
             </motion.div>
 
             <motion.div variants={staggerItem} className="card p-6 space-y-4">
               <div className="w-12 h-12 bg-info-bg rounded-xl flex items-center justify-center">
-                <MapPin className="text-info" size={24} strokeWidth={1.5} />
+                <MapPin className="text-info" size={20} strokeWidth={1.5} />
               </div>
               <h3 className="text-xl font-semibold text-text">경주 & 포항</h3>
               <p className="text-text-muted leading-relaxed">
-                경주와 포항의 아늑한 카페에서 매주 토요일 오후에 만나요.
-                지역의 숨은 북카페들을 돌아다니는 재미도 있답니다.
+                경주와 포항의 아늑한 카페에서 매주 만나요.
+                지역에 숨은 북카페들을 돌아다니는 재미도 있습니다.
               </p>
             </motion.div>
 
             <motion.div variants={staggerItem} className="card p-6 space-y-4">
               <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center">
-                <BookOpen className="text-purple-500" size={24} strokeWidth={1.5} />
+                <BookOpen className="text-purple-500" size={20} strokeWidth={1.5} />
               </div>
               <h3 className="text-xl font-semibold text-text">자유로운 책 선택</h3>
               <p className="text-text-muted leading-relaxed">
-                정해진 책 없이 각자 읽고 싶은 책을 가져오세요.
-                소설, 에세이, 자기계발서, 만화책까지 모두 환영합니다.
+                어떤 책이든 괜찮아요. 소설, 에세이, 자기계발서, 만화책까지.
+                중요한 건 한 권을 들고 온다는 마음입니다.
               </p>
             </motion.div>
           </motion.div>
@@ -306,13 +344,16 @@ export default function LandingContent({ stats, reviews, galleryImages }: Landin
         </div>
       </AnimatedSection>
 
-      {/* 모임 진행 방식 */}
+      {/* SB7 Plan: 이렇게 시작하면 돼요 */}
       <AnimatedSection className="py-20 sm:py-28 bg-bg-surface">
         <div className="max-w-4xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className={`text-2xl sm:text-3xl font-bold text-text mb-4 ${theme === 'warm' ? 'font-serif' : 'font-sans'}`}>
-              모임은 이렇게 진행돼요
+          <div className="text-center mb-10">
+            <h2 className={`text-2xl sm:text-3xl font-bold text-text mb-2 ${theme === 'warm' ? 'font-serif' : 'font-sans'}`}>
+              이렇게 시작하면 돼요
             </h2>
+            <p className="text-sm text-text-muted">
+              처음이어도 괜찮아요. 3번이면 충분합니다.
+            </p>
           </div>
 
           <motion.div
@@ -320,131 +361,198 @@ export default function LandingContent({ stats, reviews, galleryImages }: Landin
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '-50px' }}
-            className="space-y-6"
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8"
           >
             {[
               {
                 step: 1,
-                title: '독서 시간 (60분)',
-                description: '조용한 카페에서 각자 준비한 책을 읽어요.',
-                icon: BookOpen,
+                title: '마음에 드는 모임 고르기',
+                description: '이번 달 일정에서 원하는 모임을 골라요.',
               },
               {
                 step: 2,
-                title: '휴식 시간 (10분)',
-                description: '커피 한 잔 마시며 잠깐 쉬어요.',
-                icon: Calendar,
+                title: '3번 탭으로 신청하기',
+                description: '카드 선택, 신청하기, 결제. 끝이에요.',
               },
               {
                 step: 3,
-                title: '책 소개 & 소감 나누기 (50분)',
-                description: '돌아가며 읽은 책을 소개하고 이야기를 나눠요.',
-                icon: Users,
+                title: '리마인드 받고 참여하기',
+                description: '모임 전에 알림을 보내드려요. 잊을 걱정 없어요.',
               },
             ].map((item) => (
               <motion.div
                 key={item.step}
                 variants={staggerItem}
-                className="flex gap-4 sm:gap-6 items-start"
+                className="text-center"
               >
-                <div className="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold text-lg shadow-md">
+                <div className="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4 font-bold text-lg shadow-md">
                   {item.step}
                 </div>
-                <div className="flex-1 pt-1">
-                  <h3 className="text-lg font-semibold text-text mb-1">
-                    {item.title}
-                  </h3>
-                  <p className="text-text-muted">{item.description}</p>
-                </div>
+                <h3 className="text-lg font-semibold text-text mb-2">
+                  {item.title}
+                </h3>
+                <p className="text-text-muted text-sm">{item.description}</p>
               </motion.div>
             ))}
           </motion.div>
-        </div>
-      </AnimatedSection>
 
-      {/* 회원 후기 */}
-      {reviews.length > 0 && (
-        <AnimatedSection className="py-20 sm:py-28 bg-bg-base">
-          <div className="max-w-6xl mx-auto px-4">
+          <p className="text-xs text-text-muted text-center mt-6">
+            3일 전까지 100% 환불. 셀프로 처리됩니다.
+          </p>
+
+          {/* 구분선 */}
+          <div className="border-t border-[var(--border)] mt-16 pt-16">
             <div className="text-center mb-12">
               <h2 className={`text-2xl sm:text-3xl font-bold text-text mb-4 ${theme === 'warm' ? 'font-serif' : 'font-sans'}`}>
-                회원분들의 이야기
+                모임은 이렇게 진행돼요
               </h2>
-              <p className="text-text-muted">
-                지독해와 함께한 분들의 솔직한 후기
-              </p>
             </div>
 
             <motion.div
-              variants={reviewStagger}
+              variants={staggerContainer}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: '-50px' }}
-              className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
+              className="space-y-6"
             >
-              {reviews.map((review) => (
+              {[
+                {
+                  step: 1,
+                  title: '독서 시간 (60분)',
+                  description: '조용한 카페에서 각자 준비한 책을 읽어요.',
+                },
+                {
+                  step: 2,
+                  title: '휴식 시간 (10분)',
+                  description: '커피 한 잔 마시며 잠깐 쉬어요.',
+                },
+                {
+                  step: 3,
+                  title: '책 소개 & 소감 나누기 (50분)',
+                  description: '돌아가며 읽은 책을 소개하고 이야기를 나눠요.',
+                },
+              ].map((item) => (
                 <motion.div
-                  key={review.id}
-                  variants={reviewItem}
-                  className="bg-bg-surface rounded-2xl p-6 shadow-card hover:shadow-card-hover transition-shadow duration-300"
+                  key={item.step}
+                  variants={staggerItem}
+                  className="flex gap-4 sm:gap-6 items-start"
                 >
-                  <Quote className="text-primary/20 mb-4" size={32} strokeWidth={1.5} />
-                  <p className={`text-text leading-relaxed mb-4 line-clamp-4 ${theme === 'warm' ? 'font-serif' : ''}`}>
-                    &ldquo;{review.content}&rdquo;
-                  </p>
-                  <div className="flex items-center justify-between text-sm text-text-muted">
-                    <span>{review.user.name}</span>
-                    <span>{review.user.joined_year}년 합류</span>
+                  <div className="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold text-lg shadow-md">
+                    {item.step}
+                  </div>
+                  <div className="flex-1 pt-1">
+                    <h3 className="text-lg font-semibold text-text mb-1">
+                      {item.title}
+                    </h3>
+                    <p className="text-text-muted">{item.description}</p>
                   </div>
                 </motion.div>
               ))}
             </motion.div>
           </div>
-        </AnimatedSection>
-      )}
+        </div>
+      </AnimatedSection>
 
-      {/* 후기가 없는 경우 */}
-      {reviews.length === 0 && (
-        <AnimatedSection className="py-20 sm:py-28 bg-bg-base">
-          <div className="max-w-4xl mx-auto px-4 text-center">
+      {/* 회원 후기 */}
+      <AnimatedSection className="py-20 sm:py-28 bg-bg-base">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-12">
             <h2 className={`text-2xl sm:text-3xl font-bold text-text mb-4 ${theme === 'warm' ? 'font-serif' : 'font-sans'}`}>
               회원분들의 이야기
             </h2>
-            <p className="text-text-muted">
-              곧 회원분들의 후기가 올라올 예정이에요!
-            </p>
           </div>
-        </AnimatedSection>
-      )}
 
-      {/* CTA */}
-      <AnimatedSection className="py-20 sm:py-28 bg-bg-surface">
+          <motion.div
+            variants={reviewStagger}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-50px' }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {/* DB 후기가 있으면 DB 후기 표시, 없으면 하드코딩 후기 표시 */}
+            {reviews.length > 0 ? (
+              reviews.map((review) => (
+                <motion.div
+                  key={review.id}
+                  variants={reviewItem}
+                  className="bg-bg-surface border border-[var(--border)] rounded-xl p-6"
+                >
+                  <p className={`text-base text-text leading-relaxed mb-3 ${theme === 'warm' ? 'font-serif' : ''}`}>
+                    &quot;{review.content}&quot;
+                  </p>
+                  <p className="text-sm text-text-muted">
+                    — {review.user.name}, {review.user.joined_year}년 합류
+                  </p>
+                </motion.div>
+              ))
+            ) : (
+              <>
+                <motion.div
+                  variants={reviewItem}
+                  className="bg-bg-surface border border-[var(--border)] rounded-xl p-6"
+                >
+                  <p className={`text-base text-text leading-relaxed mb-3 ${theme === 'warm' ? 'font-serif' : ''}`}>
+                    &quot;처음엔 어색했는데, 이제는 수요일이 기다려져요.&quot;
+                  </p>
+                  <p className="text-sm text-text-muted">
+                    — 함께한 지 180일째 회원
+                  </p>
+                </motion.div>
+
+                <motion.div
+                  variants={reviewItem}
+                  className="bg-bg-surface border border-[var(--border)] rounded-xl p-6"
+                >
+                  <p className={`text-base text-text leading-relaxed mb-3 ${theme === 'warm' ? 'font-serif' : ''}`}>
+                    &quot;책 사놓고 안 읽던 제가 올해 12권 읽었어요.&quot;
+                  </p>
+                  <p className="text-sm text-text-muted">
+                    — 함께한 지 365일째 회원
+                  </p>
+                </motion.div>
+
+                <motion.div
+                  variants={reviewItem}
+                  className="bg-bg-surface border border-[var(--border)] rounded-xl p-6"
+                >
+                  <p className={`text-base text-text leading-relaxed mb-3 ${theme === 'warm' ? 'font-serif' : ''}`}>
+                    &quot;여기선 진지한 얘기해도 귓등으로 안 들어요.&quot;
+                  </p>
+                  <p className="text-sm text-text-muted">
+                    — 함께한 지 90일째 회원
+                  </p>
+                </motion.div>
+              </>
+            )}
+          </motion.div>
+        </div>
+      </AnimatedSection>
+
+      {/* 최종 CTA - 모든 기기에서 표시 */}
+      <section className="py-16 sm:py-20 bg-[var(--primary)] text-white">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="bg-bg-base rounded-3xl p-8 sm:p-12"
           >
-            <h2 className={`text-2xl sm:text-3xl font-bold text-text mb-4 ${theme === 'warm' ? 'font-serif' : 'font-sans'}`}>
-              함께 책 읽을 준비 되셨나요?
+            <h2 className={`text-2xl sm:text-3xl font-bold text-white mb-3 ${theme === 'warm' ? 'font-serif' : 'font-sans'}`}>
+              당신도 함께할 수 있어요.
             </h2>
-            <p className="text-text-muted mb-8 max-w-lg mx-auto">
-              처음이신가요? 부담 없이 한 번 참여해보세요!
+            <p className="text-white/80 text-base mb-8 max-w-lg mx-auto">
+              바쁜 당신을 위한 가장 지적인 리추얼.
               <br />
-              정기모임 한 번 참여로 시작할 수 있어요.
+              이번 주, 당신의 자리를 비워두었습니다.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/meetings?type=regular">
-                <Button size="lg" className="w-full sm:w-auto px-8">
-                  정기모임 신청하기
-                </Button>
-              </Link>
-            </div>
+            <Link href="/meetings?type=regular">
+              <button className="bg-white text-[var(--primary)] font-bold px-8 py-3 rounded-xl hover:bg-white/90 transition-colors">
+                정기모임 신청하기
+              </button>
+            </Link>
           </motion.div>
         </div>
-      </AnimatedSection>
+      </section>
     </div>
   )
 }

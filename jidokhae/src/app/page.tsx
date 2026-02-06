@@ -83,6 +83,10 @@ export default async function HomePage() {
               경주와 포항에서 매주 열리는 프라이빗 독서 클럽.
               <br className="hidden sm:block" />
               책을 통해 인사이트를 나누고, 사유를 확장합니다.
+              <br />
+              <span className="text-[var(--text)] font-medium">
+                바쁜 일상 속, 당신이 우아하게 연결되는 시간.
+              </span>
             </p>
             {/* Sarah Chen: 단일 CTA로 전환율 극대화 - 인지 부하 감소 */}
             <div className="mt-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
@@ -90,14 +94,14 @@ export default async function HomePage() {
                 href="/meetings"
                 className="hero-btn-primary inline-flex items-center gap-2 font-semibold rounded-xl px-8 py-4 transition-all duration-200 hover:-translate-y-[1px] hover:shadow-lg active:scale-[0.98]"
               >
-                모임 둘러보기
+                이번 달 일정 보기
                 <ArrowRight size={18} strokeWidth={1.5} />
               </Link>
               <Link
                 href="/about"
                 className="text-[var(--text-muted)] hover:text-[var(--text)] font-medium transition-colors"
               >
-                멤버십 안내 →
+                지독해 알아보기 →
               </Link>
             </div>
           </div>
@@ -198,7 +202,7 @@ export default async function HomePage() {
                   <h2 className="text-xl font-semibold text-text">
                     {thisWeekMeetings.length > 0 ? '다가오는 모임' : '모임 일정'}
                   </h2>
-                  <p className="text-sm text-text-muted">큐레이션된 독서 경험</p>
+                  <p className="text-sm text-text-muted">이번 달, 함께 읽을 책이 기다리고 있어요</p>
                 </div>
               </div>
               <Link
@@ -224,12 +228,12 @@ export default async function HomePage() {
               지독해 멤버십
             </h3>
             <p className="text-text-muted text-lg mb-8 leading-relaxed">
-              지적인 대화와 깊은 사유를 추구하는 분들을 위한 공간입니다.
+              매주 경주와 포항에서, 책을 매개로 새로운 사람들과 연결됩니다.
               <br className="hidden sm:block" />
-              멤버십에 대해 더 알아보세요.
+              지독해가 어떤 곳인지 알아보세요.
             </p>
             <Link href="/about" className="btn-primary">
-              멤버십 안내
+              지독해 알아보기
             </Link>
           </div>
         </div>
