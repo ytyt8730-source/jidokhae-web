@@ -26,6 +26,7 @@ const PAGES = [
   // ========== 01-landing (랜딩/홈) ==========
   { path: '/', name: 'home', description: '홈페이지', folder: '01-landing', animationDelay: 3000 },
   { path: '/about', name: 'about', description: '소개 페이지', folder: '01-landing', animationDelay: 3500 },
+  { path: '/onboarding', name: 'onboarding', description: '온보딩', folder: '01-landing', animationDelay: 3000 },
 
   // ========== 02-auth (인증) ==========
   { path: '/auth/login', name: 'login', description: '로그인', folder: '02-auth' },

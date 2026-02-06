@@ -197,9 +197,9 @@ export async function getFirstMeetingReminderTargets(): Promise<FirstMeetingRemi
 }
 
 /**
- * 가장 인기 있는 다음 모임 조회 (가입 리마인더용)
+ * 가장 인기 있는 다음 모임 조회 (가입 리마인더용, 환영 알림용)
  */
-async function getMostPopularMeeting() {
+export async function getMostPopularMeeting() {
   const supabase = await createServiceClient()
 
   const { data: meetings } = await supabase

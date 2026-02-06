@@ -8,14 +8,13 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createServiceClient } from '@/lib/supabase/server'
 import { cronLogger } from '@/lib/logger'
 import {
   getSignupReminderTargets,
   updateReminderCount,
-  logReminderNotification,
   type SignupReminderTarget,
 } from '@/lib/onboarding/reminder'
+import { sendAndLogNotification } from '@/lib/notification'
 import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
 
@@ -49,62 +48,54 @@ const TEMPLATE_CODES = {
  * 가입 리마인드 알림 발송
  */
 async function sendSignupReminder(target: SignupReminderTarget): Promise<boolean> {
-  const supabase = await createServiceClient()
   const templateCode = TEMPLATE_CODES[target.reminderType]
 
-  // 템플릿 조회
-  const { data: template } = await supabase
-    .from('notification_templates')
-    .select('*')
-    .eq('code', templateCode)
-    .eq('is_active', true)
-    .single()
-
-  if (!template) {
-    cronLogger.warn('signup_reminder_template_not_found', { code: templateCode })
-    return false
+  // 변수 준비
+  const variables: Record<string, string> = {
+    이름: target.userName,
   }
-
-  // 변수 치환
-  let message = template.message_template
-    .replace(/#{이름}/g, target.userName)
 
   if (target.nextMeeting) {
     const meetingDate = new Date(target.nextMeeting.datetime)
     const dayOfWeek = format(meetingDate, 'EEEE', { locale: ko })
 
-    message = message
-      .replace(/#{요일}/g, dayOfWeek)
-      .replace(/#{지역}/g, target.nextMeeting.location || '경주/포항')
-      .replace(/#{남은자리}/g, String(target.nextMeeting.remainingSpots))
-      .replace(/#{책제목}/g, target.nextMeeting.title)
-      .replace(/#{인기모임책제목}/g, target.nextMeeting.title)
-      .replace(/#{인기모임신청수}/g, String(10 - target.nextMeeting.remainingSpots))
+    variables.요일 = dayOfWeek
+    variables.지역 = target.nextMeeting.location || '경주/포항'
+    variables.남은자리 = String(target.nextMeeting.remainingSpots)
+    variables.책제목 = target.nextMeeting.title
+    variables.인기모임책제목 = target.nextMeeting.title
+    variables.인기모임신청수 = String(10 - target.nextMeeting.remainingSpots)
   }
 
-  // TODO: 실제 Solapi 발송 구현
-  // 현재는 로깅만 수행
-  cronLogger.info('signup_reminder_sent', {
+  // Solapi 알림 발송 (sendAndLogNotification이 로그도 자동 기록)
+  const result = await sendAndLogNotification({
+    templateCode,
+    phone: target.userPhone,
+    variables,
     userId: target.userId,
-    phone: target.userPhone.slice(0, -4) + '****',
-    type: target.reminderType,
-    template: templateCode,
-    messagePreview: message.slice(0, 50) + '...',
+    meetingId: target.nextMeeting?.id,
   })
 
-  // 알림 로그 저장
-  await logReminderNotification(
-    target.userId,
-    templateCode,
-    target.userPhone,
-    'sent',
-    target.nextMeeting?.id
-  )
+  if (result.success) {
+    cronLogger.info('signup_reminder_sent', {
+      userId: target.userId,
+      phone: target.userPhone.slice(0, -4) + '****',
+      type: target.reminderType,
+      template: templateCode,
+      messageId: result.messageId,
+    })
 
-  // 카운터 업데이트
-  await updateReminderCount(target.userId, 'signup')
-
-  return true
+    // 카운터 업데이트 (성공 시에만)
+    await updateReminderCount(target.userId, 'signup')
+    return true
+  } else {
+    cronLogger.warn('signup_reminder_send_failed', {
+      userId: target.userId,
+      type: target.reminderType,
+      error: result.error,
+    })
+    return false
+  }
 }
 
 export async function GET(request: NextRequest) {

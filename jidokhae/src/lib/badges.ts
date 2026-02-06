@@ -20,6 +20,23 @@ export const BADGE_DEFINITIONS = {
     conditionType: 'participation',
     conditionValue: 1,
   },
+  // M6-Onboarding: Aha Moment 배지
+  first_praise_sent: {
+    type: 'first_praise_sent',
+    name: '첫 칭찬 보내기',
+    description: '첫 칭찬을 보냈어요',
+    icon: 'HeartHandshake',
+    conditionType: 'aha_moment',
+    conditionValue: 1,
+  },
+  first_praise_received: {
+    type: 'first_praise_received',
+    name: '첫 칭찬 받기',
+    description: '첫 칭찬을 받았어요',
+    icon: 'Sparkles',
+    conditionType: 'aha_moment',
+    conditionValue: 1,
+  },
   participation_10: {
     type: 'participation_10',
     name: '10회 참여',
@@ -226,4 +243,16 @@ export async function checkAndAwardBadges(userId: string): Promise<string[]> {
     })
     return awardedBadges
   }
+}
+
+/**
+ * 특정 배지 직접 부여 (Aha Moment용)
+ * - 외부에서 직접 배지 부여가 필요한 경우 사용
+ */
+export async function grantBadge(
+  userId: string,
+  badgeType: BadgeType
+): Promise<boolean> {
+  const supabase = await createServiceClient()
+  return awardBadge(supabase, userId, badgeType)
 }

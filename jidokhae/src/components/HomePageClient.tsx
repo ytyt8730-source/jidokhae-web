@@ -16,7 +16,7 @@
  * - 컨텍스트 유지하면서 모임 정보 확인
  */
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import { useSearchParams } from 'next/navigation'
 import MeetingList from '@/components/MeetingList'
 import MeetingBottomSheet from '@/components/MeetingBottomSheet'
@@ -50,7 +50,10 @@ export default function HomePageClient({
   const [isSheetOpen, setIsSheetOpen] = useState(false)
 
   // 모든 모임 합치기 (딥링크용)
-  const allMeetings = [...thisWeekMeetings, ...upcomingMeetings]
+  const allMeetings = useMemo(
+    () => [...thisWeekMeetings, ...upcomingMeetings],
+    [thisWeekMeetings, upcomingMeetings]
+  )
 
   // 딥링크 처리: URL 파라미터에서 모임 ID 읽기
   useEffect(() => {

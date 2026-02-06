@@ -19,7 +19,7 @@ import {
 import { ErrorCode, AppError } from '@/lib/errors'
 import { registrationLogger } from '@/lib/logger'
 import { isValidPhraseId } from '@/lib/praise'
-import { checkAndAwardBadges } from '@/lib/badges'
+import { checkAndAwardBadges, grantBadge } from '@/lib/badges'
 import { rateLimiters, checkRateLimit, rateLimitExceededResponse } from '@/lib/rate-limit'
 
 const logger = registrationLogger
@@ -158,7 +158,7 @@ export async function POST(request: NextRequest) {
     // 직접 증가 처리 (RPC가 없는 경우 대비)
     const { data: receiver } = await serviceClient
       .from('users')
-      .select('total_praises_received')
+      .select('total_praises_received, second_aha_at')
       .eq('id', receiverId)
       .single()
 
@@ -174,6 +174,63 @@ export async function POST(request: NextRequest) {
 
     // 7. 수신자 배지 체크
     const receiverBadges = await checkAndAwardBadges(receiverId)
+
+    // [M6-Onboarding] 8. Aha Moment 처리
+
+    // 8-1. 발신자: 1차 Aha (칭찬 보내기)
+    const { data: sender } = await serviceClient
+      .from('users')
+      .select('first_aha_at, onboarding_step')
+      .eq('id', authUser.id)
+      .single()
+
+    if (sender && !sender.first_aha_at) {
+      const now = new Date().toISOString()
+      const updateData: Record<string, unknown> = {
+        first_aha_at: now,
+        updated_at: now,
+      }
+
+      // onboarding_step이 4 미만이면 4로 업데이트
+      if ((sender.onboarding_step ?? 1) < 4) {
+        updateData.onboarding_step = 4
+      }
+
+      await serviceClient
+        .from('users')
+        .update(updateData)
+        .eq('id', authUser.id)
+
+      // first_praise_sent 배지 부여
+      await grantBadge(authUser.id, 'first_praise_sent')
+
+      logger.info('first_aha_achieved', {
+        userId: authUser.id,
+        type: 'first',
+        trigger: 'praise_sent',
+      })
+    }
+
+    // 8-2. 수신자: 2차 Aha (칭찬 받기)
+    if (receiver && !receiver.second_aha_at) {
+      const now = new Date().toISOString()
+      await serviceClient
+        .from('users')
+        .update({
+          second_aha_at: now,
+          updated_at: now,
+        })
+        .eq('id', receiverId)
+
+      // first_praise_received 배지 부여
+      await grantBadge(receiverId, 'first_praise_received')
+
+      logger.info('second_aha_achieved', {
+        userId: receiverId,
+        type: 'second',
+        trigger: 'praise_received',
+      })
+    }
 
     // 8. 참여 완료 처리 (아직 안 된 경우)
     let senderBadges: string[] = []

@@ -160,7 +160,7 @@ async function updateUserStats(
     // 현재 사용자 정보 조회
     const { data: user, error: userError } = await supabase
       .from('users')
-      .select('total_participations, consecutive_weeks, last_regular_meeting_at, first_regular_meeting_at, is_new_member')
+      .select('total_participations, consecutive_weeks, last_regular_meeting_at, first_regular_meeting_at, is_new_member, onboarding_completed_at, onboarding_step')
       .eq('id', userId)
       .single()
 
@@ -178,9 +178,21 @@ async function updateUserStats(
     if (meeting.meeting_type === 'regular') {
       const meetingDate = new Date(meeting.datetime)
 
-      // 첫 정기모임 기록
-      if (!user.first_regular_meeting_at) {
+      // 첫 정기모임 기록 + 온보딩 완료 처리 (M6-Onboarding)
+      const isFirstRegularMeeting = !user.first_regular_meeting_at
+      if (isFirstRegularMeeting) {
         updates.first_regular_meeting_at = meetingDate.toISOString()
+
+        // [M6-Onboarding] 첫 정기모임 참여 시 온보딩 완료 처리
+        if (!user.onboarding_completed_at) {
+          updates.onboarding_step = 5
+          updates.onboarding_completed_at = new Date().toISOString()
+
+          logger.info('onboarding_completed_via_first_meeting', {
+            userId,
+            meetingId: meeting.id,
+          })
+        }
       }
 
       // 마지막 정기모임 업데이트
