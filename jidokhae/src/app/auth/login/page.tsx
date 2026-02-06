@@ -77,8 +77,8 @@ export default function LoginPage() {
         options: {
           redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`,
           queryParams: {
-            // 카카오 프로필 정보 요청 범위
-            scope: 'profile_nickname profile_image account_email',
+            // 카카오 프로필 정보 요청 범위 (전화번호 포함)
+            scope: 'profile_nickname profile_image account_email phone_number',
           },
         },
       })
