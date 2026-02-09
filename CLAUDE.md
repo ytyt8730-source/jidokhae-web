@@ -21,6 +21,8 @@ npm run dev              # Start dev server (localhost:3000)
 npm run build            # Production build
 npm run lint             # ESLint check
 npm run typecheck        # TypeScript check (tsc --noEmit)
+npm run screenshot       # Take page screenshots (Playwright)
+npm run screenshot:mobile  # Mobile-only screenshots
 ```
 
 ### Testing (Vitest)
@@ -52,11 +54,15 @@ npx tsc --noEmit && npm run build
 # Quality
 ./scripts/quality-gate.sh     # File size >200, console.log, as any checks
 ./scripts/deploy-check.sh     # Full deployment readiness check
+./scripts/find-pattern.sh     # Search for code anti-patterns
 
 # Development
 ./scripts/gen-types.sh        # Generate Supabase types → src/types/database.ts
 ./scripts/test-cron.sh        # Test cron endpoints locally
 ./scripts/status.sh           # Quick project status check
+./scripts/check-env.sh        # Validate environment variables
+./scripts/db-migrate.sh       # Database migration guide (list/show/check)
+./scripts/pre-commit.sh       # Pre-commit hook (.env check, type check)
 
 # Scaffolding
 ./scripts/create-component.sh [name] [client|server|page]
@@ -78,10 +84,12 @@ npx tsc --noEmit && npm run build
 | Styling | **Tailwind CSS 3.4** | CSS Variables for theming |
 | Animation | **Framer Motion** | Micro-interactions |
 | Icons | **Lucide React** | strokeWidth: 1.5, NO emojis allowed |
+| Dates | **date-fns 4** | All date manipulation (NOT dayjs/moment) |
 | Backend | **Supabase** | PostgreSQL + Auth + Realtime, RLS enabled |
-| Payment | **PortOne V2** | KakaoPay, TossPay |
+| Payment | **PortOne V2** | KakaoPay, TossPay (SDK lazy-loaded in layout) |
 | Notifications | **Solapi** | Kakao Alimtalk |
-| Monitoring | **Sentry** | Error tracking & performance |
+| Monitoring | **Sentry v10** | Error tracking & performance |
+| Class utils | **clsx + tailwind-merge** | Via `cn()` helper in `@/lib/utils` |
 
 ---
 
@@ -95,12 +103,14 @@ Request → middleware.ts (auth check) → Page/API Route → Supabase (with RLS
 
 ### Middleware (`src/middleware.ts`)
 
-All requests pass through middleware for session refresh:
+All non-static requests pass through middleware (negative matcher pattern):
 
 ```typescript
 // Handles: session refresh, auth state sync between server/client
-// Protected routes: /mypage/*, /admin/*
-// Public routes: /, /about, /meetings, /auth/*
+// Protected: /mypage/* → redirect to /auth/login if unauthenticated
+// Protected: /admin/* → requires 'admin' or 'super_admin' role
+// Auth redirect: /auth/* → redirect to / if already authenticated
+// Delegates to: @/lib/supabase/middleware.ts (updateSession)
 ```
 
 ### Supabase Client Usage
@@ -116,20 +126,33 @@ import { createClient } from '@/lib/supabase/client'
 import { createServiceClient } from '@/lib/supabase/server'
 ```
 
-### Providers (in `src/app/layout.tsx`)
+### Layout Pattern (`src/app/layout.tsx`)
 
 ```typescript
 // Provider hierarchy (order matters):
 <ThemeProvider>           // Theme context (electric/warm)
   <AuthProvider>          // Supabase session
-    <OnboardingRedirectProvider>  // New member redirect
-      <ToastProvider>     // Toast notifications
+    <ToastProvider>       // Toast notifications
+      <OnboardingRedirectProvider>  // New member redirect (uses Toast)
         {children}
-      </ToastProvider>
-    </OnboardingRedirectProvider>
+      </OnboardingRedirectProvider>
+    </ToastProvider>
   </AuthProvider>
 </ThemeProvider>
+
+// Responsive layout:
+// Desktop (lg:): Fixed Sidebar (256px) + Content area (lg:ml-64)
+// Mobile/Tablet: Header + Content area
 ```
+
+### Fonts
+
+| Font | Variable | Purpose |
+|------|----------|---------|
+| Pretendard (local) | `--font-pretendard` | Body text |
+| Outfit (Google) | `--font-outfit` | Electric theme display headings |
+| Noto Sans KR | `--font-noto-sans` | Body text (Korean) |
+| Noto Serif KR | `--font-noto-serif` | Warm theme headings |
 
 ### API Response Pattern
 
@@ -146,15 +169,20 @@ export async function GET() {
 // Response: { success: boolean, data?: T, error?: { code, message } }
 ```
 
-### Error Codes
+### Error Codes (`@/lib/errors` ErrorCode enum)
 
-| Range | Category | Example |
+| Range | Category | Examples |
 |-------|----------|---------|
-| 1xxx | Auth | 1001: unauthorized, 1002: invalid_token |
-| 2xxx | Payment | 2001: payment_failed, 2002: refund_failed |
-| 3xxx | External APIs | 3001: solapi_error, 3002: portone_error |
-| 4xxx | Business logic | 4001: capacity_full, 4002: not_eligible |
-| 5xxx | System | 5001: internal_error, 5002: db_error |
+| 1xxx | Auth | 1001: AUTH_INVALID_TOKEN, 1003: AUTH_UNAUTHORIZED, 1009: AUTH_FORBIDDEN |
+| 2xxx | Payment | 2001: PAYMENT_FAILED, 2006: REFUND_NOT_ELIGIBLE |
+| 21xx | Transfer | 2101: TRANSFER_DEADLINE_EXPIRED, 2103: TRANSFER_SENDER_NAME_MISMATCH |
+| 3xxx | External APIs | 3001: EXTERNAL_API_TIMEOUT, 3003: NOTIFICATION_SEND_FAILED |
+| 40xx | Meeting | 4001: MEETING_NOT_FOUND, 4004: CAPACITY_EXCEEDED |
+| 41xx | Registration | 4101: REGISTRATION_NOT_FOUND, 4102: REGISTRATION_ALREADY_EXISTS |
+| 42xx | Waitlist | 4201: WAITLIST_NOT_FOUND |
+| 43xx | Eligibility | 4301: ELIGIBILITY_NOT_MET |
+| 44xx | Praise | 4401: PRAISE_DUPLICATE_MEETING |
+| 5xxx | System | 5001: INTERNAL_ERROR, 5002: DB_ERROR |
 
 ### Logging
 
@@ -163,12 +191,16 @@ export async function GET() {
 ```typescript
 import { paymentLogger } from '@/lib/logger'
 
-// Available loggers:
+// Pre-built loggers:
 // authLogger, paymentLogger, notificationLogger, meetingLogger,
 // registrationLogger, waitlistLogger, cronLogger, systemLogger, onboardingLogger
 
 paymentLogger.info('Payment initiated', { userId, amount })
 paymentLogger.error('Payment failed', { errorCode, message })
+
+// Custom loggers for other services:
+import { createLogger } from '@/lib/logger'
+const myLogger = createLogger('my-service')
 ```
 
 ---
@@ -183,6 +215,8 @@ paymentLogger.error('Payment failed', { errorCode, message })
 | `errors` | AppError class, error codes | Throwing typed errors |
 | `logger` | Structured logging | All logging (not console.log) |
 | `env` | Environment validation | Startup checks |
+| `utils` | `cn()` class merge, meeting status calc | UI class composition |
+| `constants/microcopy` | Centralized UI text (Korean) | All user-facing strings |
 | `supabase/*` | DB clients | All DB operations |
 
 ### Auth & Security
@@ -191,7 +225,7 @@ paymentLogger.error('Payment failed', { errorCode, message })
 |--------|---------|
 | `permissions` | Role-based access control |
 | `cron-auth` | Cron job authentication (CRON_SECRET) |
-| `rate-limit` | API rate limiting (presets: auth, payment, standard) |
+| `rate-limit` | API rate limiting (presets: auth, payment, standard, search) |
 | `otp` | Phone OTP authentication |
 
 ### Business Logic
@@ -211,7 +245,8 @@ paymentLogger.error('Payment failed', { errorCode, message })
 
 | Module | Purpose |
 |--------|---------|
-| `notification/` | Solapi Alimtalk |
+| `notification/` | Solapi Alimtalk (adapter pattern: `SolapiAdapter`/`MockNotificationAdapter`) |
+| `notification/index` | `getNotificationService()`, `sendAndLogNotification()`, `isAlreadySent()` |
 | `onboarding/reminder` | Signup/first-meeting reminders |
 | `reminder` | General meeting reminders |
 | `segment-notification` | Segment-based targeting |
@@ -249,6 +284,7 @@ paymentLogger.error('Payment failed', { errorCode, message })
 | Inline styles `style={{}}` | Tailwind classes | Consistency |
 | Emojis (any) | Lucide React icons | Cross-platform rendering |
 | Hardcoded business values | DB config or constants | Maintainability |
+| Hardcoded UI text | `MICROCOPY` from `@/lib/constants/microcopy` | Tone consistency |
 
 ### When to use `unknown` vs Proper Type
 
@@ -293,8 +329,36 @@ Add `'use client'` directive ONLY when the component:
 
 ### Language
 
-- **UI text**: Korean
+- **UI text**: Korean (centralized in `MICROCOPY` constants)
 - **Code, comments, types**: English
+
+### Key Patterns
+
+**Class merging with `cn()`:**
+
+```typescript
+import { cn } from '@/lib/utils'
+<div className={cn('base-class', isActive && 'active-class', className)} />
+```
+
+**Admin pages** follow Server + Client component split:
+
+```
+src/app/admin/[section]/
+  page.tsx          # Server Component: data fetching, auth check
+  [Section]Client.tsx  # Client Component: interactive UI
+```
+
+**UI text** - Never hardcode. Import from centralized microcopy:
+
+```typescript
+import { MICROCOPY } from '@/lib/constants/microcopy'
+<button>{MICROCOPY.buttons.register}</button>  // "함께 읽기"
+```
+
+**CSS utility classes** defined in `globals.css`:
+- Typography: `text-display`, `text-h1`..`text-h3`, `text-body`, `text-body-sm`, `text-caption`, `heading-themed`
+- Components: `btn`, `btn-primary`, `btn-secondary`, `btn-ghost`, `btn-accent`, `input`, `card`, `card-base`
 
 ---
 
@@ -430,9 +494,10 @@ import { checkRateLimit, rateLimiters, rateLimitExceededResponse } from '@/lib/r
 
 export async function POST(request: NextRequest) {
   // Choose appropriate limiter:
-  // - rateLimiters.auth: login, OTP (strict)
-  // - rateLimiters.payment: payment operations (strict)
-  // - rateLimiters.standard: general APIs (lenient)
+  // - rateLimiters.auth: login, OTP (10/min)
+  // - rateLimiters.payment: payment operations (5/min)
+  // - rateLimiters.standard: general APIs (60/min)
+  // - rateLimiters.search: search/query APIs (120/min)
 
   const result = checkRateLimit(request, rateLimiters.payment)
   if (!result.success) return rateLimitExceededResponse(result)
@@ -495,7 +560,7 @@ All times in UTC. KST = UTC + 9.
 | `/api/cron/reminder` | 22:00 daily | Meeting D-1 reminders |
 | `/api/cron/waitlist` | hourly | Process waitlist |
 | `/api/cron/auto-complete` | 03:00 daily | Complete past meetings |
-| `/api/cron/afterglow` | */30 * * * * | Post-meeting followup |
+| `/api/cron/afterglow` | 0,30 * * * * | Post-meeting followup |
 | `/api/cron/welcome` | 01:00 daily | New member welcome |
 | `/api/cron/post-meeting` | 01:00 daily | Post-meeting notifications |
 | `/api/cron/monthly` | 01:00, 25th | Monthly summary |
@@ -519,11 +584,20 @@ All times in UTC. KST = UTC + 9.
 ├── /scripts         # Automation scripts (run from root)
 ├── /jidokhae        # Next.js source code
 │   ├── /src/app           # App Router pages & API routes
-│   ├── /src/components    # React components
+│   ├── /src/components
+│   │   ├── layout/        # Header, Footer, Sidebar
+│   │   ├── ui/            # Reusable primitives (Button, Input, Toast, Badge, Price)
+│   │   ├── icons/         # Custom icons (KongIcon, BookIcon, LeafIcon)
+│   │   ├── effects/       # Animation effects (Confetti, KongPour)
+│   │   ├── providers/     # AuthProvider, OnboardingRedirectProvider
+│   │   ├── ticket/        # Ticket components
+│   │   ├── onboarding/    # Onboarding flow components
+│   │   ├── cancel/        # Cancellation/refund components
+│   │   └── [root]         # Feature-specific (MeetingCard, PaymentButton, etc.)
 │   ├── /src/lib           # Utilities & services
 │   ├── /src/hooks         # Custom React hooks
 │   ├── /src/types         # TypeScript definitions
-│   ├── /src/providers     # Context providers
+│   ├── /src/providers     # Context providers (ThemeProvider)
 │   └── /src/middleware.ts # Auth middleware
 └── CLAUDE.md
 ```
@@ -543,4 +617,4 @@ When documents conflict, follow this order:
 
 ---
 
-Last updated: 2026-02-06 | v3.2
+Last updated: 2026-02-07 | v3.3

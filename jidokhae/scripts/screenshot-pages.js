@@ -27,10 +27,13 @@ const PAGES = [
   { path: '/', name: 'home', description: '홈페이지', folder: '01-landing', animationDelay: 3000 },
   { path: '/about', name: 'about', description: '소개 페이지', folder: '01-landing', animationDelay: 3500 },
   { path: '/onboarding', name: 'onboarding', description: '온보딩', folder: '01-landing', animationDelay: 3000 },
+  { path: '/legal/privacy', name: 'privacy', description: '개인정보처리방침', folder: '01-landing' },
 
   // ========== 02-auth (인증) ==========
   { path: '/auth/login', name: 'login', description: '로그인', folder: '02-auth' },
   { path: '/auth/signup', name: 'signup', description: '회원가입', folder: '02-auth' },
+  { path: '/auth/confirmed', name: 'confirmed', description: '인증 완료', folder: '02-auth', animationDelay: 2500 },
+  { path: '/auth/complete-profile', name: 'complete-profile', description: '프로필 완성', folder: '02-auth', requiresAuth: true },
 
   // ========== 03-meetings (모임) ==========
   { path: '/meetings', name: 'meetings-list', description: '모임 목록', folder: '03-meetings', animationDelay: 2500 },
@@ -38,6 +41,12 @@ const PAGES = [
   { path: '/meetings/{meetingId}', name: 'meeting-detail', description: '모임 상세', folder: '03-meetings', dynamic: true, animationDelay: 3000 },
   { path: '/meetings/{meetingId}/transfer-pending', name: 'transfer-pending', description: '입금대기 안내', folder: '03-meetings', dynamic: true, requiresAuth: true, animationDelay: 2500 },
   { path: '/meetings/{meetingId}/payment-complete', name: 'payment-complete', description: '결제 완료', folder: '03-meetings', dynamic: true, requiresAuth: true, animationDelay: 3000 },
+  { path: '/meetings/{meetingId}/feedback', name: 'feedback', description: '피드백 작성', folder: '03-meetings', dynamic: true, requiresAuth: true, animationDelay: 2500 },
+  { path: '/meetings/{meetingId}/feedback/complete', name: 'feedback-complete', description: '피드백 완료', folder: '03-meetings', dynamic: true, requiresAuth: true, animationDelay: 2500 },
+  { path: '/meetings/{meetingId}/praise', name: 'praise', description: '칭찬하기', folder: '03-meetings', dynamic: true, requiresAuth: true, animationDelay: 2500 },
+  { path: '/meetings/{meetingId}/praise/complete', name: 'praise-complete', description: '칭찬 완료', folder: '03-meetings', dynamic: true, requiresAuth: true, animationDelay: 2500 },
+  { path: '/meetings/{meetingId}/review', name: 'review', description: '후기 작성', folder: '03-meetings', dynamic: true, requiresAuth: true, animationDelay: 2500 },
+  { path: '/meetings/{meetingId}/review/complete', name: 'review-complete', description: '후기 완료', folder: '03-meetings', dynamic: true, requiresAuth: true, animationDelay: 2500 },
 
   // ========== 04-mypage (마이페이지) ==========
   { path: '/mypage', name: 'mypage-main', description: '마이페이지 메인', folder: '04-mypage', requiresAuth: true, animationDelay: 2500 },
@@ -50,6 +59,7 @@ const PAGES = [
   // ========== 06-admin-meetings (모임 관리) ==========
   { path: '/admin/meetings', name: 'admin-meetings-list', description: '모임 목록', folder: '06-admin-meetings', requiresAuth: true, requiresAdmin: true },
   { path: '/admin/meetings/new', name: 'admin-meetings-new', description: '모임 생성', folder: '06-admin-meetings', requiresAuth: true, requiresAdmin: true },
+  { path: '/admin/meetings/{meetingId}/edit', name: 'admin-meetings-edit', description: '모임 수정', folder: '06-admin-meetings', dynamic: true, requiresAuth: true, requiresAdmin: true },
 
   // ========== 07-admin-users (회원 관리) ==========
   { path: '/admin/users', name: 'admin-users-list', description: '회원 목록', folder: '07-admin-users', requiresAuth: true, requiresAdmin: true },
@@ -60,6 +70,7 @@ const PAGES = [
   // ========== 09-admin-content (콘텐츠 관리) ==========
   { path: '/admin/banners', name: 'admin-banners', description: '배너 관리', folder: '09-admin-content', requiresAuth: true, requiresAdmin: true },
   { path: '/admin/requests', name: 'admin-requests', description: '요청함 관리', folder: '09-admin-content', requiresAuth: true, requiresAdmin: true },
+  { path: '/admin/gallery', name: 'admin-gallery', description: '갤러리 관리', folder: '09-admin-content', requiresAuth: true, requiresAdmin: true },
 
   // ========== 10-admin-notifications (알림 관리) ==========
   { path: '/admin/templates', name: 'admin-templates', description: '알림 템플릿', folder: '10-admin-notifications', requiresAuth: true, requiresAdmin: true },
@@ -108,6 +119,12 @@ async function login(page, isAdmin = false) {
       await page.waitForURL(url => !url.toString().includes('/auth/login'), { timeout: 10000 })
       await page.waitForLoadState('networkidle')
       console.log(`  ✓ 로그인 완료: ${account.email}`)
+
+      // 회원 계정인 경우 온보딩 완료 처리
+      if (!isAdmin) {
+        await completeOnboarding(page)
+      }
+
       return true
     } catch (e) {
       console.log(`  ⚠ 로그인 실패: ${account.email}`)
@@ -115,6 +132,28 @@ async function login(page, isAdmin = false) {
     }
   }
   return false
+}
+
+async function completeOnboarding(page) {
+  try {
+    // 온보딩 완료 API 호출
+    const response = await page.evaluate(async (baseUrl) => {
+      const res = await fetch(`${baseUrl}/api/users/onboarding`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ step: 5, complete: true }),
+        credentials: 'include',
+      })
+      return { status: res.status, ok: res.ok }
+    }, BASE_URL)
+
+    if (response.ok) {
+      console.log(`  ✓ 온보딩 완료 처리됨`)
+    }
+  } catch (e) {
+    // 이미 완료된 경우 무시
+    console.log(`  ⚠ 온보딩 상태 확인 필요`)
+  }
 }
 
 async function getMeetingId(page) {
