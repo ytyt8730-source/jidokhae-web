@@ -68,6 +68,52 @@ gap-6 = 24px
 - [ ] Lucide 아이콘 strokeWidth (1.5 필수)
 - [ ] KongIcon 사용 (콩 화폐 표시)
 
+### 6. 디자인 토큰 검증 (구체적 패턴)
+
+기존 "CSS 변수 사용 여부"를 구체적 grep 패턴으로 교체:
+
+| 금지 패턴 | 올바른 대체 | 검색 명령 |
+|-----------|-------------|-----------|
+| `bg-white` | `bg-bg-surface` 또는 `bg-white/80` (투명도 의도적 사용) | `grep -rn "bg-white[^/]" --include="*.tsx"` |
+| `bg-red-*`, `bg-green-*`, `bg-blue-*` | `bg-error`, `bg-success`, `bg-info` | `grep -rn "bg-red-\|bg-green-\|bg-blue-" --include="*.tsx"` |
+| `text-[#hex]` | CSS Variable 기반 클래스 | `grep -rn "text-\[#" --include="*.tsx"` |
+| `z-40`, `z-50` | `z-modal-overlay`, `z-modal`, `z-toast` 등 디자인 토큰 | `grep -rn "z-[0-9]" --include="*.tsx"` |
+
+**예외**: `TicketPrinting` 컴포넌트 (인쇄용 bg-white 허용), `// bg-white-allowed` 주석
+
+### 7. z-index 스태킹 검증
+
+- `tailwind.config.ts`의 `zIndex` 정의를 먼저 확인
+- `z-[0-9]` 패턴 전수 검색으로 raw 값 탐지
+- **금지**: `z-40`, `z-50`, `z-[임의숫자]` 등 하드코딩 값
+- **필수 순서**: overlay < content < toast (예: z-modal-overlay < z-modal < z-toast)
+- 동일 z-index 값을 가진 서로 다른 컴포넌트 간 충돌 여부 보고
+
+### 8. 반응형 & 레이아웃 검사
+
+- `fixed inset-x-0` 요소에서 `lg:left-64` 사이드바 오프셋 고려 여부
+- `md:hidden` vs `lg:hidden` 브레이크포인트 불일치
+- `100vh` → `100dvh` 마이그레이션 (모바일 주소바 대응)
+- `max-w-screen-*` 사용 시 사이드바 고려 여부
+
+### 9. Safe Area 검사
+
+- `fixed bottom-0` 요소에 `safe-area-inset-bottom` 적용 여부
+- `pb-safe-area-*` 같은 **미등록 유틸리티** 탐지 → globals.css에 정의 존재하는지 교차 검증
+- `env(safe-area-inset-*)` 직접 사용 vs Tailwind 유틸리티 일관성
+
+### 10. 오버플로우 상호작용 검사
+
+- `overflow-hidden` + `rounded-*` 내 interactive 자식 → 클릭 영역 클리핑
+- `overflow-hidden` 부모 내 `sticky` → sticky 동작 불가
+- `AnimatePresence` 내부 `overflow-hidden` → exit 애니메이션 잘림
+
+### 11. 애니메이션 일관성
+
+- `lib/animations.ts` 프리셋 vs 인라인 `whileHover`/`whileTap` → 프리셋 우선
+- `AnimatePresence` 에 `mode="wait"` 누락 여부
+- 무거운 transform에 `will-change` 미사용
+
 ### 권장 검증
 
 - [ ] 테마 전환 시 정상 동작
@@ -75,17 +121,51 @@ gap-6 = 24px
 - [ ] 8px 그리드 준수
 - [ ] Bottom Sheet 패턴 활용
 
+---
+
+## grep 검색 패턴 (전수 검색용)
+
+검증 시 아래 패턴을 **순서대로** 실행하여 전수 검색:
+
+```bash
+# 디자인 토큰 위반
+grep -rn "bg-white[^/]" jidokhae/src --include="*.tsx"
+grep -rn "bg-red-\|bg-green-\|bg-blue-" jidokhae/src --include="*.tsx"
+grep -rn "text-\[#" jidokhae/src --include="*.tsx"
+
+# z-index 하드코딩
+grep -rn "z-[0-9]" jidokhae/src --include="*.tsx"
+
+# 로깅 위반
+grep -rn "console\.\(error\|warn\|log\)" jidokhae/src --include="*.tsx" --include="*.ts"
+
+# 아이콘 strokeWidth 위반
+grep -rn "strokeWidth={2}" jidokhae/src --include="*.tsx"
+
+# Safe Area 미등록 유틸리티
+grep -rn "pb-safe-area-\|pt-safe-area-\|mb-safe-area-" jidokhae/src --include="*.tsx"
+
+# 100vh (dvh 미마이그레이션)
+grep -rn "100vh" jidokhae/src --include="*.tsx" --include="*.css"
+```
+
+---
+
 ## 출력 형식
 
 ### Critical (디자인 시스템 위반)
 - No-Emoji Policy 위반
-- 하드코딩 색상 사용
+- 하드코딩 색상 사용 (bg-white, text-[#hex])
 - strokeWidth 불일치
+- z-index 하드코딩 / 충돌
+- 미등록 Tailwind 유틸리티 사용
 
 ### Warning (개선 필요)
 - 테마 비호환
-- 모바일 대응 부족
+- 모바일 대응 부족 / Safe Area 누락
 - 그리드 불일치
+- 인라인 애니메이션 (프리셋 미사용)
+- overflow-hidden 내 상호작용 문제
 
 ### Good (잘한 점)
 - 디자인 시스템 준수 사례

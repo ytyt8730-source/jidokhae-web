@@ -69,6 +69,51 @@ else
     echo "   ✅ 통과"
 fi
 
+# 6. z-index 하드코딩 검사
+echo "6️⃣ z-index 하드코딩 검사..."
+ZINDEX_COUNT=$(grep -rn "z-40\|z-50" jidokhae/src/components --include="*.tsx" 2>/dev/null | grep -v "// z-legacy" | wc -l | tr -d ' ')
+if [ "$ZINDEX_COUNT" -gt 0 ]; then
+    echo "   ⚠️ z-index 하드코딩 $ZINDEX_COUNT개 발견 (z-40/z-50 → 디자인 토큰 사용)"
+    grep -rn "z-40\|z-50" jidokhae/src/components --include="*.tsx" 2>/dev/null | grep -v "// z-legacy" | head -5 | sed 's/^/      /'
+    ((WARNINGS++))
+else
+    echo "   ✅ 통과"
+fi
+
+# 7. bg-white 하드코딩 검사 (예외: TicketPrinting, bg-white-allowed 주석)
+echo "7️⃣ bg-white 하드코딩 검사..."
+BG_WHITE_COUNT=$(grep -rn "bg-white" jidokhae/src/components --include="*.tsx" 2>/dev/null | grep -v "TicketPrinting\|// bg-white-allowed\|bg-white/" | wc -l | tr -d ' ')
+if [ "$BG_WHITE_COUNT" -gt 0 ]; then
+    echo "   ⚠️ bg-white 하드코딩 $BG_WHITE_COUNT개 발견 (→ bg-bg-surface 사용)"
+    grep -rn "bg-white" jidokhae/src/components --include="*.tsx" 2>/dev/null | grep -v "TicketPrinting\|// bg-white-allowed\|bg-white/" | head -5 | sed 's/^/      /'
+    ((WARNINGS++))
+else
+    echo "   ✅ 통과"
+fi
+
+# 8. 미등록 Tailwind 클래스 검사 (safe-area)
+echo "8️⃣ 미등록 Tailwind 유틸리티 검사..."
+UNREGISTERED_COUNT=$(grep -rn "pb-safe-area-\|pt-safe-area-\|mb-safe-area-" jidokhae/src --include="*.tsx" 2>/dev/null | wc -l | tr -d ' ')
+if [ "$UNREGISTERED_COUNT" -gt 0 ]; then
+    echo "   ❌ 미등록 safe-area 유틸리티 $UNREGISTERED_COUNT개 발견 (globals.css 정의 필요)"
+    grep -rn "pb-safe-area-\|pt-safe-area-\|mb-safe-area-" jidokhae/src --include="*.tsx" 2>/dev/null | head -5 | sed 's/^/      /'
+    ((ERRORS++))
+    PASS=false
+else
+    echo "   ✅ 통과"
+fi
+
+# 9. console.error/warn 검사 (기존은 console.log만)
+echo "9️⃣ console.error/warn 검사..."
+CONSOLE_EW_COUNT=$(grep -rn "console\.\(error\|warn\)" jidokhae/src --include="*.ts" --include="*.tsx" 2>/dev/null | grep -v "// console-allowed" | wc -l | tr -d ' ')
+if [ "$CONSOLE_EW_COUNT" -gt 0 ]; then
+    echo "   ⚠️ console.error/warn $CONSOLE_EW_COUNT개 발견 (→ @/lib/logger 사용)"
+    grep -rn "console\.\(error\|warn\)" jidokhae/src --include="*.ts" --include="*.tsx" 2>/dev/null | grep -v "// console-allowed" | head -5 | sed 's/^/      /'
+    ((WARNINGS++))
+else
+    echo "   ✅ 통과"
+fi
+
 # 결과 출력
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

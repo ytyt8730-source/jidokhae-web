@@ -18,10 +18,25 @@ model: opus
 ### 필수 규칙 (CLAUDE.md 기반)
 
 - [ ] `as any` 사용 금지 - proper types 또는 `unknown` 사용
-- [ ] `console.log` 금지 - `@/lib/logger`의 createLogger 사용
+- [ ] `console.log/error/warn` 전부 금지 - `@/lib/logger`의 createLogger 사용
 - [ ] 이모지 사용 금지 - Lucide React 아이콘 사용
 - [ ] 인라인 스타일 금지 - Tailwind 클래스 사용
 - [ ] 하드코딩 값 금지 - 상수 또는 DB config 사용
+
+### 타입 안전성
+
+- [ ] `!` non-null assertion 최소화 - 1회 추출 후 변수 재사용 또는 early return
+- [ ] `eslint-disable` 사용 시 정당한 사유 주석 필수 (같은 줄 또는 바로 위)
+
+### React 패턴
+
+- [ ] `useEffect` 의존성 배열 - 객체 참조 대신 primitive ID 사용 (예: `user.id` not `user`)
+- [ ] 불필요한 리렌더 방지 - 객체/배열 리터럴을 deps나 props에 인라인 전달 금지
+
+### API 패턴
+
+- [ ] `withErrorHandler` 래퍼 사용 여부 (모든 API route에서 필수)
+- [ ] `successResponse` / `errorResponse` 헬퍼 사용 여부
 
 ### 파일 크기 제한
 
