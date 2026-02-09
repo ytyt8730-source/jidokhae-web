@@ -45,6 +45,16 @@ export async function POST(request: Request) {
       throw new AppError(ErrorCode.MEETING_NOT_FOUND)
     }
 
+    // 모임 상태 확인 (prepare와 동일한 검증)
+    if (meeting.status !== 'open') {
+      throw new AppError(ErrorCode.MEETING_CLOSED)
+    }
+
+    // 과거 모임 신청 차단
+    if (new Date(meeting.datetime) < new Date()) {
+      throw new AppError(ErrorCode.MEETING_CLOSED)
+    }
+
     // 2. 정원 확인 및 예약 (FOR UPDATE 락 사용)
     // 동시 요청에서 정원 초과를 방지하기 위한 원자적 체크
     const { data: capacityResult, error: capacityError } = await supabaseAdmin
