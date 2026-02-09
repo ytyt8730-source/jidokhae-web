@@ -16,10 +16,12 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Button from '@/components/ui/Button'
+import Portal from '@/components/ui/Portal'
 import PaymentMethodSelector from '@/components/PaymentMethodSelector'
 import IneligibilityModal from '@/components/IneligibilityModal'
 import { useToast } from '@/components/ui/Toast'
 import { generateIdempotencyKey, PAYMENT_MESSAGES } from '@/lib/payment'
+import { paymentLogger } from '@/lib/logger'
 import { MICROCOPY } from '@/lib/constants/microcopy'
 import type { Meeting, User, PreparePaymentResponse } from '@/types/database'
 
@@ -180,7 +182,7 @@ export default function PaymentButton({
       // 2. 포트원 결제 SDK 호출 (M2-013)
       if (!window.PortOne) {
         // 포트원 SDK가 로드되지 않은 경우 수동 처리
-        console.warn('PortOne SDK not loaded, falling back to test mode')
+        paymentLogger.warn('PortOne SDK not loaded, falling back to test mode')
         // 테스트 모드: 바로 완료 처리 (개발용)
         if (process.env.NODE_ENV === 'development') {
           const testPaymentId = `TEST_${Date.now()}`
@@ -215,7 +217,7 @@ export default function PaymentButton({
       // 3. 결제 결과 처리
       if (paymentResponse.code) {
         // 결제 실패/취소 (M2-018~019)
-        console.error('Payment failed:', paymentResponse.code, paymentResponse.message)
+        paymentLogger.error('Payment failed', { code: paymentResponse.code, message: paymentResponse.message })
         await cancelPending(registrationId!, paymentResponse.code === 'PAY_PROCESS_CANCELED' ? 'user_cancelled' : 'payment_failed')
 
         if (paymentResponse.code === 'PAY_PROCESS_CANCELED') {
@@ -230,7 +232,7 @@ export default function PaymentButton({
       // 결제 성공 (M2-014~017)
       await completePayment(registrationId!, paymentResponse.paymentId || paymentId, 'portone', amount!, idempotencyKey)
     } catch (err) {
-      console.error('Payment error:', err)
+      paymentLogger.error('Payment error', { error: err instanceof Error ? err.message : 'Unknown' })
       setError('결제 처리 중 오류가 발생했습니다.')
       setIsLoading(false)
     }
@@ -272,7 +274,7 @@ export default function PaymentButton({
         setIsLoading(false)
       }
     } catch (err) {
-      console.error('Complete payment error:', err)
+      paymentLogger.error('Complete payment error', { error: err instanceof Error ? err.message : 'Unknown' })
       setError('결제 완료 처리 중 오류가 발생했습니다.')
       setIsLoading(false)
     }
@@ -287,7 +289,7 @@ export default function PaymentButton({
         body: JSON.stringify({ registrationId, reason }),
       })
     } catch (err) {
-      console.error('Cancel pending error:', err)
+      paymentLogger.error('Cancel pending error', { error: err instanceof Error ? err.message : 'Unknown' })
     }
   }
 
@@ -305,35 +307,39 @@ export default function PaymentButton({
         <p className="text-sm text-red-500 mt-2">{error}</p>
       )}
 
-      {/* 결제 방식 선택 모달 (M5-040) */}
+      {/* 결제 방식 선택 모달 (M5-040) - Portal로 stacking context 탈출 */}
       {showPaymentModal && user && (
-        <div className="fixed inset-0 z-modal flex items-center justify-center p-4">
-          <div
-            className="absolute inset-0 bg-black/50"
-            onClick={() => setShowPaymentModal(false)}
-          />
-          <div className="relative bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto shadow-xl">
-            <div className="p-6">
-              <h2 className="text-lg font-semibold text-brand-800 mb-4">
-                {meeting.title} 신청
-              </h2>
-              <PaymentMethodSelector
-                meeting={meeting}
-                user={user}
-                onClose={() => setShowPaymentModal(false)}
-              />
+        <Portal>
+          <div className="fixed inset-0 z-modal flex items-center justify-center p-4">
+            <div
+              className="absolute inset-0 bg-black/50"
+              onClick={() => setShowPaymentModal(false)}
+            />
+            <div className="relative bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto shadow-xl">
+              <div className="p-6">
+                <h2 className="text-lg font-semibold text-brand-800 mb-4">
+                  {meeting.title} 신청
+                </h2>
+                <PaymentMethodSelector
+                  meeting={meeting}
+                  user={user}
+                  onClose={() => setShowPaymentModal(false)}
+                />
+              </div>
             </div>
           </div>
-        </div>
+        </Portal>
       )}
 
-      {/* 자격 부족 모달 */}
-      <IneligibilityModal
-        isOpen={showIneligibilityModal}
-        onClose={() => setShowIneligibilityModal(false)}
-        lastRegularMeetingAt={user?.last_regular_meeting_at || null}
-        daysRemaining={null}
-      />
+      {/* 자격 부족 모달 - Portal로 stacking context 탈출 */}
+      <Portal>
+        <IneligibilityModal
+          isOpen={showIneligibilityModal}
+          onClose={() => setShowIneligibilityModal(false)}
+          lastRegularMeetingAt={user?.last_regular_meeting_at || null}
+          daysRemaining={null}
+        />
+      </Portal>
     </div>
   )
 }
