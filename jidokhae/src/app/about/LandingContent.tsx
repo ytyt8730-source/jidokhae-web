@@ -130,9 +130,11 @@ export default function LandingContent({ stats, reviews, galleryImages }: Landin
             transition={{ duration: 0.6, delay: 0.4 }}
             className="text-lg sm:text-xl text-text-muted mb-10 max-w-2xl mx-auto leading-relaxed"
           >
-            책 사놓고 안 읽은 지 몇 달째. 진지한 대화를 나눌 곳도 마땅치 않고.
-            <br className="hidden sm:block" />
-            바쁘다는 핑계가 벌써 몇 달째 이어지고 있다면, 당신만 그런 게 아닙니다.
+            책 사놓고 안 읽은 지 몇 달째.
+            <br />
+            진지한 대화 나눌 곳도 마땅치 않고.
+            <br />
+            그래서 매주 모여서 읽기로 했습니다.
           </motion.p>
 
           <motion.div
@@ -152,7 +154,7 @@ export default function LandingContent({ stats, reviews, galleryImages }: Landin
               className="w-full sm:w-auto px-8 inline-flex items-center gap-2"
               onClick={() => document.getElementById('founder-story')?.scrollIntoView({ behavior: 'smooth' })}
             >
-              3분 만에 알아보기
+              어떤 모임인지 보기
               <ChevronDown size={16} strokeWidth={1.5} />
             </Button>
           </motion.div>
@@ -198,7 +200,7 @@ export default function LandingContent({ stats, reviews, galleryImages }: Landin
 
       {/* 창업자 스토리 섹션 */}
       <section id="founder-story" className="py-16 sm:py-24 bg-bg-base">
-        <div className="max-w-2xl mx-auto px-4 text-left">
+        <div className="max-w-xl mx-auto px-4 text-center">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -217,25 +219,23 @@ export default function LandingContent({ stats, reviews, galleryImages }: Landin
             className="space-y-6"
           >
             <p className="text-base text-text-muted leading-relaxed">
-              저도 그랬어요.
+              2022년 6월, 4명이 모였습니다.
               <br />
-              책 사놓고 안 읽은 지 몇 달째, 진지한 대화 나눌 곳도 없고.
+              각자 책 한 권 들고 카페에 앉았어요.
+              <br />
+              읽고, 소개하고, 이야기 나눴습니다.
             </p>
 
             <p className="text-base text-text-muted leading-relaxed">
-              그래서 4명이 모여봤습니다.
+              그게 3년 넘게 계속되고 있고,
               <br />
-              &apos;이별&apos;에 대해 이야기했는데, 다들 이별한 지 얼마 안 됐더라고요.
+              지금은 250명의 회원이 있어요.
             </p>
 
-            <p className={`text-xl font-bold text-text leading-snug ${theme === 'warm' ? 'font-serif' : 'font-sans'}`}>
-              그런데 우리는 웃고 있었어요.
-            </p>
-
-            <p className="text-base text-text-muted leading-relaxed">
-              혼자가 아니면 다르더라고요.
+            <p className="text-base text-text font-medium leading-relaxed">
+              경주에서 수요일마다,
               <br />
-              그 모임이 3년째 이어지고 있고, 지금은 매주 경주와 포항에서 만나고 있습니다.
+              포항에서 토요일마다 만납니다.
             </p>
           </motion.div>
         </div>
@@ -257,8 +257,9 @@ export default function LandingContent({ stats, reviews, galleryImages }: Landin
               </div>
               <h3 className="text-xl font-semibold text-text">함께 읽는 즐거움</h3>
               <p className="text-text-muted leading-relaxed">
-                혼자서는 안 읽히던 책이, 모임 날짜에 맞춰 자연스럽게 읽혀요.
-                같은 공간에서 각자의 책을 읽고, 마지막엔 서로의 책을 소개합니다.
+                같은 공간에서 각자의 책을 읽어요.
+                <br />
+                마지막엔 서로의 책을 소개합니다.
               </p>
             </motion.div>
 
@@ -268,8 +269,9 @@ export default function LandingContent({ stats, reviews, galleryImages }: Landin
               </div>
               <h3 className="text-xl font-semibold text-text">따뜻한 분위기</h3>
               <p className="text-text-muted leading-relaxed">
-                처음 와도 어색하지 않아요. 책이 자연스러운 대화의 시작점이 되니까요.
-                걱정 없이, 비교 없이, 편안하게 참여할 수 있습니다.
+                처음 오는 분도 많아요.
+                <br />
+                책 얘기부터 시작하면 어색할 틈이 없습니다.
               </p>
             </motion.div>
 
@@ -279,8 +281,9 @@ export default function LandingContent({ stats, reviews, galleryImages }: Landin
               </div>
               <h3 className="text-xl font-semibold text-text">경주 & 포항</h3>
               <p className="text-text-muted leading-relaxed">
-                경주와 포항의 아늑한 카페에서 매주 만나요.
-                지역에 숨은 북카페들을 돌아다니는 재미도 있습니다.
+                경주 수요일, 포항 토요일.
+                <br />
+                매주 우리만의 지정된 장소에서 만납니다.
               </p>
             </motion.div>
 
@@ -290,8 +293,9 @@ export default function LandingContent({ stats, reviews, galleryImages }: Landin
               </div>
               <h3 className="text-xl font-semibold text-text">자유로운 책 선택</h3>
               <p className="text-text-muted leading-relaxed">
-                어떤 책이든 괜찮아요. 소설, 에세이, 자기계발서, 만화책까지.
-                중요한 건 한 권을 들고 온다는 마음입니다.
+                장르 제한 없어요.
+                <br />
+                소설, 에세이, 만화책까지. 한 권만 들고 오면 됩니다.
               </p>
             </motion.div>
           </motion.div>
@@ -537,17 +541,12 @@ export default function LandingContent({ stats, reviews, galleryImages }: Landin
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className={`text-2xl sm:text-3xl font-bold text-white mb-3 ${theme === 'warm' ? 'font-serif' : 'font-sans'}`}>
-              당신도 함께할 수 있어요.
+            <h2 className={`text-2xl sm:text-3xl font-bold text-white mb-8 ${theme === 'warm' ? 'font-serif' : 'font-sans'}`}>
+              이번 달 모임, 아직 자리 있어요.
             </h2>
-            <p className="text-white/80 text-base mb-8 max-w-lg mx-auto">
-              바쁜 당신을 위한 가장 지적인 리추얼.
-              <br />
-              이번 주, 당신의 자리를 비워두었습니다.
-            </p>
-            <Link href="/meetings?type=regular">
+            <Link href="/meetings">
               <button className="bg-white text-[var(--primary)] font-bold px-8 py-3 rounded-xl hover:bg-white/90 transition-colors">
-                정기모임 신청하기
+                일정 보기
               </button>
             </Link>
           </motion.div>

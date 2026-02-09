@@ -80,13 +80,9 @@ export default async function HomePage() {
               새로운 관점
             </h1>
             <p className="hero-subtitle mt-6 text-lg lg:text-xl leading-relaxed max-w-2xl">
-              경주와 포항에서 매주 열리는 프라이빗 독서 클럽.
+              경주와 포항에서 매주 열리는 독서 클럽.
               <br className="hidden sm:block" />
-              책을 통해 인사이트를 나누고, 사유를 확장합니다.
-              <br />
-              <span className="text-[var(--text)] font-medium">
-                바쁜 일상 속, 당신이 우아하게 연결되는 시간.
-              </span>
+              같이 읽고, 같이 이야기합니다.
             </p>
             {/* Sarah Chen: 단일 CTA로 전환율 극대화 - 인지 부하 감소 */}
             <div className="mt-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
@@ -101,7 +97,7 @@ export default async function HomePage() {
                 href="/about"
                 className="text-[var(--text-muted)] hover:text-[var(--text)] font-medium transition-colors"
               >
-                지독해 알아보기 →
+                소개 →
               </Link>
             </div>
           </div>
@@ -202,7 +198,7 @@ export default async function HomePage() {
                   <h2 className="text-xl font-semibold text-text">
                     {thisWeekMeetings.length > 0 ? '다가오는 모임' : '모임 일정'}
                   </h2>
-                  <p className="text-sm text-text-muted">이번 달, 함께 읽을 책이 기다리고 있어요</p>
+                  <p className="text-sm text-text-muted">이번 달 모임 일정</p>
                 </div>
               </div>
               <Link
@@ -228,12 +224,12 @@ export default async function HomePage() {
               지독해 멤버십
             </h3>
             <p className="text-text-muted text-lg mb-8 leading-relaxed">
-              매주 경주와 포항에서, 책을 매개로 새로운 사람들과 연결됩니다.
+              경주와 포항에서 매주 책 읽는 사람들.
               <br className="hidden sm:block" />
-              지독해가 어떤 곳인지 알아보세요.
+              250명이 함께하고 있어요.
             </p>
             <Link href="/about" className="btn-primary">
-              지독해 알아보기
+              소개 보기
             </Link>
           </div>
         </div>

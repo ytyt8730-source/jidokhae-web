@@ -263,7 +263,7 @@ export default function SignupPage() {
             회원가입 완료!
           </h2>
           <p className="text-gray-600">
-            이메일 인증 후 로그인해주세요.
+            잠시 후 로그인 페이지로 이동합니다.
           </p>
         </div>
       </div>
