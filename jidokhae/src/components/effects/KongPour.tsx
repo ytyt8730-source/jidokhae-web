@@ -89,7 +89,7 @@ export function KongPour({
           initial="hidden"
           animate="visible"
           exit={{ opacity: 0 }}
-          className={`fixed inset-0 pointer-events-none z-50 overflow-hidden ${className}`}
+          className={`fixed inset-0 pointer-events-none z-toast overflow-hidden ${className}`}
         >
           {kongs.map((kong) => (
             <motion.div

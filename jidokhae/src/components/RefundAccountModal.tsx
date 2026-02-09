@@ -62,18 +62,25 @@ export default function RefundAccountModal({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <>
       {/* 백드롭 */}
       <div
-        className="absolute inset-0 bg-black/50"
+        className="fixed inset-0 bg-black/50 z-modal-overlay"
         onClick={onClose}
       />
 
+    <div className="fixed inset-0 z-modal flex items-center justify-center p-4">
+
       {/* 모달 */}
-      <div className="relative bg-white rounded-2xl w-full max-w-md shadow-xl">
+      <div
+        className="relative bg-white rounded-2xl w-full max-w-md shadow-xl"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="refund-account-title"
+      >
         {/* 헤더 */}
         <div className="flex items-center justify-between p-5 border-b border-gray-100">
-          <h2 className="text-lg font-semibold text-brand-800">환불 계좌 입력</h2>
+          <h2 id="refund-account-title" className="text-lg font-semibold text-brand-800">환불 계좌 입력</h2>
           <button
             onClick={onClose}
             className="p-1 rounded-lg hover:bg-gray-100 transition-colors"
@@ -105,10 +112,11 @@ export default function RefundAccountModal({
 
           {/* 은행 선택 */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="refund-bank" className="block text-sm font-medium text-gray-700 mb-2">
               은행 선택
             </label>
             <select
+              id="refund-bank"
               value={bank}
               onChange={(e) => setBank(e.target.value)}
               className="w-full px-4 py-3 border border-gray-200 rounded-xl
@@ -127,10 +135,11 @@ export default function RefundAccountModal({
 
           {/* 계좌번호 */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="refund-account" className="block text-sm font-medium text-gray-700 mb-2">
               계좌번호
             </label>
             <input
+              id="refund-account"
               type="text"
               value={account}
               onChange={(e) => setAccount(e.target.value)}
@@ -144,10 +153,11 @@ export default function RefundAccountModal({
 
           {/* 예금주 */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="refund-holder" className="block text-sm font-medium text-gray-700 mb-2">
               예금주
             </label>
             <input
+              id="refund-holder"
               type="text"
               value={holder}
               onChange={(e) => setHolder(e.target.value)}
@@ -200,5 +210,6 @@ export default function RefundAccountModal({
         </form>
       </div>
     </div>
+    </>
   )
 }

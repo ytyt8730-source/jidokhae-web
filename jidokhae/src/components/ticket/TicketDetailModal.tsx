@@ -52,11 +52,11 @@ export default function TicketDetailModal({
             animate="visible"
             exit="exit"
             onClick={onClose}
-            className="fixed inset-0 bg-black/50 z-50"
+            className="fixed inset-0 bg-black/50 z-modal-overlay"
           />
 
           {/* Modal */}
-          <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 flex items-center justify-center z-modal p-4">
             <motion.div
               variants={modalAnimation}
               initial="hidden"

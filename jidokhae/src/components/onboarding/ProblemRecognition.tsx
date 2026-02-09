@@ -112,7 +112,7 @@ export default function ProblemRecognition({
                     exit={{ scale: 0 }}
                     className="w-6 h-6 rounded-full bg-primary flex items-center justify-center"
                   >
-                    <Check size={14} strokeWidth={2} className="text-white" />
+                    <Check size={14} strokeWidth={1.5} className="text-white" />
                   </motion.div>
                 )}
               </AnimatePresence>

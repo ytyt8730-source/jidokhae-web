@@ -39,7 +39,7 @@ export default function Header({ user }: HeaderProps) {
     : []
 
   return (
-    <header className="sticky top-0 z-50 bg-bg-surface/95 backdrop-blur-md border-b border-[var(--border)]">
+    <header className="sticky top-0 z-sticky bg-bg-surface/95 backdrop-blur-md border-b border-[var(--border)]">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         {/* 로고 */}
         <Link href="/" className="flex items-center gap-2">

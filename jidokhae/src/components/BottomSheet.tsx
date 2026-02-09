@@ -75,7 +75,7 @@ export default function BottomSheet({
         <>
           {/* Backdrop */}
           <motion.div
-            className="fixed inset-0 z-40 backdrop-blur-sm bg-overlay"
+            className="fixed inset-0 z-modal-overlay backdrop-blur-sm bg-overlay"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -86,7 +86,7 @@ export default function BottomSheet({
 
           {/* Bottom Sheet */}
           <motion.div
-            className="fixed inset-x-0 bottom-0 z-50 flex flex-col rounded-t-3xl overflow-hidden bg-bg-surface"
+            className="fixed inset-x-0 bottom-0 z-modal flex flex-col rounded-t-3xl overflow-hidden bg-bg-surface"
             style={{ maxHeight }}
             initial={{ y: '100%' }}
             animate={{ y: 0 }}

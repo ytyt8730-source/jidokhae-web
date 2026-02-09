@@ -84,7 +84,7 @@ export default function NewMemberGuideModal({
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="fixed inset-0 bg-black/50 z-50"
+            className="fixed inset-0 bg-black/50 z-modal-overlay"
             onClick={handleClose}
           />
 
@@ -94,7 +94,7 @@ export default function NewMemberGuideModal({
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md mx-4"
+            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-modal w-full max-w-md mx-4"
           >
             <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
               {/* 닫기 버튼 */}

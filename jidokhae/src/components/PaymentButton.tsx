@@ -307,7 +307,7 @@ export default function PaymentButton({
 
       {/* 결제 방식 선택 모달 (M5-040) */}
       {showPaymentModal && user && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-modal flex items-center justify-center p-4">
           <div
             className="absolute inset-0 bg-black/50"
             onClick={() => setShowPaymentModal(false)}

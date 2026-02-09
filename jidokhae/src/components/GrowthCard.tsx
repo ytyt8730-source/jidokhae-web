@@ -63,7 +63,7 @@ export default function GrowthCard({
             size={16}
             className="inline ml-1 text-orange-500"
             fill="currentColor"
-            strokeWidth={2}
+            strokeWidth={1.5}
           />
         </h3>
 

@@ -97,17 +97,20 @@ export default function CancelBottomSheet({
             animate="visible"
             exit="exit"
             onClick={onClose}
-            className="fixed inset-0 bg-black/50 z-50"
+            className="fixed inset-0 bg-black/50 z-modal-overlay"
           />
 
           {/* Bottom Sheet */}
-          <div className="fixed inset-x-0 bottom-0 z-50 flex items-end justify-center">
+          <div className="fixed inset-x-0 bottom-0 z-modal flex items-end justify-center">
             <motion.div
               variants={bottomSheetAnimation}
               initial="hidden"
               animate="visible"
               exit="exit"
               className="bg-bg-base rounded-t-3xl w-full max-w-md shadow-2xl"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="cancel-sheet-title"
             >
               {/* 핸들 */}
               <div className="flex justify-center pt-3 pb-2">
@@ -117,7 +120,7 @@ export default function CancelBottomSheet({
               {/* 내용 */}
               <div className="px-6 pb-6">
                 {/* 타이틀 */}
-                <h2 className="text-xl font-bold text-text-primary mb-2">
+                <h2 id="cancel-sheet-title" className="text-xl font-bold text-text-primary mb-2">
                   {MICROCOPY.cancel.title}
                 </h2>
 

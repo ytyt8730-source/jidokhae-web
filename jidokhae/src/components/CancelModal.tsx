@@ -187,7 +187,7 @@ export default function CancelModal({
         <>
           {/* 배경 오버레이 */}
           <motion.div
-            className="fixed inset-0 bg-black/50 z-40"
+            className="fixed inset-0 bg-black/50 z-modal-overlay"
             variants={overlayAnimation}
             initial="hidden"
             animate="visible"
@@ -197,7 +197,7 @@ export default function CancelModal({
 
           {/* 모달 */}
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 z-modal flex items-center justify-center p-4"
             variants={modalAnimation}
             initial="hidden"
             animate="visible"

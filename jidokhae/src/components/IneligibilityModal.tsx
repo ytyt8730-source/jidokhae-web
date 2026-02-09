@@ -45,7 +45,7 @@ export default function IneligibilityModal({
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="fixed inset-0 bg-black/50 z-50"
+            className="fixed inset-0 bg-black/50 z-modal-overlay"
             onClick={onClose}
           />
 
@@ -55,7 +55,10 @@ export default function IneligibilityModal({
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md mx-4"
+            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-modal w-full max-w-md mx-4"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="ineligibility-modal-title"
           >
             <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
               {/* 닫기 버튼 */}
@@ -72,7 +75,7 @@ export default function IneligibilityModal({
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-warning/10 rounded-full mb-4">
                   <AlertTriangle className="text-warning" size={32} strokeWidth={1.5} />
                 </div>
-                <h2 className="text-xl font-bold text-brand-800 mb-2">
+                <h2 id="ineligibility-modal-title" className="text-xl font-bold text-brand-800 mb-2">
                   정기모임 참여가 필요해요
                 </h2>
                 <p className="text-gray-600 leading-relaxed text-sm">
