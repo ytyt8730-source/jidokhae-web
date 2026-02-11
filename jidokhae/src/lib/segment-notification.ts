@@ -15,7 +15,8 @@ import {
   type SegmentTarget,
   type MonthlyTarget,
 } from '@/lib/notification'
-import { subMonths, subDays, startOfMonth, endOfMonth } from 'date-fns'
+import { subMonths, subDays, startOfMonth, endOfMonth, addMonths, differenceInDays, format } from 'date-fns'
+import { ko } from 'date-fns/locale'
 
 // 데이터베이스 결과 타입
 interface UserRow {
@@ -247,11 +248,20 @@ export async function processSegmentReminders(): Promise<{
     )
     if (alreadyNotified) continue
 
+    const lastDate = target.lastParticipationAt
+      ? format(target.lastParticipationAt, 'M월 d일', { locale: ko })
+      : ''
+    const expiryDate = target.lastParticipationAt
+      ? format(addMonths(target.lastParticipationAt, 6), 'M월 d일', { locale: ko })
+      : ''
+
     const result = await sendAndLogNotification({
       templateCode: NOTIFICATION_TEMPLATES.ELIGIBILITY_WARNING,
       phone: target.phone,
       variables: {
         이름: target.userName,
+        마지막참여일: lastDate,
+        만료예정일: expiryDate,
       },
       userId: target.userId,
     })
@@ -277,11 +287,16 @@ export async function processSegmentReminders(): Promise<{
     )
     if (alreadyNotified) continue
 
+    const daysElapsed = target.lastParticipationAt
+      ? differenceInDays(new Date(), target.lastParticipationAt)
+      : 0
+
     const result = await sendAndLogNotification({
       templateCode: NOTIFICATION_TEMPLATES.DORMANT_RISK,
       phone: target.phone,
       variables: {
         이름: target.userName,
+        경과일: String(daysElapsed),
       },
       userId: target.userId,
     })
@@ -307,11 +322,16 @@ export async function processSegmentReminders(): Promise<{
     )
     if (alreadyNotified) continue
 
+    const onboardingDaysElapsed = target.firstParticipationAt
+      ? differenceInDays(new Date(), target.firstParticipationAt)
+      : 0
+
     const result = await sendAndLogNotification({
       templateCode: NOTIFICATION_TEMPLATES.ONBOARDING_RISK,
       phone: target.phone,
       variables: {
         이름: target.userName,
+        경과일: String(onboardingDaysElapsed),
       },
       userId: target.userId,
     })

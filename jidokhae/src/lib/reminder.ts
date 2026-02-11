@@ -268,6 +268,7 @@ export async function sendReminder(
       모임명: target.meetingTitle,
       날짜: formatMeetingDate(target.meetingDatetime),
       시간: formatMeetingTime(target.meetingDatetime),
+      일시: `${formatMeetingDate(target.meetingDatetime)} ${formatMeetingTime(target.meetingDatetime)}`,
       장소: target.meetingLocation,
       참가비: target.meetingFee.toLocaleString(),
       티저_문구: teaserText, // M7-010

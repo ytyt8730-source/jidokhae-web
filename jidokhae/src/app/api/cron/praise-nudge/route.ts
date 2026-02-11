@@ -84,12 +84,25 @@ export async function GET(request: NextRequest) {
           continue
         }
 
+        // 첫 완료 모임 제목 조회
+        const { data: firstReg } = await supabase
+          .from('registrations')
+          .select('meetings (title)')
+          .eq('user_id', user.id)
+          .eq('participation_status', 'completed')
+          .order('created_at', { ascending: true })
+          .limit(1)
+          .single()
+
+        const meetingTitle = (firstReg?.meetings as { title: string } | null)?.title ?? '정기모임'
+
         // 알림 발송
         const result = await sendAndLogNotification({
           templateCode: PRAISE_NUDGE_TEMPLATE,
           phone: user.phone,
           variables: {
             이름: user.name,
+            모임명: meetingTitle,
           },
           userId: user.id,
         })
