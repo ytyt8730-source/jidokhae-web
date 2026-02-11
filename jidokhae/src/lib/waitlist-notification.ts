@@ -203,8 +203,14 @@ export async function processExpiredWaitlists(): Promise<{
       user_id,
       meeting_id,
       position,
+      users (
+        id,
+        name,
+        phone
+      ),
       meetings (
         id,
+        title,
         status,
         current_participants,
         capacity
@@ -229,13 +235,28 @@ export async function processExpiredWaitlists(): Promise<{
 
     stats.expired++
 
-    // 모임에 자리가 있는지 확인
+    // 만료 당사자에게 알림 발송
+    const user = waitlist.users as { id: string; name: string; phone: string | null } | null
     const meeting = waitlist.meetings as {
       id: string
+      title: string
       status: string
       current_participants: number
       capacity: number
     } | null
+
+    if (user?.phone && meeting) {
+      await sendAndLogNotification({
+        templateCode: NOTIFICATION_TEMPLATES.WAITLIST_EXPIRED,
+        phone: user.phone,
+        variables: {
+          이름: user.name,
+          모임명: meeting.title,
+        },
+        userId: user.id,
+        meetingId: meeting.id,
+      })
+    }
 
     if (
       meeting &&
