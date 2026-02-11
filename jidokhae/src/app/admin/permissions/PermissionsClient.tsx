@@ -229,7 +229,7 @@ export function PermissionsClient() {
                     key={permission}
                     className={`flex items-center gap-2 p-2 rounded-lg border cursor-pointer transition-colors ${admin.permissions.includes(permission)
                       ? 'bg-brand-50 border-brand-200'
-                      : 'bg-white border-gray-200 hover:border-gray-300'
+                      : 'bg-bg-surface border-gray-200 hover:border-gray-300'
                       } ${savingId === admin.id ? 'opacity-50 pointer-events-none' : ''}`}
                   >
                     <input
@@ -263,7 +263,7 @@ export function PermissionsClient() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-2xl w-full max-w-md p-6"
+            className="bg-bg-surface rounded-2xl w-full max-w-md p-6"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold text-brand-800">운영자 추가</h2>

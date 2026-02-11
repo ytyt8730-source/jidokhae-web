@@ -315,7 +315,7 @@ export default function PaymentButton({
               className="absolute inset-0 bg-black/50"
               onClick={() => setShowPaymentModal(false)}
             />
-            <div className="relative bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto shadow-xl">
+            <div className="relative bg-bg-surface rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto shadow-xl">
               <div className="p-6">
                 <h2 className="text-lg font-semibold text-brand-800 mb-4">
                   {meeting.title} 신청

@@ -120,7 +120,7 @@ export default function BadgeCelebration({ badges, onComplete }: BadgeCelebratio
                 stiffness: 300,
                 damping: 25,
               }}
-              className="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-xl"
+              className="bg-bg-surface rounded-2xl p-8 max-w-sm w-full text-center shadow-xl"
               onClick={(e) => e.stopPropagation()}
             >
               {/* 배지 아이콘 (No-Emoji Policy: Lucide 사용) */}

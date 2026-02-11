@@ -263,7 +263,7 @@ export default function TransfersClient() {
           <select
             value={selectedMeetingId}
             onChange={(e) => setSelectedMeetingId(e.target.value)}
-            className="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white min-w-[180px]"
+            className="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-bg-surface min-w-[180px]"
           >
             <option value="all">전체 모임</option>
             {meetingOptions.map((meeting) => (

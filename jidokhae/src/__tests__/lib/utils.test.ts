@@ -106,11 +106,13 @@ describe('calculateRefundAmount (환불 금액 계산)', () => {
 })
 
 describe('calculateMeetingStatus (모임 상태 계산)', () => {
+  // datetime을 미래로 설정 (함수가 과거 모임을 closed로 처리하므로)
+  const futureDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
   const baseMeeting: Meeting = {
     id: 'test-id',
     title: '테스트 모임',
     description: '테스트 설명',
-    datetime: new Date().toISOString(),
+    datetime: futureDate.toISOString(),
     location: '테스트 장소',
     capacity: 10,
     current_participants: 0,

@@ -60,7 +60,7 @@ export default function IneligibilityModal({
             aria-modal="true"
             aria-labelledby="ineligibility-modal-title"
           >
-            <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
+            <div className="bg-bg-surface rounded-2xl shadow-xl p-6 sm:p-8">
               {/* 닫기 버튼 */}
               <button
                 onClick={onClose}

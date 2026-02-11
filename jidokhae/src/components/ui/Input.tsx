@@ -29,7 +29,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             'bg-gray-50 border rounded-xl',
             'placeholder:text-gray-400',
             'transition-all duration-200',
-            'focus:outline-none focus:bg-white focus:ring-2',
+            'focus:outline-none focus:bg-white focus:ring-2', // bg-white-allowed: focus state
             error
               ? 'border-error focus:ring-red-100 focus:border-error'
               : 'border-transparent focus:ring-brand-100 focus:border-brand-600',

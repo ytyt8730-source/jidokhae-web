@@ -73,7 +73,7 @@ export default function RefundAccountModal({
 
       {/* 모달 */}
       <div
-        className="relative bg-white rounded-2xl w-full max-w-md shadow-xl"
+        className="relative bg-bg-surface rounded-2xl w-full max-w-md shadow-xl"
         role="dialog"
         aria-modal="true"
         aria-labelledby="refund-account-title"
@@ -121,7 +121,7 @@ export default function RefundAccountModal({
               onChange={(e) => setBank(e.target.value)}
               className="w-full px-4 py-3 border border-gray-200 rounded-xl
                          focus:ring-2 focus:ring-brand-500 focus:border-transparent
-                         bg-white text-brand-800"
+                         bg-bg-surface text-brand-800"
               required
             >
               <option value="">은행을 선택하세요</option>

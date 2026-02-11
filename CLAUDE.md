@@ -21,8 +21,10 @@ npm run dev              # Start dev server (localhost:3000)
 npm run build            # Production build
 npm run lint             # ESLint check
 npm run typecheck        # TypeScript check (tsc --noEmit)
-npm run screenshot       # Take page screenshots (Playwright)
+npm run screenshot         # Take page screenshots (Playwright)
 npm run screenshot:mobile  # Mobile-only screenshots
+npm run screenshot:desktop # Desktop-only screenshots
+npm run screenshot:install # Install Playwright chromium (first-time setup)
 ```
 
 ### Testing (Vitest)
@@ -35,6 +37,8 @@ npm run test -- src/lib/utils.test.ts     # Single file
 npm run test -- --grep "payment"          # Pattern match
 npm run test:coverage                     # Coverage report (threshold: 60%)
 ```
+
+**Test setup (`src/__tests__/setup.ts`)** pre-mocks: `next/navigation`, `next/headers`, `@/lib/supabase/client`
 
 ### Pre-commit (REQUIRED)
 
@@ -52,21 +56,28 @@ npx tsc --noEmit && npm run build
 
 ```bash
 # Quality
-./scripts/quality-gate.sh     # File size >200, console.log, as any checks
+./scripts/quality-gate.sh     # File size, console.log, as any, z-index, bg-white checks
 ./scripts/deploy-check.sh     # Full deployment readiness check
 ./scripts/find-pattern.sh     # Search for code anti-patterns
+./scripts/count-lines.sh [N]  # Find files over N lines (default: 200)
 
 # Development
 ./scripts/gen-types.sh        # Generate Supabase types → src/types/database.ts
 ./scripts/test-cron.sh        # Test cron endpoints locally
+./scripts/test-api.sh [url]   # Smoke test API endpoints
 ./scripts/status.sh           # Quick project status check
 ./scripts/check-env.sh        # Validate environment variables
 ./scripts/db-migrate.sh       # Database migration guide (list/show/check)
 ./scripts/pre-commit.sh       # Pre-commit hook (.env check, type check)
 
+# Workflow
+./scripts/start-coding.sh     # Pre-coding checklist (branch, uncommitted, current-state)
+./scripts/context-diff.sh [N] # Show last N days of changes for context
+
 # Scaffolding
 ./scripts/create-component.sh [name] [client|server|page]
 ./scripts/create-api.sh [path] [GET,POST,...]
+./scripts/scaffold-phase.sh M P  # Pre-create empty files for milestone M, phase P
 
 # Git
 ./scripts/clean-branches.sh   # Clean merged branches
@@ -167,6 +178,12 @@ export async function GET() {
   })
 }
 // Response: { success: boolean, data?: T, error?: { code, message } }
+
+// Auth/validation helpers (use inside withErrorHandler):
+import { requireAuth, requireAdmin, validateRequired } from '@/lib/api'
+requireAuth(user?.id)      // Throws AUTH_UNAUTHORIZED if not authenticated
+requireAdmin(userData.role) // Throws AUTH_UNAUTHORIZED if not admin/super_admin
+validateRequired(body, ['meetingId', 'amount']) // Throws VALIDATION_ERROR if missing
 ```
 
 ### Error Codes (`@/lib/errors` ErrorCode enum)
@@ -182,6 +199,7 @@ export async function GET() {
 | 42xx | Waitlist | 4201: WAITLIST_NOT_FOUND |
 | 43xx | Eligibility | 4301: ELIGIBILITY_NOT_MET |
 | 44xx | Praise | 4401: PRAISE_DUPLICATE_MEETING |
+| 45xx | Participation | 4501: PARTICIPATION_ALREADY_COMPLETED, 4502: PARTICIPATION_NO_SHOW |
 | 5xxx | System | 5001: INTERNAL_ERROR, 5002: DB_ERROR |
 
 ### Logging
@@ -203,6 +221,20 @@ import { createLogger } from '@/lib/logger'
 const myLogger = createLogger('my-service')
 ```
 
+### Environment Variables
+
+```typescript
+// Check if a service is configured:
+import { isConfigured } from '@/lib/env'
+if (isConfigured('portone')) { /* payment enabled */ }
+if (isConfigured('solapi')) { /* notifications enabled */ }
+if (isConfigured('sentry')) { /* error tracking enabled */ }
+```
+
+**Required (client):** `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+**Required (server):** `SUPABASE_SERVICE_ROLE_KEY`, `PORTONE_*`, `SOLAPI_*`
+**Optional:** `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_*`
+
 ---
 
 ## Key Modules
@@ -223,7 +255,8 @@ const myLogger = createLogger('my-service')
 
 | Module | Purpose |
 |--------|---------|
-| `permissions` | Role-based access control |
+| `permissions` | Role-based access control (server-only) |
+| `permissions-constants` | Shared role/permission constants (client + server) |
 | `cron-auth` | Cron job authentication (CRON_SECRET) |
 | `rate-limit` | API rate limiting (presets: auth, payment, standard, search) |
 | `otp` | Phone OTP authentication |
@@ -240,6 +273,7 @@ const myLogger = createLogger('my-service')
 | `praise` | Member praise/points |
 | `transfer` | Registration transfer |
 | `auto-complete` | Meeting auto-completion |
+| `post-meeting` | Post-meeting notification logic (D+3 followup) |
 
 ### Notifications
 
@@ -280,11 +314,23 @@ const myLogger = createLogger('my-service')
 | Pattern | Use Instead | Why |
 |---------|-------------|-----|
 | `as any` | Proper type or `unknown` | Type safety |
-| `console.log` | Logger from `@/lib/logger` | Production logging |
+| `console.log/error/warn` | Logger from `@/lib/logger` | Production logging |
+| `z-40`, `z-50` (raw z-index) | Tokens: `z-modal`, `z-toast` | Cross-file consistency |
+| `bg-white` | `bg-bg-surface` | Theme-aware |
 | Inline styles `style={{}}` | Tailwind classes | Consistency |
 | Emojis (any) | Lucide React icons | Cross-platform rendering |
 | Hardcoded business values | DB config or constants | Maintainability |
 | Hardcoded UI text | `MICROCOPY` from `@/lib/constants/microcopy` | Tone consistency |
+
+### quality-gate.sh Exemptions
+
+When a pattern is intentionally used, add a comment on the SAME LINE:
+
+```typescript
+// z-legacy       → Skip z-index check
+// bg-white-allowed → Skip bg-white check
+// console-allowed  → Skip console check
+```
 
 ### When to use `unknown` vs Proper Type
 
@@ -357,8 +403,19 @@ import { MICROCOPY } from '@/lib/constants/microcopy'
 ```
 
 **CSS utility classes** defined in `globals.css`:
-- Typography: `text-display`, `text-h1`..`text-h3`, `text-body`, `text-body-sm`, `text-caption`, `heading-themed`
-- Components: `btn`, `btn-primary`, `btn-secondary`, `btn-ghost`, `btn-accent`, `input`, `card`, `card-base`
+- Typography: `text-display`, `text-h1`..`text-h3`, `text-body`, `text-body-sm`, `text-caption`, `text-caption-sm`, `heading-themed`
+- Buttons: `btn`, `btn-primary`, `btn-secondary`, `btn-ghost`, `btn-accent`
+- Cards: `card`, `card-base`, `card-hoverable`
+- Badges: `badge-primary`, `badge-accent`, `badge-success`, `badge-warning`, `badge-danger`, `badge-muted`
+- Inputs: `input`
+- Layout: `nav-item`, `section-label`, `safe-area-inset-bottom`
+
+**Portal for modals inside `backdrop-filter`/`transform` parents:**
+
+```tsx
+import { Portal } from '@/components/ui/Portal'
+<Portal><MyModal /></Portal>  // Renders at document.body to escape stacking context
+```
 
 ---
 
@@ -453,6 +510,42 @@ export function Card() {
   )
 }
 ```
+
+### z-index Tokens
+
+**NEVER use raw z-index values (z-40, z-50). ALWAYS use tokens:**
+
+| Token | Value | Use for |
+|-------|:-----:|---------|
+| `z-base` | 0 | Default stacking |
+| `z-card` | 10 | Cards, list items |
+| `z-sticky` | 100 | Sticky headers |
+| `z-fab` | 200 | Floating action buttons |
+| `z-dropdown` | 300 | Dropdowns, selects |
+| `z-modal-overlay` | 1000 | Modal backdrop |
+| `z-modal` | 1001 | Modal content |
+| `z-toast` | 2000 | Toast notifications |
+| `z-noise` | 9999 | Noise texture (warm theme) |
+
+### Shadow Tokens
+
+| Token | Use for |
+|-------|---------|
+| `shadow-card` | Default cards |
+| `shadow-card-hover` | Hovered cards |
+| `shadow-sheet` | Bottom sheets |
+| `shadow-fab` | FAB buttons |
+| `shadow-button` | Primary buttons |
+| `shadow-modal` | Modals/dialogs |
+
+### Animation Classes
+
+| Class | Description |
+|-------|-------------|
+| `animate-fade-in` | Simple fade (0.3s) |
+| `animate-fade-in-up` | Fade + slide up (0.4s) |
+| `animate-slide-up` | Slide up (0.3s) |
+| `animate-slide-down` | Slide down (0.3s) |
 
 ---
 
@@ -570,6 +663,7 @@ All times in UTC. KST = UTC + 9.
 | `/api/cron/onboarding-signup` | 01:00 daily | Signup reminder (3/7 days) |
 | `/api/cron/onboarding-first-meeting` | 01:00 daily | First meeting followup |
 | `/api/cron/praise-nudge` | 01:00 daily | Encourage praise giving |
+| `/api/cron/transfer-timeout` | hourly | 24hr unpaid transfer auto-cancel + 6hr warning |
 
 ---
 
@@ -586,7 +680,7 @@ All times in UTC. KST = UTC + 9.
 │   ├── /src/app           # App Router pages & API routes
 │   ├── /src/components
 │   │   ├── layout/        # Header, Footer, Sidebar
-│   │   ├── ui/            # Reusable primitives (Button, Input, Toast, Badge, Price)
+│   │   ├── ui/            # Reusable primitives (Button, Input, Toast, Badge, Price, Portal, BrandLogo)
 │   │   ├── icons/         # Custom icons (KongIcon, BookIcon, LeafIcon)
 │   │   ├── effects/       # Animation effects (Confetti, KongPour)
 │   │   ├── providers/     # AuthProvider, OnboardingRedirectProvider
@@ -617,4 +711,4 @@ When documents conflict, follow this order:
 
 ---
 
-Last updated: 2026-02-07 | v3.3
+Last updated: 2026-02-11 | v3.4

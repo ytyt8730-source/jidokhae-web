@@ -128,7 +128,7 @@ export default function TemplatesClient({ initialTemplates }: TemplatesClientPro
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className={`border rounded-lg p-4 transition-colors ${template.is_active
-                      ? 'border-gray-200 bg-white'
+                      ? 'border-gray-200 bg-bg-surface'
                       : 'border-gray-100 bg-gray-50'
                     }`}
                 >
@@ -278,10 +278,10 @@ function EditModal({
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+        className="bg-bg-surface rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+        <div className="sticky top-0 bg-bg-surface border-b border-gray-200 px-6 py-4 flex items-center justify-between">
           <h3 className="font-semibold text-brand-800">템플릿 수정</h3>
           <button
             onClick={onClose}
@@ -450,10 +450,10 @@ function PreviewModal({
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        className="bg-white rounded-xl max-w-lg w-full max-h-[90vh] overflow-y-auto"
+        className="bg-bg-surface rounded-xl max-w-lg w-full max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+        <div className="sticky top-0 bg-bg-surface border-b border-gray-200 px-6 py-4 flex items-center justify-between">
           <h3 className="font-semibold text-brand-800">미리보기</h3>
           <button
             onClick={onClose}

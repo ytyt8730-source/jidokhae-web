@@ -147,13 +147,13 @@ export default function RegistrationList({
                   <div className="flex gap-2 flex-shrink-0">
                     <Link
                       href={`/meetings/${reg.meeting_id}/praise`}
-                      className="text-xs text-primary hover:text-primary/80 px-2 py-1 bg-white rounded-lg border border-primary/20 hover:border-primary/30"
+                      className="text-xs text-primary hover:text-primary/80 px-2 py-1 bg-bg-surface rounded-lg border border-primary/20 hover:border-primary/30"
                     >
                       칭찬하기
                     </Link>
                     <Link
                       href={`/meetings/${reg.meeting_id}/feedback`}
-                      className="text-xs text-gray-600 hover:text-gray-700 px-2 py-1 bg-white rounded-lg border border-gray-200 hover:border-gray-300"
+                      className="text-xs text-gray-600 hover:text-gray-700 px-2 py-1 bg-bg-surface rounded-lg border border-gray-200 hover:border-gray-300"
                     >
                       후기 쓰기
                     </Link>

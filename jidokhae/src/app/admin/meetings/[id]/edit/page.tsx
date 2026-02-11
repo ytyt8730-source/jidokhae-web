@@ -196,7 +196,7 @@ export default function EditMeetingPage({ params }: PageProps) {
               name="meeting_type"
               value={formData.meeting_type}
               onChange={handleChange}
-              className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-brand-800 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+              className="w-full rounded-xl border border-gray-200 bg-bg-surface px-4 py-3 text-brand-800 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
             >
               <option value="regular">정기모임</option>
               <option value="discussion">토론모임</option>
@@ -212,7 +212,7 @@ export default function EditMeetingPage({ params }: PageProps) {
               name="status"
               value={formData.status}
               onChange={handleChange}
-              className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-brand-800 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+              className="w-full rounded-xl border border-gray-200 bg-bg-surface px-4 py-3 text-brand-800 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
             >
               <option value="open">모집중</option>
               <option value="closed">마감</option>
@@ -269,7 +269,7 @@ export default function EditMeetingPage({ params }: PageProps) {
             name="refund_policy_id"
             value={formData.refund_policy_id}
             onChange={handleChange}
-            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-brand-800 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+            className="w-full rounded-xl border border-gray-200 bg-bg-surface px-4 py-3 text-brand-800 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
           >
             <option value="">선택 안함</option>
             {refundPolicies.map((policy) => (
@@ -290,7 +290,7 @@ export default function EditMeetingPage({ params }: PageProps) {
             onChange={handleChange}
             placeholder="모임에 대한 추가 안내 사항을 입력해주세요."
             rows={4}
-            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-brand-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent resize-none"
+            className="w-full rounded-xl border border-gray-200 bg-bg-surface px-4 py-3 text-brand-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent resize-none"
           />
         </div>
 

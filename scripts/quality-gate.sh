@@ -80,23 +80,25 @@ else
     echo "   ✅ 통과"
 fi
 
-# 7. bg-white 하드코딩 검사 (예외: TicketPrinting, bg-white-allowed 주석)
+# 7. bg-white 하드코딩 검사
+# 예외: ticket 컴포넌트(물리 티켓 메타포), bg-white-allowed 마커, bg-white/[opacity] 변형
 echo "7️⃣ bg-white 하드코딩 검사..."
-BG_WHITE_COUNT=$(grep -rn "bg-white" jidokhae/src/components --include="*.tsx" 2>/dev/null | grep -v "TicketPrinting\|// bg-white-allowed\|bg-white/" | wc -l | tr -d ' ')
+BG_WHITE_COUNT=$(grep -rn "bg-white" jidokhae/src/components --include="*.tsx" 2>/dev/null | grep -v "ticket/Ticket\.tsx\|TicketStub\|TicketPerforation\|TicketPrinting\|bg-white-allowed\|bg-white/" | wc -l | tr -d ' ')
 if [ "$BG_WHITE_COUNT" -gt 0 ]; then
     echo "   ⚠️ bg-white 하드코딩 $BG_WHITE_COUNT개 발견 (→ bg-bg-surface 사용)"
-    grep -rn "bg-white" jidokhae/src/components --include="*.tsx" 2>/dev/null | grep -v "TicketPrinting\|// bg-white-allowed\|bg-white/" | head -5 | sed 's/^/      /'
+    grep -rn "bg-white" jidokhae/src/components --include="*.tsx" 2>/dev/null | grep -v "ticket/Ticket\.tsx\|TicketStub\|TicketPerforation\|TicketPrinting\|bg-white-allowed\|bg-white/" | head -5 | sed 's/^/      /'
     ((WARNINGS++))
 else
     echo "   ✅ 통과"
 fi
 
 # 8. 미등록 Tailwind 클래스 검사 (safe-area)
+# globals.css에 등록된 클래스: safe-area-inset-top, safe-area-inset-bottom, pb-safe-area-inset-bottom
 echo "8️⃣ 미등록 Tailwind 유틸리티 검사..."
-UNREGISTERED_COUNT=$(grep -rn "pb-safe-area-\|pt-safe-area-\|mb-safe-area-" jidokhae/src --include="*.tsx" 2>/dev/null | wc -l | tr -d ' ')
+UNREGISTERED_COUNT=$(grep -rn "pb-safe-area-\|pt-safe-area-\|mb-safe-area-" jidokhae/src --include="*.tsx" 2>/dev/null | grep -v "pb-safe-area-inset-bottom\|safe-area-inset-top\|safe-area-inset-bottom" | wc -l | tr -d ' ')
 if [ "$UNREGISTERED_COUNT" -gt 0 ]; then
     echo "   ❌ 미등록 safe-area 유틸리티 $UNREGISTERED_COUNT개 발견 (globals.css 정의 필요)"
-    grep -rn "pb-safe-area-\|pt-safe-area-\|mb-safe-area-" jidokhae/src --include="*.tsx" 2>/dev/null | head -5 | sed 's/^/      /'
+    grep -rn "pb-safe-area-\|pt-safe-area-\|mb-safe-area-" jidokhae/src --include="*.tsx" 2>/dev/null | grep -v "pb-safe-area-inset-bottom\|safe-area-inset-top\|safe-area-inset-bottom" | head -5 | sed 's/^/      /'
     ((ERRORS++))
     PASS=false
 else

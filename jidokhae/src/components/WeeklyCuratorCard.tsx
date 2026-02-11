@@ -66,7 +66,7 @@ export default function WeeklyCuratorCard({ meeting, className = '' }: WeeklyCur
 
           {/* Book Cover Placeholder */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-[100px] h-[140px] bg-white rounded shadow-lg flex items-center justify-center">
+            <div className={`w-[100px] h-[140px] bg-white rounded shadow-lg flex items-center justify-center` /* bg-white-allowed: book cover */}>
               <BookOpen
                 className="text-[var(--text-muted)]"
                 size={32}

@@ -203,7 +203,7 @@ export default function CancelModal({
             animate="visible"
             exit="exit"
           >
-            <div className="bg-white rounded-2xl w-full max-w-md shadow-xl">
+            <div className="bg-bg-surface rounded-2xl w-full max-w-md shadow-xl">
               {/* 헤더 */}
               <div className="flex items-center justify-between p-4 border-b border-gray-100">
                 <h2 className="text-lg font-semibold text-brand-800">마음 돌리기</h2>

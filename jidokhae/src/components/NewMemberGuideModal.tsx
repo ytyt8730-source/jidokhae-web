@@ -96,7 +96,7 @@ export default function NewMemberGuideModal({
             exit="exit"
             className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-modal w-full max-w-md mx-4"
           >
-            <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
+            <div className="bg-bg-surface rounded-2xl shadow-xl p-6 sm:p-8">
               {/* 닫기 버튼 */}
               <button
                 onClick={handleClose}

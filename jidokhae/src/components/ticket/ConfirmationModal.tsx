@@ -90,7 +90,7 @@ export function ConfirmationModal({
             exit="exit"
             className="fixed inset-0 z-modal flex items-center justify-center p-4"
           >
-            <div className="relative bg-white rounded-2xl max-w-sm w-full max-h-[90vh] overflow-y-auto shadow-xl">
+            <div className="relative bg-bg-surface rounded-2xl max-w-sm w-full max-h-[90vh] overflow-y-auto shadow-xl">
               {/* 닫기 버튼 */}
               <button
                 onClick={onClose}

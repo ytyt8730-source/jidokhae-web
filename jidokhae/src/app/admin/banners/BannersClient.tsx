@@ -306,7 +306,7 @@ export function BannersClient() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-2xl w-full max-w-lg p-6"
+            className="bg-bg-surface rounded-2xl w-full max-w-lg p-6"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold text-brand-800">

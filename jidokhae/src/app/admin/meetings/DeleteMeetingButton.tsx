@@ -44,7 +44,7 @@ export default function DeleteMeetingButton({ meetingId, meetingTitle }: DeleteM
   if (showConfirm) {
     return (
       <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-modal p-4">
-        <div className="bg-white rounded-2xl p-6 max-w-sm w-full">
+        <div className="bg-bg-surface rounded-2xl p-6 max-w-sm w-full">
           <div className="flex items-center gap-3 mb-4 text-red-600">
             <AlertTriangle size={24} />
             <h3 className="font-semibold text-lg">모임 삭제</h3>
