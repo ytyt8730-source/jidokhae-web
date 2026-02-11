@@ -170,7 +170,8 @@
 
   .safe-area-inset-bottom,
   .pb-safe-area-inset-bottom {
-    padding-bottom: env(safe-area-inset-bottom);
+    /* 최소 16px + safe area 영역 보장 (노치 없는 기기도 여백 확보) */
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
   }
 
   /* ===== Hero Section (Theme-aware) ===== */

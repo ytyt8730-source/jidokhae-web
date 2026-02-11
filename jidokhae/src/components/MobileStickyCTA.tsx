@@ -25,7 +25,7 @@ export default function MobileStickyCTA({
   if (!show) return null
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 p-4 pb-6 bg-[var(--bg-base)]/90 backdrop-blur-lg border-t border-[var(--border)] md:hidden z-fab pb-safe-area-inset-bottom">
+    <div className="fixed bottom-0 left-0 right-0 px-4 pt-4 bg-[var(--bg-base)]/90 backdrop-blur-lg border-t border-[var(--border)] md:hidden z-fab pb-safe-area-inset-bottom">
       <div className="max-w-md mx-auto">
         {children}
       </div>

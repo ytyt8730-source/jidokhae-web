@@ -361,7 +361,7 @@ export default function MeetingBottomSheet({
             </div>
 
             {/* Sticky CTA */}
-            <div className="sticky bottom-0 px-6 py-4 border-t border-[var(--border)] bg-bg-surface pb-safe-area-inset-bottom">
+            <div className="sticky bottom-0 px-6 pt-4 border-t border-[var(--border)] bg-bg-surface pb-safe-area-inset-bottom">
               {alreadyRegistered ? (
                 <div>
                   <Button disabled className="w-full">

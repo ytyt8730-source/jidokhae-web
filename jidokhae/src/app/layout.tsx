@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Noto_Sans_KR, Noto_Serif_KR, Outfit } from 'next/font/google'
 import localFont from 'next/font/local'
 import Script from 'next/script'
@@ -55,6 +55,14 @@ export const metadata: Metadata = {
     description: '지적인 사유와 깊은 대화가 있는 곳. 지독해 멤버십에서 새로운 관점을 만나세요.',
     type: 'website',
   },
+}
+
+// iOS/Android 노치 및 하단 바 영역 지원
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: 'cover',
 }
 
 export default async function RootLayout({

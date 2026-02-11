@@ -118,7 +118,7 @@ export default function CancelBottomSheet({
               </div>
 
               {/* 내용 */}
-              <div className="px-6 pb-6">
+              <div className="px-6 pb-safe-area-inset-bottom">
                 {/* 타이틀 */}
                 <h2 id="cancel-sheet-title" className="text-xl font-bold text-text-primary mb-2">
                   {MICROCOPY.cancel.title}
