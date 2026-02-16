@@ -16,6 +16,13 @@ export async function updateSession(request: NextRequest) {
     return supabaseResponse
   }
 
+  // OAuth 콜백은 자체적으로 세션을 설정하므로 미들웨어의 세션 새로고침을 건너뜀.
+  // 미들웨어의 getUser()가 "세션 없음"을 감지하고 빈 쿠키를 설정하면,
+  // 콜백 Route Handler가 설정한 유효한 세션 쿠키를 덮어쓰는 문제 방지.
+  if (request.nextUrl.pathname === '/auth/callback') {
+    return supabaseResponse
+  }
+
   const supabase = createServerClient<Database>(
     supabaseUrl,
     supabaseAnonKey,
