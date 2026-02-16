@@ -57,10 +57,12 @@ export async function updateSession(request: NextRequest) {
   }
 
   // 로그인 사용자가 인증 페이지 접근 시 홈으로 리다이렉트
-  // 단, callback과 complete-profile은 제외 (OAuth 흐름에 필요)
-  const isCallbackPage = request.nextUrl.pathname.startsWith('/auth/callback')
-  const isCompleteProfilePage = request.nextUrl.pathname.startsWith('/auth/complete-profile')
-  if (user && isAuthPage && !isCallbackPage && !isCompleteProfilePage) {
+  // 단, OAuth/인증 흐름에 필요한 경로는 제외
+  const isAuthFlowPage =
+    request.nextUrl.pathname.startsWith('/auth/callback') ||
+    request.nextUrl.pathname.startsWith('/auth/complete-profile') ||
+    request.nextUrl.pathname.startsWith('/auth/confirmed')
+  if (user && isAuthPage && !isAuthFlowPage) {
     const url = request.nextUrl.clone()
     url.pathname = '/'
     return NextResponse.redirect(url)
