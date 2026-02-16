@@ -44,7 +44,7 @@ export async function updateSession(request: NextRequest) {
   // 보호된 라우트 처리
   const isAuthPage = request.nextUrl.pathname.startsWith('/auth')
   const isAdminPage = request.nextUrl.pathname.startsWith('/admin')
-  const isProtectedPage = 
+  const isProtectedPage =
     request.nextUrl.pathname.startsWith('/mypage') ||
     isAdminPage
 
@@ -57,7 +57,10 @@ export async function updateSession(request: NextRequest) {
   }
 
   // 로그인 사용자가 인증 페이지 접근 시 홈으로 리다이렉트
-  if (user && isAuthPage) {
+  // 단, callback과 complete-profile은 제외 (OAuth 흐름에 필요)
+  const isCallbackPage = request.nextUrl.pathname.startsWith('/auth/callback')
+  const isCompleteProfilePage = request.nextUrl.pathname.startsWith('/auth/complete-profile')
+  if (user && isAuthPage && !isCallbackPage && !isCompleteProfilePage) {
     const url = request.nextUrl.clone()
     url.pathname = '/'
     return NextResponse.redirect(url)
