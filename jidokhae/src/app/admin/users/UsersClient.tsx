@@ -9,6 +9,7 @@ interface UserData {
   id: string
   email: string
   name: string
+  nickname: string
   phone: string | null
   role: 'member' | 'admin' | 'super_admin'
   is_new_member: boolean
@@ -54,6 +55,7 @@ export function UsersClient() {
         users.filter(
           (user) =>
             user.name.toLowerCase().includes(query) ||
+            (user.nickname && user.nickname.toLowerCase().includes(query)) ||
             user.email.toLowerCase().includes(query) ||
             (user.phone && user.phone.includes(query))
         )
@@ -163,7 +165,10 @@ export function UsersClient() {
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-brand-800">{user.name}</span>
+                      <span className="font-medium text-brand-800">
+                        {user.name}
+                        {user.nickname && <span className="text-gray-500 font-normal"> ({user.nickname})</span>}
+                      </span>
                       {getRoleBadge(user.role)}
                       {user.is_new_member && (
                         <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-green-100 text-green-700">

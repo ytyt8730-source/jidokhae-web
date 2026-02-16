@@ -59,6 +59,7 @@ CREATE TABLE users (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   email VARCHAR(255) UNIQUE NOT NULL,
   name VARCHAR(100) NOT NULL,
+  nickname VARCHAR(6) NOT NULL UNIQUE CHECK (LENGTH(nickname) >= 2 AND LENGTH(nickname) <= 6),
   phone VARCHAR(20),
   role VARCHAR(20) DEFAULT 'member' CHECK (role IN ('member', 'admin', 'super_admin')),
   auth_provider VARCHAR(20) DEFAULT 'email',
@@ -501,12 +502,33 @@ $$ LANGUAGE plpgsql;
 -- 신규 회원 동기화
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
+DECLARE
+  v_name TEXT;
+  v_base_nick VARCHAR(6);
+  v_nickname VARCHAR(6);
+  v_suffix INT;
 BEGIN
-  INSERT INTO public.users (id, email, name, phone, role, is_new_member, created_at, updated_at)
+  v_name := COALESCE(NEW.raw_user_meta_data->>'name', '회원');
+  v_base_nick := SUBSTRING(v_name FROM 1 FOR 2);
+  IF LENGTH(v_base_nick) < 2 THEN
+    v_base_nick := v_name || '0';
+  END IF;
+
+  v_nickname := v_base_nick;
+  v_suffix := 1;
+  WHILE EXISTS (SELECT 1 FROM public.users WHERE nickname = v_nickname)
+  LOOP
+    v_nickname := v_base_nick || v_suffix::text;
+    v_suffix := v_suffix + 1;
+    IF v_suffix > 999 THEN EXIT; END IF;
+  END LOOP;
+
+  INSERT INTO public.users (id, email, name, nickname, phone, role, is_new_member, created_at, updated_at)
   VALUES (
     NEW.id,
     NEW.email,
-    COALESCE(NEW.raw_user_meta_data->>'name', '회원'),
+    v_name,
+    v_nickname,
     NEW.raw_user_meta_data->>'phone',
     'member',
     true,

@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { phone, otp } = body
+    const { phone, otp, nickname } = body
 
     if (!phone || !otp) {
       return NextResponse.json({ error: '전화번호와 인증번호를 입력해주세요.' }, { status: 400 })
@@ -66,17 +66,42 @@ export async function POST(request: NextRequest) {
     const isFirstPhoneSave = !existingUser.phone
     const shouldSendWelcome = isFirstPhoneSave && !existingUser.welcome_sent_at
 
-    // 전화번호 저장 (검증됨)
+    // 전화번호 + 닉네임 저장 (검증됨)
+    const updateData: Record<string, unknown> = {
+      phone: normalizedPhone,
+      phone_verified: true,
+      updated_at: new Date().toISOString(),
+    }
+
+    // 닉네임이 전달된 경우 함께 저장 (complete-profile 흐름)
+    if (nickname && typeof nickname === 'string') {
+      const nicknameTrimmed = nickname.trim()
+      if (nicknameTrimmed.length >= 2 && nicknameTrimmed.length <= 6) {
+        // 닉네임 중복 체크
+        const { data: existingNickname } = await serviceClient
+          .from('users')
+          .select('id')
+          .eq('nickname', nicknameTrimmed)
+          .neq('id', user.id)
+          .maybeSingle()
+
+        if (existingNickname) {
+          return NextResponse.json({ error: '이미 사용 중인 닉네임입니다.' }, { status: 409 })
+        }
+
+        updateData.nickname = nicknameTrimmed
+      }
+    }
+
     const { error: updateError } = await serviceClient
       .from('users')
-      .update({
-        phone: normalizedPhone,
-        phone_verified: true,
-        updated_at: new Date().toISOString(),
-      })
+      .update(updateData)
       .eq('id', user.id)
 
     if (updateError) {
+      if (updateError.code === '23505' && updateError.message?.includes('nickname')) {
+        return NextResponse.json({ error: '이미 사용 중인 닉네임입니다.' }, { status: 409 })
+      }
       logger.error('phone_update_failed', { userId: user.id, error: updateError.message })
       return NextResponse.json({ error: '전화번호 저장에 실패했습니다.' }, { status: 500 })
     }

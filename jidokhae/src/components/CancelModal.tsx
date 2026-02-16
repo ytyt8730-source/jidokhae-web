@@ -27,6 +27,7 @@ const logger = createLogger('payment')
 /** 함께 참가하는 회원 정보 */
 interface OtherParticipant {
   name: string
+  nickname: string
 }
 
 interface CancelModalProps {
@@ -230,7 +231,7 @@ export default function CancelModal({
                         <Users size={16} strokeWidth={1.5} className="text-brand-500" />
                         <span>
                           {MICROCOPY.cancel.persuasion.withOthers(
-                            otherParticipants.slice(0, 3).map(p => p.name)
+                            otherParticipants.slice(0, 3).map(p => p.nickname || p.name)
                           )}
                         </span>
                       </div>

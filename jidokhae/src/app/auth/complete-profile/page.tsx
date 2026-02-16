@@ -5,7 +5,8 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
-import { Phone, AlertCircle, User, CheckCircle, ArrowRight } from 'lucide-react'
+import { Phone, AlertCircle, User, CheckCircle, ArrowRight, AtSign } from 'lucide-react'
+import { useNicknameCheck } from '@/hooks/useNicknameCheck'
 
 type Step = 'phone' | 'otp' | 'complete'
 
@@ -16,12 +17,15 @@ export default function CompleteProfilePage() {
 
   const [step, setStep] = useState<Step>('phone')
   const [phone, setPhone] = useState('')
+  const [nickname, setNickname] = useState('')
   const [otp, setOtp] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [userName, setUserName] = useState('')
   const [countdown, setCountdown] = useState(0)
   const [devOtp, setDevOtp] = useState<string | null>(null)
+
+  const { status: nicknameStatus, scheduleCheck: scheduleNicknameCheck } = useNicknameCheck()
 
   const supabase = createClient()
 
@@ -76,8 +80,26 @@ export default function CompleteProfilePage() {
     setError('')
   }
 
+  const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.slice(0, 6)
+    setNickname(value)
+    setError('')
+    scheduleNicknameCheck(value)
+  }
+
   // 인증번호 발송
   const handleSendOtp = useCallback(async () => {
+    const nicknameTrimmed = nickname.trim()
+    if (nicknameTrimmed.length < 2 || nicknameTrimmed.length > 6) {
+      setError('닉네임은 2~6자 사이로 입력해주세요.')
+      return
+    }
+
+    if (nicknameStatus === 'taken') {
+      setError('이미 사용 중인 닉네임입니다.')
+      return
+    }
+
     const phoneNumbers = phone.replace(/\D/g, '')
     if (phoneNumbers.length !== 11) {
       setError('올바른 전화번호를 입력해주세요.')
@@ -114,7 +136,7 @@ export default function CompleteProfilePage() {
     } finally {
       setIsLoading(false)
     }
-  }, [phone])
+  }, [phone, nickname, nicknameStatus])
 
   // 인증번호 확인
   const handleVerifyOtp = async () => {
@@ -131,7 +153,7 @@ export default function CompleteProfilePage() {
       const response = await fetch('/api/auth/phone/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: phoneNumbers, otp }),
+        body: JSON.stringify({ phone: phoneNumbers, otp, nickname: nickname.trim() }),
       })
 
       const data = await response.json()
@@ -161,11 +183,6 @@ export default function CompleteProfilePage() {
     setStep('phone')
     setOtp('')
     setDevOtp(null)
-  }
-
-  const handleSkip = () => {
-    router.push(next)
-    router.refresh()
   }
 
   // 완료 화면
@@ -198,7 +215,7 @@ export default function CompleteProfilePage() {
           </h1>
           <p className="text-gray-600">
             {step === 'phone'
-              ? '모임 알림을 위해 전화번호를 인증해주세요.'
+              ? '닉네임과 전화번호를 입력해주세요.'
               : '문자로 발송된 인증번호를 입력해주세요.'}
           </p>
         </div>
@@ -223,6 +240,34 @@ export default function CompleteProfilePage() {
           {step === 'phone' ? (
             // Step 1: 전화번호 입력
             <div className="space-y-5">
+              <div>
+                <div className="relative">
+                  <AtSign
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                    size={18}
+                    strokeWidth={1.5}
+                  />
+                  <Input
+                    type="text"
+                    placeholder="닉네임 (2~6자, 다른 회원에게 표시)"
+                    value={nickname}
+                    onChange={handleNicknameChange}
+                    className="pl-11"
+                    maxLength={6}
+                    autoFocus
+                  />
+                </div>
+                {nicknameStatus === 'checking' && (
+                  <p className="text-xs text-gray-400 mt-1">확인 중...</p>
+                )}
+                {nicknameStatus === 'available' && (
+                  <p className="text-xs text-green-600 mt-1">사용 가능한 닉네임입니다.</p>
+                )}
+                {nicknameStatus === 'taken' && (
+                  <p className="text-xs text-red-500 mt-1">이미 사용 중인 닉네임입니다.</p>
+                )}
+              </div>
+
               <div className="relative">
                 <Phone
                   className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
@@ -236,7 +281,6 @@ export default function CompleteProfilePage() {
                   onChange={handlePhoneChange}
                   className="pl-11"
                   maxLength={13}
-                  autoFocus
                 />
               </div>
 
@@ -244,26 +288,16 @@ export default function CompleteProfilePage() {
                 전화번호는 모임 알림 및 긴급 연락 시에만 사용됩니다.
               </p>
 
-              <div className="space-y-3">
-                <Button
-                  type="button"
-                  className="w-full"
-                  onClick={handleSendOtp}
-                  isLoading={isLoading}
-                  disabled={phone.replace(/\D/g, '').length !== 11}
-                >
-                  <span>인증번호 받기</span>
-                  <ArrowRight size={18} strokeWidth={1.5} />
-                </Button>
-
-                <button
-                  type="button"
-                  onClick={handleSkip}
-                  className="w-full text-sm text-gray-500 hover:text-gray-700 py-2"
-                >
-                  나중에 입력하기
-                </button>
-              </div>
+              <Button
+                type="button"
+                className="w-full"
+                onClick={handleSendOtp}
+                isLoading={isLoading}
+                disabled={phone.replace(/\D/g, '').length !== 11 || nickname.trim().length < 2 || nicknameStatus === 'taken'}
+              >
+                <span>인증번호 받기</span>
+                <ArrowRight size={18} strokeWidth={1.5} />
+              </Button>
             </div>
           ) : (
             // Step 2: OTP 입력
@@ -304,27 +338,17 @@ export default function CompleteProfilePage() {
                   인증 확인
                 </Button>
 
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={handleResend}
-                    disabled={countdown > 0}
-                    className={`flex-1 text-sm py-2 rounded-lg transition-colors ${
-                      countdown > 0
-                        ? 'text-gray-400 cursor-not-allowed'
-                        : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                <button
+                  type="button"
+                  onClick={handleResend}
+                  disabled={countdown > 0}
+                  className={`w-full text-sm py-2 rounded-lg transition-colors ${countdown > 0
+                      ? 'text-gray-400 cursor-not-allowed'
+                      : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
                     }`}
-                  >
-                    다시 받기
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleSkip}
-                    className="flex-1 text-sm text-gray-500 hover:text-gray-700 py-2"
-                  >
-                    나중에
-                  </button>
-                </div>
+                >
+                  다시 받기
+                </button>
               </div>
             </div>
           )}

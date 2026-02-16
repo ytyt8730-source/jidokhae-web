@@ -42,6 +42,7 @@ export async function GET(request: Request) {
         created_at,
         user:users!reviews_user_id_fkey (
           name,
+          nickname,
           created_at
         ),
         meeting:meetings!reviews_meeting_id_fkey (
@@ -65,7 +66,7 @@ export async function GET(request: Request) {
       id: string
       content: string
       created_at: string
-      user: { name: string; created_at: string } | null
+      user: { name: string; nickname: string | null; created_at: string } | null
       meeting: { title: string } | null
     }
 
@@ -73,9 +74,10 @@ export async function GET(request: Request) {
       const user = review.user
       const meeting = review.meeting
 
-      // 이름 익명화: "홍길동" → "홍**"
-      const anonymizedName = user?.name
-        ? `${user.name.charAt(0)}${'*'.repeat(Math.max(user.name.length - 1, 2))}`
+      // 닉네임 기반 익명화: 닉네임이 있으면 닉네임 첫 글자 + **, 없으면 이름 기반
+      const displayName = user?.nickname || user?.name
+      const anonymizedName = displayName
+        ? `${displayName.charAt(0)}${'*'.repeat(Math.max(displayName.length - 1, 2))}`
         : '익명'
 
       // 가입 연도 추출

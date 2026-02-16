@@ -52,6 +52,7 @@ export interface Database {
           id: string
           email: string
           name: string
+          nickname: string
           phone: string | null
           role: UserRole
           auth_provider: string
@@ -69,6 +70,7 @@ export interface Database {
           id?: string
           email: string
           name: string
+          nickname?: string
           phone?: string | null
           role?: UserRole
           auth_provider?: string
@@ -86,6 +88,7 @@ export interface Database {
           id?: string
           email?: string
           name?: string
+          nickname?: string
           phone?: string | null
           role?: UserRole
           auth_provider?: string

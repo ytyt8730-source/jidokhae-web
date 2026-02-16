@@ -6,8 +6,9 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
-import { Mail, Lock, User, Phone, AlertCircle, CheckCircle, ArrowRight, ArrowLeft } from 'lucide-react'
+import { Mail, Lock, User, Phone, AlertCircle, CheckCircle, ArrowRight, ArrowLeft, AtSign } from 'lucide-react'
 import { MICROCOPY } from '@/lib/constants/microcopy'
+import { useNicknameCheck } from '@/hooks/useNicknameCheck'
 
 type Step = 'info' | 'phone' | 'otp' | 'complete'
 
@@ -20,6 +21,7 @@ export default function SignupPage() {
     password: '',
     passwordConfirm: '',
     name: '',
+    nickname: '',
     phone: '',
   })
   const [otp, setOtp] = useState('')
@@ -27,6 +29,8 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [countdown, setCountdown] = useState(0)
   const [devOtp, setDevOtp] = useState<string | null>(null)
+
+  const { status: nicknameStatus, scheduleCheck: scheduleNicknameCheck } = useNicknameCheck()
 
   const supabase = createClient()
 
@@ -59,6 +63,13 @@ export default function SignupPage() {
       return
     }
 
+    if (name === 'nickname') {
+      const sliced = value.slice(0, 6)
+      setFormData(prev => ({ ...prev, nickname: sliced }))
+      scheduleNicknameCheck(sliced)
+      return
+    }
+
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
@@ -75,6 +86,17 @@ export default function SignupPage() {
 
     if (!formData.name.trim()) {
       setError('이름을 입력해주세요.')
+      return
+    }
+
+    const nicknameTrimmed = formData.nickname.trim()
+    if (nicknameTrimmed.length < 2 || nicknameTrimmed.length > 6) {
+      setError('닉네임은 2~6자 사이로 입력해주세요.')
+      return
+    }
+
+    if (nicknameStatus === 'taken') {
+      setError('이미 사용 중인 닉네임입니다.')
       return
     }
 
@@ -201,6 +223,7 @@ export default function SignupPage() {
         options: {
           data: {
             name: formData.name,
+            nickname: formData.nickname.trim(),
             phone: phoneNumbers,
           },
         },
@@ -217,17 +240,23 @@ export default function SignupPage() {
 
       // users 테이블에 저장 (Trigger 백업)
       if (authData.user) {
-        await supabase
+        const { error: upsertError } = await supabase
           .from('users')
           .upsert({
             id: authData.user.id,
             email: formData.email,
             name: formData.name,
+            nickname: formData.nickname.trim(),
             phone: phoneNumbers,
             phone_verified: true,
             role: 'member',
             is_new_member: true,
           }, { onConflict: 'id' })
+
+        if (upsertError?.code === '23505' && upsertError.message?.includes('nickname')) {
+          setError('닉네임이 이미 사용 중입니다. 다시 시도해주세요.')
+          return
+        }
       }
 
       setStep('complete')
@@ -290,11 +319,10 @@ export default function SignupPage() {
           {['info', 'phone', 'otp'].map((s, i) => (
             <div
               key={s}
-              className={`w-8 h-1 rounded-full transition-colors ${
-                ['info', 'phone', 'otp'].indexOf(step) >= i
+              className={`w-8 h-1 rounded-full transition-colors ${['info', 'phone', 'otp'].indexOf(step) >= i
                   ? 'bg-brand-600'
                   : 'bg-gray-200'
-              }`}
+                }`}
             />
           ))}
         </div>
@@ -324,13 +352,39 @@ export default function SignupPage() {
                 <Input
                   type="text"
                   name="name"
-                  placeholder="이름"
+                  placeholder="이름 (실명)"
                   value={formData.name}
                   onChange={handleChange}
                   className="pl-11"
                   required
                   autoFocus
                 />
+              </div>
+
+              <div>
+                <div className="relative">
+                  <AtSign className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} strokeWidth={1.5} />
+                  <Input
+                    type="text"
+                    name="nickname"
+                    placeholder="닉네임 (2~6자, 다른 회원에게 표시)"
+                    value={formData.nickname}
+                    onChange={handleChange}
+                    className="pl-11"
+                    required
+                    minLength={2}
+                    maxLength={6}
+                  />
+                </div>
+                {nicknameStatus === 'checking' && (
+                  <p className="text-xs text-gray-400 mt-1">확인 중...</p>
+                )}
+                {nicknameStatus === 'available' && (
+                  <p className="text-xs text-green-600 mt-1">사용 가능한 닉네임입니다.</p>
+                )}
+                {nicknameStatus === 'taken' && (
+                  <p className="text-xs text-red-500 mt-1">이미 사용 중인 닉네임입니다.</p>
+                )}
               </div>
 
               <div className="relative">
@@ -483,11 +537,10 @@ export default function SignupPage() {
                     type="button"
                     onClick={handleResend}
                     disabled={countdown > 0}
-                    className={`flex-1 text-sm py-2 rounded-lg transition-colors ${
-                      countdown > 0
+                    className={`flex-1 text-sm py-2 rounded-lg transition-colors ${countdown > 0
                         ? 'text-gray-400 cursor-not-allowed'
                         : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
-                    }`}
+                      }`}
                   >
                     다시 받기
                   </button>

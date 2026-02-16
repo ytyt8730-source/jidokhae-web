@@ -92,6 +92,7 @@ async function getPublicReviews(): Promise<PublicReview[]> {
       created_at,
       user:users!reviews_user_id_fkey (
         name,
+        nickname,
         created_at
       ),
       meeting:meetings!reviews_meeting_id_fkey (
@@ -108,7 +109,7 @@ async function getPublicReviews(): Promise<PublicReview[]> {
     id: string
     content: string
     created_at: string
-    user: { name: string; created_at: string } | null
+    user: { name: string; nickname: string | null; created_at: string } | null
     meeting: { title: string } | null
   }
 
@@ -116,8 +117,10 @@ async function getPublicReviews(): Promise<PublicReview[]> {
     const user = review.user
     const meeting = review.meeting
 
-    const anonymizedName = user?.name
-      ? `${user.name.charAt(0)}${'*'.repeat(Math.max(user.name.length - 1, 2))}`
+    // 닉네임 기반 익명화
+    const displayName = user?.nickname || user?.name
+    const anonymizedName = displayName
+      ? `${displayName.charAt(0)}${'*'.repeat(Math.max(displayName.length - 1, 2))}`
       : '익명'
 
     const joinedYear = user?.created_at

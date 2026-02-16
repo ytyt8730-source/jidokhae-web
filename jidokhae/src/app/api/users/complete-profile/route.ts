@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { phone } = body
+    const { phone, nickname } = body
 
     // 전화번호 유효성 검사
     if (!phone || typeof phone !== 'string') {
@@ -41,6 +41,16 @@ export async function POST(request: NextRequest) {
     const phoneNumbers = phone.replace(/\D/g, '')
     if (phoneNumbers.length !== 11) {
       return NextResponse.json({ error: 'Invalid phone number format' }, { status: 400 })
+    }
+
+    // 닉네임 유효성 검사 (2-6자 필수)
+    if (!nickname || typeof nickname !== 'string') {
+      return NextResponse.json({ error: 'Nickname is required' }, { status: 400 })
+    }
+
+    const nicknameTrimmed = nickname.trim()
+    if (nicknameTrimmed.length < 2 || nicknameTrimmed.length > 6) {
+      return NextResponse.json({ error: 'Nickname must be 2-6 characters' }, { status: 400 })
     }
 
     const serviceClient = await createServiceClient()
@@ -56,20 +66,36 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
+    // 닉네임 중복 체크
+    const { data: existingNickname } = await serviceClient
+      .from('users')
+      .select('id')
+      .eq('nickname', nicknameTrimmed)
+      .neq('id', user.id)
+      .maybeSingle()
+
+    if (existingNickname) {
+      return NextResponse.json({ error: '이미 사용 중인 닉네임입니다.' }, { status: 409 })
+    }
+
     // 이미 전화번호가 있고 환영 알림을 보냈으면 그냥 업데이트만
     const isFirstPhoneSave = !existingUser.phone
     const shouldSendWelcome = isFirstPhoneSave && !existingUser.welcome_sent_at
 
-    // 전화번호 저장
+    // 전화번호 + 닉네임 저장
     const { error: updateError } = await serviceClient
       .from('users')
       .update({
         phone: phoneNumbers,
+        nickname: nicknameTrimmed,
         updated_at: new Date().toISOString(),
       })
       .eq('id', user.id)
 
     if (updateError) {
+      if (updateError.code === '23505' && updateError.message?.includes('nickname')) {
+        return NextResponse.json({ error: '이미 사용 중인 닉네임입니다.' }, { status: 409 })
+      }
       logger.error('phone_update_failed', { userId: user.id, error: updateError.message })
       return NextResponse.json({ error: 'Failed to update phone' }, { status: 500 })
     }

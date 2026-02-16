@@ -1,5 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
+import { createLogger } from '@/lib/logger'
+
+const logger = createLogger('auth-callback')
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
@@ -10,7 +13,7 @@ export async function GET(request: Request) {
 
   // 에러 처리 (M2-004: 카카오 로그인 취소 포함)
   if (error) {
-    console.error('Auth callback error:', error, errorDescription)
+    logger.error('Auth callback error', { error, errorDescription })
     // 사용자가 카카오 로그인을 취소한 경우 에러 없이 로그인 페이지로
     if (error === 'access_denied') {
       return NextResponse.redirect(`${origin}/auth/login`)
@@ -25,7 +28,7 @@ export async function GET(request: Request) {
     const { data: sessionData, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
 
     if (exchangeError) {
-      console.error('Code exchange error:', exchangeError.message)
+      logger.error('Code exchange error', { error: exchangeError.message })
       return NextResponse.redirect(
         `${origin}/auth/login?error=${encodeURIComponent(exchangeError.message)}`
       )
@@ -54,11 +57,32 @@ export async function GET(request: Request) {
             .replace(/[^0-9]/g, '')     // 숫자만 추출
         }
 
+        // 임시 닉네임 생성 (이름 앞 2글자, 중복 시 숫자 접미사)
+        const userName = userMetadata.name || userMetadata.full_name || userMetadata.preferred_username || '사용자'
+        const baseName = userName.length >= 2 ? userName.substring(0, 2) : userName + '0'
+        const { data: similarNicknames } = await supabase
+          .from('users')
+          .select('nickname')
+          .like('nickname', `${baseName}%`)
+        const usedSet = new Set(similarNicknames?.map((n: { nickname: string }) => n.nickname) || [])
+        let tempNickname = baseName
+        if (usedSet.has(tempNickname)) {
+          for (let i = 1; i <= 999; i++) {
+            const candidate = baseName + String(i)
+            if (candidate.length > 6) break
+            if (!usedSet.has(candidate)) {
+              tempNickname = candidate
+              break
+            }
+          }
+        }
+
         // 카카오에서 받아온 프로필 정보
         const profileData = {
           id: user.id,
           email: user.email || userMetadata.email,
-          name: userMetadata.name || userMetadata.full_name || userMetadata.preferred_username || '사용자',
+          name: userName,
+          nickname: tempNickname,  // 임시 닉네임 (complete-profile에서 변경 가능)
           phone: kakaoPhone,  // 카카오 전화번호 (있는 경우)
           phone_verified: kakaoPhone ? true : false,  // 카카오 인증 전화번호는 검증됨
           profile_image_url: userMetadata.avatar_url || userMetadata.picture,
@@ -69,7 +93,7 @@ export async function GET(request: Request) {
         // 기존 사용자 확인
         const { data: existingUser } = await supabase
           .from('users')
-          .select('id, phone, is_new_member')
+          .select('id, phone, nickname, is_new_member')
           .eq('id', user.id)
           .single()
 
@@ -93,8 +117,10 @@ export async function GET(request: Request) {
             .update(updateData)
             .eq('id', user.id)
 
-          // 전화번호가 여전히 없으면 전화번호 입력 페이지로 리다이렉트 (M2-005)
-          if (!existingUser.phone && !kakaoPhone) {
+          // 전화번호 또는 닉네임이 없으면 프로필 완성 페이지로 리다이렉트
+          const needsPhone = !existingUser.phone && !kakaoPhone
+          const needsNickname = !existingUser.nickname
+          if (needsPhone || needsNickname) {
             return NextResponse.redirect(`${origin}/auth/complete-profile?next=${encodeURIComponent(next)}`)
           }
         } else {
@@ -104,14 +130,12 @@ export async function GET(request: Request) {
             .insert(profileData)
 
           if (insertError) {
-            console.error('User insert error:', insertError.message)
+            logger.error('User insert error', { error: insertError.message })
           }
 
-          // 카카오에서 전화번호를 받아온 경우 → 바로 다음 페이지로
-          // 전화번호가 없는 경우 → 전화번호 입력 페이지로 (M2-005)
-          if (!kakaoPhone) {
-            return NextResponse.redirect(`${origin}/auth/complete-profile?next=${encodeURIComponent(next)}`)
-          }
+          // 카카오에서 전화번호를 받아온 경우에도 닉네임은 필수 입력
+          // 항상 complete-profile 페이지로 이동 (신규 카카오 사용자)
+          return NextResponse.redirect(`${origin}/auth/complete-profile?next=${encodeURIComponent(next)}`)
         }
       }
     }

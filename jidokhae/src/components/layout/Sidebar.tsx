@@ -32,9 +32,9 @@ export default function Sidebar({ user }: SidebarProps) {
 
   const userItems = user
     ? [
-        { href: '/mypage', label: 'MY PAGE', icon: User },
-        ...(isAdmin ? [{ href: '/admin', label: 'ADMIN', icon: Settings }] : []),
-      ]
+      { href: '/mypage', label: 'MY PAGE', icon: User },
+      ...(isAdmin ? [{ href: '/admin', label: 'ADMIN', icon: Settings }] : []),
+    ]
     : []
 
   return (
@@ -128,7 +128,10 @@ export default function Sidebar({ user }: SidebarProps) {
                 {user.name?.charAt(0) || 'U'}
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-bold text-text truncate">{user.name}</div>
+                <div className="text-sm font-bold text-text truncate">
+                  {user.name}
+                  {user.nickname && <span className="font-normal text-text-muted"> ({user.nickname})</span>}
+                </div>
                 <span className="user-level">
                   {getMemberLevel(user.total_participations ?? 0, user.is_new_member ?? true).displayText}
                 </span>

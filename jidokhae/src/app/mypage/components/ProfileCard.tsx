@@ -1,4 +1,5 @@
 import type { User as UserType } from '@/types/database'
+import NicknameEditor from './NicknameEditor'
 
 interface ProfileCardProps {
   user: UserType
@@ -19,6 +20,7 @@ export default function ProfileCard({ user, daysWithUs }: ProfileCardProps) {
         </div>
         <div className="flex-1">
           <h2 className="text-xl font-semibold text-text">{user.name}</h2>
+          <NicknameEditor currentNickname={user.nickname} />
           <p className="text-text-muted">{user.email}</p>
           {user.phone && (
             <p className="text-sm text-text-muted/70 mt-1">{user.phone}</p>

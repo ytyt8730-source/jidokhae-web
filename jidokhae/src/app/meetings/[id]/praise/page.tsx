@@ -97,7 +97,8 @@ export default async function PraisePage({ params }: PageProps) {
       user_id,
       users!registrations_user_id_fkey (
         id,
-        name
+        name,
+        nickname
       )
     `)
     .eq('meeting_id', meeting.id)
@@ -105,10 +106,10 @@ export default async function PraisePage({ params }: PageProps) {
     .neq('user_id', authUser.id)
 
   const participantList = participants?.map((p: { users: unknown }) => {
-    const user = p.users as { id: string; name: string }
+    const user = p.users as { id: string; name: string; nickname: string }
     return {
       id: user.id,
-      name: user.name,
+      name: user.nickname || user.name,  // 닉네임 우선 표시
     }
   }) || []
 
