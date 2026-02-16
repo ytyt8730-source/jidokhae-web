@@ -50,7 +50,7 @@ export async function createClient() {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    console.warn('⚠️ Supabase 환경 변수가 설정되지 않았습니다.')
+    // Supabase 환경 변수 미설정 - 더미 클라이언트 반환
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return createDummyClient() as any
   }
@@ -82,7 +82,7 @@ export async function createServiceClient() {
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
   if (!supabaseUrl || !serviceRoleKey) {
-    console.warn('⚠️ Supabase Service Role 환경 변수가 설정되지 않았습니다.')
+    // Supabase Service Role 환경 변수 미설정 - 더미 클라이언트 반환
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return createDummyClient() as any
   }

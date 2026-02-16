@@ -12,7 +12,7 @@ export async function updateSession(request: NextRequest) {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    console.warn('⚠️ Supabase 환경 변수가 설정되지 않았습니다. 인증 기능이 비활성화됩니다.')
+    // Supabase 환경 변수 미설정 - 인증 기능 비활성화 상태로 진행
     return supabaseResponse
   }
 
@@ -42,7 +42,6 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   // 보호된 라우트 처리
-  const isAuthPage = request.nextUrl.pathname.startsWith('/auth')
   const isAdminPage = request.nextUrl.pathname.startsWith('/admin')
   const isProtectedPage =
     request.nextUrl.pathname.startsWith('/mypage') ||

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
@@ -8,6 +8,7 @@ import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import { Mail, Lock, AlertCircle } from 'lucide-react'
 import { MICROCOPY } from '@/lib/constants/microcopy'
+import type { User } from '@supabase/supabase-js'
 
 // 카카오 로고 SVG 컴포넌트
 function KakaoLogo({ className }: { className?: string }) {
@@ -35,6 +36,13 @@ export default function LoginPage() {
   const [isKakaoLoading, setIsKakaoLoading] = useState(false)
 
   const supabase = createClient()
+
+  // 이미 로그인된 사용자는 홈으로 리다이렉트 (클라이언트 측 처리)
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }: { data: { user: User | null } }) => {
+      if (user) router.replace(redirectTo)
+    })
+  }, [supabase, router, redirectTo])
 
   // 이메일 로그인 핸들러
   const handleSubmit = async (e: React.FormEvent) => {
