@@ -48,6 +48,13 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
+  // 임시 진단 로그 - OAuth 세션 디버깅 (문제 해결 후 제거) console-allowed
+  console.log('[Middleware]', {
+    path: request.nextUrl.pathname,
+    hasUser: !!user,
+    cookieCount: request.cookies.getAll().length,
+  })
+
   // 보호된 라우트 처리
   const isAdminPage = request.nextUrl.pathname.startsWith('/admin')
   const isProtectedPage =

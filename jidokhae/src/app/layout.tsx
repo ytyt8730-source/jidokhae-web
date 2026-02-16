@@ -72,7 +72,10 @@ export default async function RootLayout({
 }) {
   const supabase = await createClient()
 
-  const { data: { user: authUser } } = await supabase.auth.getUser()
+  const { data: { user: authUser }, error } = await supabase.auth.getUser()
+
+  // 임시 진단 로그 - OAuth 세션 디버깅 console-allowed
+  console.log('[Layout] Auth:', { hasUser: !!authUser, error: error?.message })
 
   let user = null
   if (authUser) {

@@ -39,6 +39,13 @@ async function createCallbackClient() {
       getAll() { return cookieStore.getAll() },
       setAll(cookiesToSet) {
         cookiesToSet.forEach(({ name, value, options }) => {
+          // Primary: Next.js cookies() API (공식 Supabase 접근법)
+          try {
+            cookieStore.set(name, value, options)
+          } catch {
+            // Route Handler에서는 보통 성공, Server Component에서는 실패 가능
+          }
+          // Backup: redirect 응답에 명시적으로 전달
           pendingCookies.push({ name, value, options: options as Record<string, unknown> })
         })
       },
@@ -47,10 +54,17 @@ async function createCallbackClient() {
   return { supabase, pendingCookies }
 }
 
-/** 세션 쿠키를 포함한 리다이렉트 응답 생성 */
+/** 세션 쿠키를 포함한 리다이렉트 응답 생성 (302 + secure) */
 function redirectWithCookies(url: string, pendingCookies: PendingCookie[]) {
-  const response = NextResponse.redirect(url)
-  pendingCookies.forEach(({ name, value, options }) => response.cookies.set(name, value, options))
+  const response = NextResponse.redirect(url, { status: 302 })
+  const isProduction = process.env.NODE_ENV === 'production'
+
+  pendingCookies.forEach(({ name, value, options }) => {
+    response.cookies.set(name, value, {
+      ...options,
+      secure: isProduction,
+    })
+  })
   return response
 }
 
@@ -112,6 +126,12 @@ export async function GET(request: Request) {
         `${origin}/auth/login?error=${encodeURIComponent(exchangeError.message)}`
       )
     }
+
+    logger.info('Session exchange complete', {
+      cookieCount: pendingCookies.length,
+      cookieNames: pendingCookies.map(c => c.name),
+      userId: sessionData?.user?.id,
+    })
 
     // 이후 모든 redirect는 반드시 redirectWithCookies() 사용
     const type = searchParams.get('type')
