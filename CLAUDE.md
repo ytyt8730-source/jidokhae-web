@@ -40,6 +40,18 @@ npm run test:coverage                     # Coverage report (threshold: 60%)
 
 **Test setup (`src/__tests__/setup.ts`)** pre-mocks: `next/navigation`, `next/headers`, `@/lib/supabase/client`
 
+**Test file structure** mirrors `src/`:
+```
+src/__tests__/
+├── setup.ts              # Global mocks, env vars, beforeEach clearAllMocks
+├── lib/                  # Mirrors src/lib/
+│   ├── utils.test.ts
+│   ├── errors.test.ts
+│   └── api.test.ts
+└── components/ui/        # Mirrors src/components/
+    └── Badge.test.tsx
+```
+
 ### Pre-commit (REQUIRED)
 
 **Use ONE of these before every commit:**
@@ -82,6 +94,10 @@ npx tsc --noEmit && npm run build
 # Git
 ./scripts/clean-branches.sh   # Clean merged branches
 ./scripts/rollback.sh [M] [P] # Rollback to last success
+
+# AI/Context
+./scripts/pipeline-logger.sh  # Pipeline progress logging (milestones)
+./scripts/pack_context.py     # Context packing for LLM (requires pyperclip)
 ```
 
 ---
@@ -135,6 +151,9 @@ import { createClient } from '@/lib/supabase/client'
 
 // Admin operations - ONLY when bypassing RLS is necessary
 import { createServiceClient } from '@/lib/supabase/server'
+
+// All clients are typed with generated Database type from @/types/database
+// Regenerate after schema changes: ./scripts/gen-types.sh (root)
 ```
 
 ### Layout Pattern (`src/app/layout.tsx`)
@@ -200,7 +219,7 @@ validateRequired(body, ['meetingId', 'amount']) // Throws VALIDATION_ERROR if mi
 | 43xx | Eligibility | 4301: ELIGIBILITY_NOT_MET |
 | 44xx | Praise | 4401: PRAISE_DUPLICATE_MEETING |
 | 45xx | Participation | 4501: PARTICIPATION_ALREADY_COMPLETED, 4502: PARTICIPATION_NO_SHOW |
-| 5xxx | System | 5001: INTERNAL_ERROR, 5002: DB_ERROR |
+| 5xxx | System | 5001: INTERNAL_ERROR, 5002: DATABASE_ERROR |
 
 ### Logging
 
@@ -209,16 +228,25 @@ validateRequired(body, ['meetingId', 'amount']) // Throws VALIDATION_ERROR if mi
 ```typescript
 import { paymentLogger } from '@/lib/logger'
 
-// Pre-built loggers:
+// Pre-built loggers (9):
 // authLogger, paymentLogger, notificationLogger, meetingLogger,
 // registrationLogger, waitlistLogger, cronLogger, systemLogger, onboardingLogger
 
 paymentLogger.info('Payment initiated', { userId, amount })
 paymentLogger.error('Payment failed', { errorCode, message })
 
+// User context chaining (all subsequent logs include userId)
+const logger = paymentLogger.withUser(userId)
+logger.info('Processing refund', { amount })
+
+// Performance timer
+const timer = paymentLogger.startTimer()
+await processPayment()
+timer.done('Payment completed', { amount }) // auto-logs elapsed ms
+
 // Custom loggers for other services:
 import { createLogger } from '@/lib/logger'
-const myLogger = createLogger('my-service')
+const myLogger = createLogger('admin-gallery') // LogService type required
 ```
 
 ### Environment Variables
@@ -232,7 +260,7 @@ if (isConfigured('sentry')) { /* error tracking enabled */ }
 ```
 
 **Required (client):** `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-**Required (server):** `SUPABASE_SERVICE_ROLE_KEY`, `PORTONE_*`, `SOLAPI_*`
+**Required (server):** `SUPABASE_SERVICE_ROLE_KEY`, `PORTONE_*`, `SOLAPI_*`, `CRON_SECRET`
 **Optional:** `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_*`
 
 ---
@@ -247,63 +275,17 @@ if (isConfigured('sentry')) { /* error tracking enabled */ }
 | `errors` | AppError class, error codes | Throwing typed errors |
 | `logger` | Structured logging | All logging (not console.log) |
 | `env` | Environment validation | Startup checks |
-| `utils` | `cn()` class merge, meeting status calc | UI class composition |
+| `utils` | `cn()` class merge, meeting status calc, member level calc | UI class composition, user segmentation |
 | `constants/microcopy` | Centralized UI text (Korean) | All user-facing strings |
 | `supabase/*` | DB clients | All DB operations |
 
-### Auth & Security
+### Other Modules
 
-| Module | Purpose |
-|--------|---------|
-| `permissions` | Role-based access control (server-only) |
-| `permissions-constants` | Shared role/permission constants (client + server) |
-| `cron-auth` | Cron job authentication (CRON_SECRET) |
-| `rate-limit` | API rate limiting (presets: auth, payment, standard, search) |
-| `otp` | Phone OTP authentication |
+Explore `src/lib/` for all business modules and `src/hooks/` for React hooks. Key architectural notes:
 
-### Business Logic
-
-| Module | Purpose |
-|--------|---------|
-| `eligibility` | Meeting join eligibility (6-month window) |
-| `payment` | PortOne V2 integration |
-| `ticket` | Digital ticket generation |
-| `badges` | Badge system (server-side) |
-| `badges-client` | Badge rendering (client-side) |
-| `praise` | Member praise/points |
-| `transfer` | Registration transfer |
-| `auto-complete` | Meeting auto-completion |
-| `post-meeting` | Post-meeting notification logic (D+3 followup) |
-
-### Notifications
-
-| Module | Purpose |
-|--------|---------|
-| `notification/` | Solapi Alimtalk (adapter pattern: `SolapiAdapter`/`MockNotificationAdapter`) |
-| `notification/index` | `getNotificationService()`, `sendAndLogNotification()`, `isAlreadySent()` |
-| `onboarding/reminder` | Signup/first-meeting reminders |
-| `reminder` | General meeting reminders |
-| `segment-notification` | Segment-based targeting |
-| `waitlist-notification` | Waitlist status changes |
-
-### UX
-
-| Module | Purpose |
-|--------|---------|
-| `sound` | SoundManager singleton |
-| `animations` | Framer Motion presets |
-| `ticket-export` | Ticket image export |
-
-### Hooks (`@/hooks/`)
-
-| Hook | Purpose |
-|------|---------|
-| `useFeedback` | Unified sound + haptic |
-| `useTickets` | Ticket list management |
-| `useTearGesture` | Ticket tear animation |
-| `useTypewriter` | Typewriter effect |
-| `useOnboardingRedirect` | New member redirect |
-| `useMeetingParticipants` | Participant list |
+- **permissions vs permissions-constants**: `permissions` is server-only (uses Supabase), `permissions-constants` is shared (client + server)
+- **notification/**: Adapter pattern (`SolapiAdapter` in production, `MockNotificationAdapter` in dev). Use `sendAndLogNotification()` and `isAlreadySent()` from `notification/index`
+- **badges vs badges-client**: Server-side awarding logic vs client-side rendering (to avoid importing server code in `'use client'` components)
 
 ---
 
@@ -421,18 +403,6 @@ import { Portal } from '@/components/ui/Portal'
 
 ## Database Patterns
 
-### Concurrent Registration Lock
-
-```typescript
-// ALWAYS use FOR UPDATE when checking capacity
-const { data: meeting } = await supabase
-  .from('meetings')
-  .select('*')
-  .eq('id', meetingId)
-  .single()
-  .forUpdate()  // Prevents race conditions
-```
-
 ### DB-driven Configuration
 
 ```typescript
@@ -527,25 +497,20 @@ export function Card() {
 | `z-toast` | 2000 | Toast notifications |
 | `z-noise` | 9999 | Noise texture (warm theme) |
 
-### Shadow Tokens
+### Semantic Color Tokens
 
-| Token | Use for |
-|-------|---------|
-| `shadow-card` | Default cards |
-| `shadow-card-hover` | Hovered cards |
-| `shadow-sheet` | Bottom sheets |
-| `shadow-fab` | FAB buttons |
-| `shadow-button` | Primary buttons |
-| `shadow-modal` | Modals/dialogs |
+Tailwind config defines semantic colors with foreground/background variants:
 
-### Animation Classes
+```
+success / success-fg / success-bg
+warning / warning-fg / warning-bg
+error / error-fg / error-bg    (also aliased as 'danger')
+info / info-fg / info-bg
+```
 
-| Class | Description |
-|-------|-------------|
-| `animate-fade-in` | Simple fade (0.3s) |
-| `animate-fade-in-up` | Fade + slide up (0.4s) |
-| `animate-slide-up` | Slide up (0.3s) |
-| `animate-slide-down` | Slide down (0.3s) |
+### Shadow & Animation Tokens
+
+See `tailwind.config.ts` for full definitions. Key tokens: `shadow-card`, `shadow-sheet`, `shadow-fab`, `shadow-button`, `shadow-modal`, `animate-fade-in`, `animate-fade-in-up`, `animate-slide-up`, `animate-slide-down`.
 
 ---
 
@@ -572,6 +537,21 @@ export function Card() {
 
 - Show: "O명 참여" (current participants)
 - Hide: max capacity (never show to users)
+
+### Member Levels (PRD-driven)
+
+| Level | Segment | Condition |
+|:-----:|---------|-----------|
+| Lv.1 | new | is_new_member=true OR 0 participations |
+| Lv.2 | onboarding | 1 participation |
+| Lv.3 | growing | 2-4 participations |
+| Lv.4 | loyal | 5+ participations |
+
+```typescript
+import { getMemberLevel } from '@/lib/utils'
+const level = getMemberLevel(totalParticipations, isNewMember)
+// Returns: { level, label, displayText, segment }
+```
 
 ### Eligibility
 
@@ -641,29 +621,13 @@ fix/[설명]                  # Bug fixes
 | `/log/current-state.md` | Current development status |
 | `/roadmap/milestones.md` | Development roadmap |
 | `/core/AI_AGENT_GUIDE.md` | Document navigation rules |
+| `/.cursorrules` | Cursor IDE rules (v3.0) - Git workflow, @agent- commands |
 
 ---
 
-## Cron Jobs (vercel.json)
+## Cron Jobs
 
-All times in UTC. KST = UTC + 9.
-
-| Endpoint | Schedule | Purpose |
-|----------|----------|---------|
-| `/api/cron/reminder` | 22:00 daily | Meeting D-1 reminders |
-| `/api/cron/waitlist` | hourly | Process waitlist |
-| `/api/cron/auto-complete` | 03:00 daily | Complete past meetings |
-| `/api/cron/afterglow` | 0,30 * * * * | Post-meeting followup |
-| `/api/cron/welcome` | 01:00 daily | New member welcome |
-| `/api/cron/post-meeting` | 01:00 daily | Post-meeting notifications |
-| `/api/cron/monthly` | 01:00, 25th | Monthly summary |
-| `/api/cron/segment-reminder` | 02:00 daily | Segment-based reminders |
-| `/api/cron/eligibility-warning` | 01:00 Mon | Eligibility warnings |
-| `/api/cron/first-meeting-followup` | 01:00 daily | First meeting D+1 feedback |
-| `/api/cron/onboarding-signup` | 01:00 daily | Signup reminder (3/7 days) |
-| `/api/cron/onboarding-first-meeting` | 01:00 daily | First meeting followup |
-| `/api/cron/praise-nudge` | 01:00 daily | Encourage praise giving |
-| `/api/cron/transfer-timeout` | hourly | 24hr unpaid transfer auto-cancel + 6hr warning |
+All schedules in `vercel.json`. Times in UTC (KST = UTC + 9). Routes in `src/app/api/cron/`. All require `CRON_SECRET` auth via `@/lib/cron-auth`.
 
 ---
 
@@ -682,7 +646,7 @@ All times in UTC. KST = UTC + 9.
 │   │   ├── layout/        # Header, Footer, Sidebar
 │   │   ├── ui/            # Reusable primitives (Button, Input, Toast, Badge, Price, Portal, BrandLogo)
 │   │   ├── icons/         # Custom icons (KongIcon, BookIcon, LeafIcon)
-│   │   ├── effects/       # Animation effects (Confetti, KongPour)
+│   │   ├── effects/       # Animation effects (Confetti, KongPour, StubFlyaway)
 │   │   ├── providers/     # AuthProvider, OnboardingRedirectProvider
 │   │   ├── ticket/        # Ticket components
 │   │   ├── onboarding/    # Onboarding flow components
@@ -711,4 +675,4 @@ When documents conflict, follow this order:
 
 ---
 
-Last updated: 2026-02-11 | v3.4
+Last updated: 2026-02-16 | v3.6

@@ -9,7 +9,10 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Button from '@/components/ui/Button'
 import { MICROCOPY } from '@/lib/constants/microcopy'
+import { createLogger } from '@/lib/logger'
 import type { Meeting, User, Waitlist } from '@/types/database'
+
+const logger = createLogger('waitlist')
 
 interface WaitlistButtonProps {
   meeting: Meeting
@@ -57,7 +60,7 @@ export default function WaitlistButton({
         setError(data.data?.message || '대기 등록 중 오류가 발생했습니다.')
       }
     } catch (err) {
-      console.error('Waitlist register error:', err)
+      logger.error('Waitlist register error', { error: err instanceof Error ? err.message : 'Unknown' })
       setError('대기 등록 중 오류가 발생했습니다.')
     } finally {
       setIsLoading(false)
@@ -87,7 +90,7 @@ export default function WaitlistButton({
         setError(data.data?.message || '대기 취소 중 오류가 발생했습니다.')
       }
     } catch (err) {
-      console.error('Waitlist cancel error:', err)
+      logger.error('Waitlist cancel error', { error: err instanceof Error ? err.message : 'Unknown' })
       setError('대기 취소 중 오류가 발생했습니다.')
     } finally {
       setIsLoading(false)

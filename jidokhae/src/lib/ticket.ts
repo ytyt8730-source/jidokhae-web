@@ -4,7 +4,10 @@
  */
 
 import { createClient } from '@/lib/supabase/client'
+import { createLogger } from '@/lib/logger'
 import type { TicketData, TicketStatus } from '@/types/ticket'
+
+const logger = createLogger('ticket')
 
 /**
  * 사용자의 총 참여 횟수 계산 (클라이언트용)
@@ -19,7 +22,7 @@ export async function getParticipationCount(userId: string): Promise<number> {
     .eq('status', 'confirmed')
 
   if (error) {
-    console.error('Failed to get participation count:', error)
+    logger.error('Failed to get participation count', { error: error instanceof Error ? error.message : 'Unknown' })
     return 1
   }
 

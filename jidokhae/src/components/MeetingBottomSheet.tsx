@@ -20,7 +20,10 @@
 import { useEffect, useState, useCallback } from 'react'
 import { motion, AnimatePresence, useDragControls, PanInfo } from 'framer-motion'
 import { X, Calendar, MapPin, Users, Medal, Clock, ChevronDown, ChevronUp, Loader2 } from 'lucide-react'
+import { createLogger } from '@/lib/logger'
 import Badge from '@/components/ui/Badge'
+
+const logger = createLogger('meeting')
 import Button from '@/components/ui/Button'
 import PaymentButton from '@/components/PaymentButton'
 import WaitlistButton from '@/components/WaitlistButton'
@@ -77,7 +80,7 @@ export default function MeetingBottomSheet({
           setStatusData(data.data)
         }
       } catch (err) {
-        console.error('Failed to fetch meeting status:', err)
+        logger.error('Failed to fetch meeting status', { error: err instanceof Error ? err.message : 'Unknown' })
       } finally {
         setIsLoading(false)
       }

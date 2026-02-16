@@ -13,6 +13,9 @@ import {
   ToggleRight,
   Image as ImageIcon,
 } from 'lucide-react'
+import { createLogger } from '@/lib/logger'
+
+const logger = createLogger('admin-gallery')
 
 interface GalleryImage {
   id: string
@@ -43,7 +46,7 @@ export function GalleryClient() {
         setImages(data.data)
       }
     } catch (error) {
-      console.error('Failed to fetch gallery images:', error)
+      logger.error('Failed to fetch gallery images', { error: error instanceof Error ? error.message : 'Unknown' })
     } finally {
       setLoading(false)
     }
@@ -63,7 +66,7 @@ export function GalleryClient() {
         body: JSON.stringify({ imageIds: newOrder.map((img) => img.id) }),
       })
     } catch (error) {
-      console.error('Failed to reorder images:', error)
+      logger.error('Failed to reorder images', { error: error instanceof Error ? error.message : 'Unknown' })
       fetchImages() // 실패 시 원래 순서 복원
     }
   }
@@ -89,7 +92,7 @@ export function GalleryClient() {
         closeModal()
       }
     } catch (error) {
-      console.error('Failed to save image:', error)
+      logger.error('Failed to save image', { error: error instanceof Error ? error.message : 'Unknown' })
     } finally {
       setSubmitting(false)
     }
@@ -104,7 +107,7 @@ export function GalleryClient() {
       })
       await fetchImages()
     } catch (error) {
-      console.error('Failed to toggle image:', error)
+      logger.error('Failed to toggle image', { error: error instanceof Error ? error.message : 'Unknown' })
     }
   }
 
@@ -116,7 +119,7 @@ export function GalleryClient() {
       await fetch(`/api/admin/gallery/${id}`, { method: 'DELETE' })
       await fetchImages()
     } catch (error) {
-      console.error('Failed to delete image:', error)
+      logger.error('Failed to delete image', { error: error instanceof Error ? error.message : 'Unknown' })
     } finally {
       setDeletingId(null)
     }

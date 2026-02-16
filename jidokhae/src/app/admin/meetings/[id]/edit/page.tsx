@@ -7,7 +7,10 @@ import { ArrowLeft, AlertCircle } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import { createClient } from '@/lib/supabase/client'
+import { createLogger } from '@/lib/logger'
 import type { RefundPolicy, MeetingType, MeetingStatus } from '@/types/database'
+
+const logger = createLogger('admin-meetings')
 
 interface PageProps {
   params: { id: string }
@@ -137,7 +140,7 @@ export default function EditMeetingPage({ params }: PageProps) {
 
       if (updateError) {
         setError('모임 수정 중 오류가 발생했습니다.')
-        console.error(updateError)
+        logger.error('Failed to update meeting', { error: updateError.message })
         return
       }
 

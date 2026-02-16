@@ -5,6 +5,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { MessageSquare, Send, X, Loader2, CheckCircle, Clock, User } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
+import { createLogger } from '@/lib/logger'
+
+const logger = createLogger('admin-requests')
 
 interface RequestUser {
   id: string
@@ -56,7 +59,7 @@ export function RequestsClient() {
         setPendingCount(data.data.pendingCount)
       }
     } catch (error) {
-      console.error('Failed to fetch requests:', error)
+      logger.error('Failed to fetch requests', { error: error instanceof Error ? error.message : 'Unknown' })
     } finally {
       setLoading(false)
     }
@@ -79,7 +82,7 @@ export function RequestsClient() {
         setAnswerText('')
       }
     } catch (error) {
-      console.error('Failed to submit answer:', error)
+      logger.error('Failed to submit answer', { error: error instanceof Error ? error.message : 'Unknown' })
     } finally {
       setSubmitting(false)
     }

@@ -8,7 +8,10 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Bell, Clock, Edit2, Eye, ToggleLeft, ToggleRight, X } from 'lucide-react'
+import { createLogger } from '@/lib/logger'
 import { NotificationTemplate } from '@/types/database'
+
+const logger = createLogger('admin-templates')
 
 interface TemplatesClientProps {
   initialTemplates: NotificationTemplate[]
@@ -38,7 +41,7 @@ export default function TemplatesClient({ initialTemplates }: TemplatesClientPro
         )
       }
     } catch (error) {
-      console.error('Toggle failed:', error)
+      logger.error('Toggle failed', { error: error instanceof Error ? error.message : 'Unknown' })
     } finally {
       setIsLoading(false)
     }
@@ -65,7 +68,7 @@ export default function TemplatesClient({ initialTemplates }: TemplatesClientPro
         setSelectedTemplate(null)
       }
     } catch (error) {
-      console.error('Save failed:', error)
+      logger.error('Save failed', { error: error instanceof Error ? error.message : 'Unknown' })
     } finally {
       setIsLoading(false)
     }

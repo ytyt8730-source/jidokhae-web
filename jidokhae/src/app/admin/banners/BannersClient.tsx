@@ -14,6 +14,9 @@ import {
   ToggleRight,
   Image as ImageIcon,
 } from 'lucide-react'
+import { createLogger } from '@/lib/logger'
+
+const logger = createLogger('admin-banners')
 
 interface Banner {
   id: string
@@ -48,7 +51,7 @@ export function BannersClient() {
         setBanners(data.data)
       }
     } catch (error) {
-      console.error('Failed to fetch banners:', error)
+      logger.error('Failed to fetch banners', { error: error instanceof Error ? error.message : 'Unknown' })
     } finally {
       setLoading(false)
     }
@@ -68,7 +71,7 @@ export function BannersClient() {
         body: JSON.stringify({ bannerIds: newOrder.map((b) => b.id) }),
       })
     } catch (error) {
-      console.error('Failed to reorder banners:', error)
+      logger.error('Failed to reorder banners', { error: error instanceof Error ? error.message : 'Unknown' })
       fetchBanners() // 실패 시 원래 순서 복원
     }
   }
@@ -94,7 +97,7 @@ export function BannersClient() {
         closeModal()
       }
     } catch (error) {
-      console.error('Failed to save banner:', error)
+      logger.error('Failed to save banner', { error: error instanceof Error ? error.message : 'Unknown' })
     } finally {
       setSubmitting(false)
     }
@@ -109,7 +112,7 @@ export function BannersClient() {
       })
       await fetchBanners()
     } catch (error) {
-      console.error('Failed to toggle banner:', error)
+      logger.error('Failed to toggle banner', { error: error instanceof Error ? error.message : 'Unknown' })
     }
   }
 
@@ -121,7 +124,7 @@ export function BannersClient() {
       await fetch(`/api/admin/banners/${id}`, { method: 'DELETE' })
       await fetchBanners()
     } catch (error) {
-      console.error('Failed to delete banner:', error)
+      logger.error('Failed to delete banner', { error: error instanceof Error ? error.message : 'Unknown' })
     } finally {
       setDeletingId(null)
     }

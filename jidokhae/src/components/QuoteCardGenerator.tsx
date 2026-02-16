@@ -10,7 +10,10 @@
 import { useRef, useState } from 'react'
 import { toPng } from 'html-to-image'
 import { Download, Loader2 } from 'lucide-react'
+import { createLogger } from '@/lib/logger'
 import { useBrandText } from '@/components/ui/BrandLogo'
+
+const logger = createLogger('quote-card')
 
 interface QuoteCardGeneratorProps {
   quote: string
@@ -55,7 +58,7 @@ export default function QuoteCardGenerator({ quote, bookTitle, author }: QuoteCa
       link.href = dataUrl
       link.click()
     } catch (error) {
-      console.error('이미지 생성 실패:', error)
+      logger.error('Image generation failed', { error: error instanceof Error ? error.message : 'Unknown' })
       alert('이미지 생성에 실패했습니다. 다시 시도해주세요.')
     } finally {
       setIsGenerating(false)

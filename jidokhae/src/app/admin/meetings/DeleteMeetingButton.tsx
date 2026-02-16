@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation'
 import { Trash2, AlertTriangle } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import { createClient } from '@/lib/supabase/client'
+import { createLogger } from '@/lib/logger'
+
+const logger = createLogger('admin-meetings')
 
 interface DeleteMeetingButtonProps {
   meetingId: string
@@ -28,7 +31,7 @@ export default function DeleteMeetingButton({ meetingId, meetingTitle }: DeleteM
 
       if (error) {
         alert('모임 삭제 중 오류가 발생했습니다.')
-        console.error(error)
+        logger.error('Failed to delete meeting', { error: error instanceof Error ? error.message : 'Unknown' })
         return
       }
 

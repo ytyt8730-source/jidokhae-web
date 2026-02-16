@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Shield, UserPlus, UserMinus, Check, X, Search, Loader2 } from 'lucide-react'
 import { PERMISSION_LABELS, ALL_PERMISSIONS, Permission } from '@/lib/permissions-constants'
+import { createLogger } from '@/lib/logger'
+
+const logger = createLogger('admin-permissions')
 
 interface Admin {
   id: string
@@ -43,7 +46,7 @@ export function PermissionsClient() {
         setAdmins(data.data)
       }
     } catch (error) {
-      console.error('Failed to fetch admins:', error)
+      logger.error('Failed to fetch admins', { error: error instanceof Error ? error.message : 'Unknown' })
     } finally {
       setLoading(false)
     }
@@ -75,7 +78,7 @@ export function PermissionsClient() {
         )
       }
     } catch (error) {
-      console.error('Failed to update permission:', error)
+      logger.error('Failed to update permission', { error: error instanceof Error ? error.message : 'Unknown' })
     } finally {
       setSavingId(null)
     }
@@ -97,7 +100,7 @@ export function PermissionsClient() {
         setSearchResults(data.data.filter((m: Member) => !adminIds.includes(m.id)))
       }
     } catch (error) {
-      console.error('Failed to search members:', error)
+      logger.error('Failed to search members', { error: error instanceof Error ? error.message : 'Unknown' })
     } finally {
       setSearching(false)
     }
@@ -120,7 +123,7 @@ export function PermissionsClient() {
         setSearchResults([])
       }
     } catch (error) {
-      console.error('Failed to add admin:', error)
+      logger.error('Failed to add admin', { error: error instanceof Error ? error.message : 'Unknown' })
     } finally {
       setAddingUserId(null)
     }
@@ -142,7 +145,7 @@ export function PermissionsClient() {
         setAdmins((prev) => prev.filter((a) => a.id !== userId))
       }
     } catch (error) {
-      console.error('Failed to remove admin:', error)
+      logger.error('Failed to remove admin', { error: error instanceof Error ? error.message : 'Unknown' })
     } finally {
       setRemovingUserId(null)
     }

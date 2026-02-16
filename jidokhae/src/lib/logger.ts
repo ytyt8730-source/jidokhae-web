@@ -15,6 +15,7 @@ export enum LogLevel {
  */
 export type LogService =
   | 'auth'
+  | 'auth-callback'
   | 'payment'
   | 'webhook'
   | 'notification'
@@ -25,11 +26,19 @@ export type LogService =
   | 'system'
   | 'templates'
   | 'admin'
+  | 'admin-banners'
+  | 'admin-gallery'
+  | 'admin-meetings'
+  | 'admin-permissions'
+  | 'admin-requests'
+  | 'admin-templates'
   | 'reviews'
   | 'eligibility'
+  | 'ticket'
   | 'ticket-export'
   | 'useTickets'
   | 'tickets-page'
+  | 'quote-card'
   | 'onboarding'
 
 /**
