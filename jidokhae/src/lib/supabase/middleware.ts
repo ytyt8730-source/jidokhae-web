@@ -56,17 +56,10 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // 로그인 사용자가 인증 페이지 접근 시 홈으로 리다이렉트
-  // 단, OAuth/인증 흐름에 필요한 경로는 제외
-  const isAuthFlowPage =
-    request.nextUrl.pathname.startsWith('/auth/callback') ||
-    request.nextUrl.pathname.startsWith('/auth/complete-profile') ||
-    request.nextUrl.pathname.startsWith('/auth/confirmed')
-  if (user && isAuthPage && !isAuthFlowPage) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/'
-    return NextResponse.redirect(url)
-  }
+  // 참고: 로그인 사용자의 /auth/* 접근을 홈으로 리다이렉트하지 않음.
+  // OAuth 흐름에서 불완전한 세션 쿠키가 남으면 로그인 페이지 접근이
+  // 차단되어 사용자가 로그인 자체를 못하는 치명적 루프가 발생하기 때문.
+  // 로그인 상태에서의 auth 페이지 리다이렉트는 각 페이지에서 클라이언트 측으로 처리.
 
   // 관리자 페이지 접근 권한 체크
   if (user && isAdminPage) {
