@@ -115,7 +115,7 @@ npx tsc --noEmit && npm run build
 | Backend | **Supabase** | PostgreSQL + Auth + Realtime, RLS enabled |
 | Payment | **PortOne V2** | KakaoPay, TossPay (SDK lazy-loaded in layout) |
 | Notifications | **Solapi** | Kakao Alimtalk |
-| Monitoring | **Sentry v10** | Error tracking & performance |
+| Monitoring | **Sentry v10** | Error tracking & performance (`next.config.mjs` wrapped with `withSentryConfig`) |
 | Class utils | **clsx + tailwind-merge** | Via `cn()` helper in `@/lib/utils` |
 
 ---
@@ -128,17 +128,25 @@ npx tsc --noEmit && npm run build
 Request → middleware.ts (auth check) → Page/API Route → Supabase (with RLS)
 ```
 
-### Middleware (`src/middleware.ts`)
+### Middleware (`src/middleware.ts` → `src/lib/supabase/middleware.ts`)
 
 All non-static requests pass through middleware (negative matcher pattern):
 
-```typescript
-// Handles: session refresh, auth state sync between server/client
-// Protected: /mypage/* → redirect to /auth/login if unauthenticated
-// Protected: /admin/* → requires 'admin' or 'super_admin' role
-// Auth redirect: /auth/* → redirect to / if already authenticated
-// Delegates to: @/lib/supabase/middleware.ts (updateSession)
-```
+- **Session refresh**: Syncs auth state between server/client
+- **OAuth bypass**: `/auth/callback` is skipped entirely to prevent session cookie overwrite
+- **Protected**: `/mypage/*` → redirect to `/auth/login` if unauthenticated
+- **Protected**: `/admin/*` → requires `admin` or `super_admin` role (DB lookup)
+- **NO auth→home redirect**: Authenticated users are NOT redirected from `/auth/*` pages (removed to prevent OAuth cookie loop — each auth page handles this client-side instead)
+
+### OAuth Callback (`src/app/auth/callback/route.ts`)
+
+The OAuth callback is the most complex auth route — handles Kakao login:
+1. Exchanges auth code for session via `supabase.auth.exchangeCodeForSession()`
+2. Fetches Kakao profile and auto-generates nickname if missing
+3. Uses `pendingCookies` pattern: collects cookies during exchange, then manually sets them on the redirect response (because `NextResponse.redirect()` doesn't carry cookies from the Supabase client)
+4. Middleware skips `/auth/callback` entirely to prevent overwriting these session cookies
+
+**Known issue source:** If cookies are lost during redirect, user appears unauthenticated after login. Check the `pendingCookies` flow first when debugging auth issues.
 
 ### Supabase Client Usage
 
@@ -257,11 +265,18 @@ import { isConfigured } from '@/lib/env'
 if (isConfigured('portone')) { /* payment enabled */ }
 if (isConfigured('solapi')) { /* notifications enabled */ }
 if (isConfigured('sentry')) { /* error tracking enabled */ }
+
+// Type-safe access via env object:
+import { env } from '@/lib/env'
+env.supabase.url        // client-safe
+env.server.portone.apiKey  // throws on client
 ```
 
 **Required (client):** `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-**Required (server):** `SUPABASE_SERVICE_ROLE_KEY`, `PORTONE_*`, `SOLAPI_*`, `CRON_SECRET`
-**Optional:** `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_*`
+**Required (client, payment):** `NEXT_PUBLIC_PORTONE_STORE_ID`, `NEXT_PUBLIC_PORTONE_CHANNEL_KEY`
+**Required (client, transfer):** `NEXT_PUBLIC_TRANSFER_BANK_NAME`, `NEXT_PUBLIC_TRANSFER_ACCOUNT_NUMBER`, `NEXT_PUBLIC_TRANSFER_ACCOUNT_HOLDER`
+**Required (server):** `SUPABASE_SERVICE_ROLE_KEY`, `PORTONE_API_KEY`, `PORTONE_API_SECRET`, `PORTONE_WEBHOOK_SECRET`, `SOLAPI_API_KEY`, `SOLAPI_API_SECRET`, `CRON_SECRET`
+**Optional:** `NEXT_PUBLIC_APP_URL` (default: localhost:3000), `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_*`, `LOG_LEVEL`
 
 ---
 
@@ -279,9 +294,26 @@ if (isConfigured('sentry')) { /* error tracking enabled */ }
 | `constants/microcopy` | Centralized UI text (Korean) | All user-facing strings |
 | `supabase/*` | DB clients | All DB operations |
 
-### Other Modules
+### Business Modules (`@/lib/`)
 
-Explore `src/lib/` for all business modules and `src/hooks/` for React hooks. Key architectural notes:
+| Module | Purpose | When to use |
+|--------|---------|-------------|
+| `payment` | PortOne integration, refund calc, qualification check | Payment flows |
+| `transfer` | Bank transfer flow, deadline management, account validation | Transfer payment method |
+| `notification/` | Solapi adapter, template management, dedup, bulk send | All notification sending |
+| `reminder` | Meeting reminders (3d, 1d, today) with KST handling | Cron jobs |
+| `segment-notification` | Priority-based segment alerts (eligibility, dormant, onboarding) | Monthly/segment crons |
+| `waitlist-notification` | Dynamic deadline waitlist notifications (24h/6h/2h) | Waitlist cron |
+| `onboarding/reminder` | Signup/first-meeting 3/7 day reminders, 14-day rule | Onboarding crons |
+| `auto-complete` | 10-day post-meeting auto-participation completion | Auto-complete cron |
+| `post-meeting` | 3-day post-meeting feedback notification | Post-meeting cron |
+| `praise` | Praise phrases, validators, helpers | Praise feature |
+| `ticket` | Ticket formatting, calendar URL, ICS/image export | Ticket feature |
+| `otp` | SMS OTP generation, Supabase storage, 5-attempt/5-min verification | Auth flows |
+| `sound` | SoundManager singleton (beans, printer, typewriter, tear, stamp, whoosh) | Micro-interactions |
+| `animations` | Centralized Framer Motion variants (~25 exports) | All animations |
+
+### Architectural Split Patterns
 
 - **permissions vs permissions-constants**: `permissions` is server-only (uses Supabase), `permissions-constants` is shared (client + server)
 - **notification/**: Adapter pattern (`SolapiAdapter` in production, `MockNotificationAdapter` in dev). Use `sendAndLogNotification()` and `isAlreadySent()` from `notification/index`
@@ -627,7 +659,24 @@ fix/[설명]                  # Bug fixes
 
 ## Cron Jobs
 
-All schedules in `vercel.json`. Times in UTC (KST = UTC + 9). Routes in `src/app/api/cron/`. All require `CRON_SECRET` auth via `@/lib/cron-auth`.
+Routes in `src/app/api/cron/`. All require `CRON_SECRET` auth via `verifyCronRequest()` from `@/lib/cron-auth`. Schedules in `vercel.json` (UTC; KST = UTC + 9):
+
+| Cron Route | UTC Schedule | KST | Purpose |
+|------------|:------------|:----|---------|
+| `reminder` | 0 22 * * * | 07:00 daily | Meeting reminders (3d, 1d, today) |
+| `waitlist` | 0 * * * * | Hourly | Expired waitlist processing |
+| `transfer-timeout` | 0 * * * * | Hourly | Transfer deadline expiry |
+| `afterglow` | 0,30 * * * * | Every 30m | Post-meeting afterglow effects |
+| `post-meeting` | 0 1 * * * | 10:00 daily | 3-day post-meeting feedback |
+| `welcome` | 0 1 * * * | 10:00 daily | Welcome notifications |
+| `first-meeting-followup` | 0 1 * * * | 10:00 daily | First meeting follow-up |
+| `onboarding-signup` | 0 1 * * * | 10:00 daily | Signup 3/7-day reminders |
+| `onboarding-first-meeting` | 0 1 * * * | 10:00 daily | First meeting 3/7-day reminders |
+| `praise-nudge` | 0 1 * * * | 10:00 daily | Praise nudge notifications |
+| `segment-reminder` | 0 2 * * * | 11:00 daily | Segment-based priority alerts |
+| `auto-complete` | 0 3 * * * | 12:00 daily | 10-day auto-participation |
+| `monthly` | 0 1 25 * * | 25th 10:00 | Monthly summary |
+| `eligibility-warning` | 0 1 * * 1 | Mon 10:00 | Weekly eligibility warnings |
 
 ---
 
@@ -675,4 +724,4 @@ When documents conflict, follow this order:
 
 ---
 
-Last updated: 2026-02-16 | v3.6
+Last updated: 2026-02-18 | v3.7
