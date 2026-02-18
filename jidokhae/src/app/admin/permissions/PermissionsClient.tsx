@@ -266,10 +266,13 @@ export function PermissionsClient() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="add-admin-title"
             className="bg-bg-surface rounded-2xl w-full max-w-md p-6"
           >
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-brand-800">운영자 추가</h2>
+              <h2 id="add-admin-title" className="text-xl font-bold text-brand-800">운영자 추가</h2>
               <button
                 onClick={() => {
                   setShowAddModal(false)

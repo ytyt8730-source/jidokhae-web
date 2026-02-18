@@ -107,7 +107,7 @@ export default async function TransferPendingPage({ params }: PageProps) {
         <div className="p-6 space-y-6">
           {/* 모임 정보 */}
           <div className="bg-gray-50 rounded-xl p-4">
-            <p className="font-semibold text-brand-800 mb-1">{meeting.title}</p>
+            <p className="font-semibold text-brand-800 mb-1 line-clamp-2">{meeting.title}</p>
             <p className="text-sm text-gray-600">{formatDate(meeting.datetime)}</p>
           </div>
 

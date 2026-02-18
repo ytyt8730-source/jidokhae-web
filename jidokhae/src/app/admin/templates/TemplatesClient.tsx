@@ -276,6 +276,9 @@ function EditModal({
       exit={{ opacity: 0 }}
       className="fixed inset-0 bg-black/50 flex items-center justify-center z-modal p-4"
       onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="템플릿 수정"
     >
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
@@ -448,6 +451,9 @@ function PreviewModal({
       exit={{ opacity: 0 }}
       className="fixed inset-0 bg-black/50 flex items-center justify-center z-modal p-4"
       onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="미리보기"
     >
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}

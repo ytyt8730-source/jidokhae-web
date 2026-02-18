@@ -62,9 +62,9 @@ export default function TicketDetailModal({
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="bg-bg-base rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto relative"
+              className="bg-bg-base rounded-2xl max-w-md w-full max-h-[90vh] flex flex-col relative"
             >
-              {/* 닫기 버튼 */}
+              {/* 닫기 버튼 (스크롤 외부 고정) */}
               <button
                 onClick={onClose}
                 className="absolute top-4 right-4 z-10 p-2 rounded-full bg-bg-surface hover:bg-bg-hover transition-colors"
@@ -73,6 +73,8 @@ export default function TicketDetailModal({
                 <X size={20} strokeWidth={1.5} className="text-text-secondary" />
               </button>
 
+              {/* 스크롤 가능 영역 */}
+              <div className="overflow-y-auto flex-1 min-h-0">
               {/* 티켓 */}
               <div className="p-6 pb-4" ref={ticketRef}>
                 <Ticket
@@ -111,6 +113,7 @@ export default function TicketDetailModal({
                   </Button>
                 </div>
               )}
+              </div>{/* overflow-y-auto 닫기 */}
             </motion.div>
           </div>
         </>

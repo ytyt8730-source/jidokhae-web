@@ -203,11 +203,14 @@ export default function CancelModal({
             initial="hidden"
             animate="visible"
             exit="exit"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="cancel-modal-title"
           >
-            <div className="bg-bg-surface rounded-2xl w-full max-w-md shadow-xl">
+            <div className="bg-bg-surface rounded-2xl w-full max-w-md shadow-xl max-h-[90vh] flex flex-col">
               {/* 헤더 */}
-              <div className="flex items-center justify-between p-4 border-b border-gray-100">
-                <h2 className="text-lg font-semibold text-brand-800">마음 돌리기</h2>
+              <div className="flex items-center justify-between p-4 border-b border-gray-100 flex-shrink-0">
+                <h2 id="cancel-modal-title" className="text-lg font-semibold text-brand-800">마음 돌리기</h2>
                 <button
                   onClick={onClose}
                   className="p-2 text-gray-400 hover:text-gray-600 rounded-lg"
@@ -216,8 +219,8 @@ export default function CancelModal({
                 </button>
               </div>
 
-              {/* 본문 */}
-              <div className="p-4 space-y-4">
+              {/* 본문 (스크롤 가능) */}
+              <div className="p-4 space-y-4 overflow-y-auto flex-1 min-h-0">
                 {/* 마음 돌리기 설득 섹션 (PRD 섹션 6: 취소 마찰) */}
                 {(hasOtherParticipants || isSoonMeeting || remainingSpots <= 2) && (
                   <motion.div
@@ -261,7 +264,7 @@ export default function CancelModal({
                 <div className="bg-gray-50 rounded-xl p-4">
                   <div className="flex items-start justify-between">
                     <div>
-                      <h3 className="font-medium text-brand-800">{meeting.title}</h3>
+                      <h3 className="font-medium text-brand-800 line-clamp-2">{meeting.title}</h3>
                       <div className="flex items-center gap-2 mt-1 text-sm text-gray-600">
                         <Calendar size={14} strokeWidth={1.5} />
                         <span>{formatMeetingDate(meeting.datetime)}</span>
@@ -354,7 +357,7 @@ export default function CancelModal({
               </div>
 
               {/* 푸터 */}
-              <div className="p-4 border-t border-gray-100 space-y-2">
+              <div className="p-4 border-t border-gray-100 space-y-2 flex-shrink-0">
                 <Button
                   onClick={handleCancel}
                   isLoading={isLoading}

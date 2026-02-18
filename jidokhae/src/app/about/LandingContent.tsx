@@ -484,7 +484,7 @@ export default function LandingContent({ stats, reviews, galleryImages }: Landin
                   <p className={`text-base text-text leading-relaxed mb-3 ${theme === 'warm' ? 'font-serif' : ''}`}>
                     &quot;{review.content}&quot;
                   </p>
-                  <p className="text-sm text-text-muted">
+                  <p className="text-sm text-text-muted truncate">
                     — {review.user.name}, {review.user.joined_year}년 합류
                   </p>
                 </motion.div>

@@ -57,7 +57,7 @@ export default function WeeklyCuratorCard({ meeting, className = '' }: WeeklyCur
     >
       <Link href={`/meetings/${meeting.id}`} className="flex gap-5 p-6">
         {/* Atmospheric Cover */}
-        <div className="flex-shrink-0 w-[140px] h-[180px] relative rounded-2xl overflow-hidden">
+        <div className="flex-shrink-0 w-[100px] sm:w-[140px] h-[140px] sm:h-[180px] relative rounded-2xl overflow-hidden">
           {/* Blur Background */}
           <div
             className="absolute inset-[-20px] bg-gradient-to-br from-[var(--bg-surface)] via-[var(--bg-base)] to-[var(--border)] opacity-60"
@@ -66,7 +66,7 @@ export default function WeeklyCuratorCard({ meeting, className = '' }: WeeklyCur
 
           {/* Book Cover Placeholder */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className={`w-[100px] h-[140px] bg-white rounded shadow-lg flex items-center justify-center` /* bg-white-allowed: book cover */}>
+            <div className={`w-[70px] sm:w-[100px] h-[100px] sm:h-[140px] bg-white rounded shadow-lg flex items-center justify-center` /* bg-white-allowed: book cover */}>
               <BookOpen
                 className="text-[var(--text-muted)]"
                 size={32}
@@ -80,7 +80,7 @@ export default function WeeklyCuratorCard({ meeting, className = '' }: WeeklyCur
         <div className="flex-1 flex flex-col min-w-0">
           <span className="section-label">Weekly Curator</span>
 
-          <h3 className="mt-2 text-xl font-bold heading-themed truncate">
+          <h3 className="mt-2 text-xl font-bold heading-themed line-clamp-2">
             {meeting.title}
           </h3>
 

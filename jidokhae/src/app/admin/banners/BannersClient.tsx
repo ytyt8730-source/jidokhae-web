@@ -309,10 +309,13 @@ export function BannersClient() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="banner-modal-title"
             className="bg-bg-surface rounded-2xl w-full max-w-lg p-6"
           >
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-brand-800">
+              <h2 id="banner-modal-title" className="text-xl font-bold text-brand-800">
                 {editingBanner ? '배너 수정' : '새 배너 추가'}
               </h2>
               <button onClick={closeModal} className="text-gray-400 hover:text-gray-600">

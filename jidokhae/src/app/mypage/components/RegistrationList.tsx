@@ -180,9 +180,9 @@ export default function RegistrationList({
                 key={reg.id}
                 className="p-3 bg-gray-50 rounded-lg opacity-60"
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 min-w-0">
                   <Badge variant="default">취소됨</Badge>
-                  <span className="text-sm text-gray-600 truncate">{reg.meetings.title}</span>
+                  <span className="text-sm text-gray-600 truncate min-w-0">{reg.meetings.title}</span>
                 </div>
                 {reg.refund_amount > 0 && (
                   <p className="text-xs text-gray-500 mt-1">

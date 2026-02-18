@@ -206,7 +206,7 @@ export default function NotificationLogs() {
                         </span>
                       </div>
                       {log.error_message && (
-                        <p className="text-xs text-red-500 mt-0.5 truncate max-w-[200px]">
+                        <p className="text-xs text-red-500 mt-0.5 truncate max-w-full">
                           {log.error_message}
                         </p>
                       )}

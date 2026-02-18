@@ -226,11 +226,14 @@ export function RequestsClient() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="request-detail-title"
               className="bg-bg-surface rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
             >
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-brand-800">요청 상세</h2>
+                  <h2 id="request-detail-title" className="text-xl font-bold text-brand-800">요청 상세</h2>
                   <button
                     onClick={() => {
                       setSelectedRequest(null)

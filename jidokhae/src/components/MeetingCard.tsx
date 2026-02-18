@@ -119,7 +119,7 @@ export default function MeetingCard({
       {/* Content */}
       <div className="p-5">
         {/* Title */}
-        <h3 className="font-semibold text-[var(--text)] text-[1.1rem] mb-3 truncate group-hover:text-[var(--primary)] transition-colors">
+        <h3 className="font-semibold text-[var(--text)] text-[1.1rem] mb-3 line-clamp-2 group-hover:text-[var(--primary)] transition-colors">
           {meeting.title}
         </h3>
 

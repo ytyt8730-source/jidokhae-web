@@ -90,8 +90,8 @@ export function ConfirmationModal({
             exit="exit"
             className="fixed inset-0 z-modal flex items-center justify-center p-4"
           >
-            <div className="relative bg-bg-surface rounded-2xl max-w-sm w-full max-h-[90vh] overflow-y-auto shadow-xl">
-              {/* 닫기 버튼 */}
+            <div className="relative bg-bg-surface rounded-2xl max-w-sm w-full max-h-[90vh] flex flex-col shadow-xl">
+              {/* 닫기 버튼 (스크롤 외부 고정) */}
               <button
                 onClick={onClose}
                 className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 z-10"
@@ -99,6 +99,8 @@ export function ConfirmationModal({
                 <X size={20} />
               </button>
 
+              {/* 스크롤 가능 영역 */}
+              <div className="overflow-y-auto flex-1 min-h-0">
               {/* 헤더 */}
               <div className="text-center pt-8 pb-4 px-6">
                 <h2 className="text-xl font-bold text-brand-800">
@@ -166,6 +168,7 @@ export function ConfirmationModal({
                   확인
                 </button>
               </div>
+              </div>{/* overflow-y-auto 닫기 */}
             </div>
           </motion.div>
         </>

@@ -47,10 +47,15 @@ export default function DeleteMeetingButton({ meetingId, meetingTitle }: DeleteM
   if (showConfirm) {
     return (
       <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-modal p-4">
-        <div className="bg-bg-surface rounded-2xl p-6 max-w-sm w-full">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="delete-dialog-title"
+          className="bg-bg-surface rounded-2xl p-6 max-w-sm w-full"
+        >
           <div className="flex items-center gap-3 mb-4 text-red-600">
             <AlertTriangle size={24} />
-            <h3 className="font-semibold text-lg">모임 삭제</h3>
+            <h3 id="delete-dialog-title" className="font-semibold text-lg">모임 삭제</h3>
           </div>
           <p className="text-gray-600 mb-6">
             &ldquo;{meetingTitle}&rdquo; 모임을 정말 삭제하시겠습니까?

@@ -172,7 +172,7 @@ export default function MeetingBottomSheet({
           {/* Bottom Sheet */}
           <motion.div
             className="fixed inset-x-0 bottom-0 z-modal flex flex-col rounded-t-3xl overflow-hidden bg-bg-surface"
-            style={{ maxHeight: '90vh' }}
+            style={{ maxHeight: '90dvh' }}
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
@@ -202,8 +202,8 @@ export default function MeetingBottomSheet({
             </div>
 
             {/* Header */}
-            <div className="flex items-start justify-between px-6 pb-4 border-b border-[var(--border)]">
-              <div className="flex-1">
+            <div className="flex items-start justify-between gap-3 px-6 pb-4 border-b border-[var(--border)]">
+              <div className="flex-1 min-w-0">
                 {/* Badges */}
                 <div className="flex items-center gap-2 flex-wrap mb-2">
                   {meeting.isThisWeek && <Badge variant="success">이번 주</Badge>}
@@ -214,7 +214,7 @@ export default function MeetingBottomSheet({
                 {/* Title */}
                 <h2
                   id="meeting-sheet-title"
-                  className="text-xl font-bold heading-themed text-text"
+                  className="text-xl font-bold heading-themed text-text line-clamp-2"
                 >
                   {meeting.title}
                 </h2>

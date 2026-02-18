@@ -104,11 +104,22 @@ export default function BadgeCelebration({ badges, onComplete }: BadgeCelebratio
       {/* 배지 획득 모달 */}
       <AnimatePresence>
         {showModal && badgeInfo && (
+          <>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-modal flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+            className="fixed inset-0 z-modal-overlay bg-black/40 backdrop-blur-sm"
+            onClick={handleNext}
+          />
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-modal flex items-center justify-center p-4"
+            role="dialog"
+            aria-modal="true"
+            aria-label="배지 획득 축하"
             onClick={handleNext}
           >
             <motion.div
@@ -177,6 +188,7 @@ export default function BadgeCelebration({ badges, onComplete }: BadgeCelebratio
               )}
             </motion.div>
           </motion.div>
+          </>
         )}
       </AnimatePresence>
     </>
