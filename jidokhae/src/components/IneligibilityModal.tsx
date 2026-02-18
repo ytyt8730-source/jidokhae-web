@@ -49,18 +49,18 @@ export default function IneligibilityModal({
             onClick={onClose}
           />
 
-          {/* 모달 */}
+          {/* 모달 컨테이너 - flexbox 센터링 (모바일 호환) */}
           <motion.div
             variants={modalAnimation}
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-modal w-full max-w-md mx-4"
+            className="fixed inset-0 z-modal flex items-center justify-center p-4"
             role="dialog"
             aria-modal="true"
             aria-labelledby="ineligibility-modal-title"
           >
-            <div className="bg-bg-surface rounded-2xl shadow-xl p-6 sm:p-8">
+            <div className="relative bg-bg-surface rounded-2xl shadow-xl p-6 sm:p-8 w-full max-w-md">
               {/* 닫기 버튼 */}
               <button
                 onClick={onClose}

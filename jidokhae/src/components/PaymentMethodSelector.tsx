@@ -11,6 +11,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { CreditCard, Building2, ArrowLeft, AlertCircle } from 'lucide-react'
 import Button from '@/components/ui/Button'
+import Portal from '@/components/ui/Portal'
 import { useToast } from '@/components/ui/Toast'
 import IneligibilityModal from '@/components/IneligibilityModal'
 import TransferInfo from '@/components/TransferInfo'
@@ -456,13 +457,15 @@ export default function PaymentMethodSelector({
         </div>
       )}
 
-      {/* 자격 부족 모달 */}
-      <IneligibilityModal
-        isOpen={showIneligibilityModal}
-        onClose={() => setShowIneligibilityModal(false)}
-        lastRegularMeetingAt={user.last_regular_meeting_at}
-        daysRemaining={null}
-      />
+      {/* 자격 부족 모달 - Portal로 stacking context 탈출 */}
+      <Portal>
+        <IneligibilityModal
+          isOpen={showIneligibilityModal}
+          onClose={() => setShowIneligibilityModal(false)}
+          lastRegularMeetingAt={user.last_regular_meeting_at}
+          daysRemaining={null}
+        />
+      </Portal>
     </div>
   )
 }
