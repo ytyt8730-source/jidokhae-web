@@ -53,11 +53,17 @@ export function useOnboardingRedirect(): OnboardingStatus {
         return
       }
 
-      const { data: userData } = await supabase
+      const { data: userData, error } = await supabase
         .from('users')
         .select('is_new_member, onboarding_step, onboarding_completed_at')
         .eq('id', user.id)
         .single()
+
+      // 쿼리 에러 시 (RLS 거부, 네트워크 오류 등) 온보딩 체크 스킵
+      if (error) {
+        setStatus({ isLoading: false, needsOnboarding: false, currentStep: null })
+        return
+      }
 
       // 신규 회원이고 온보딩 미완료인 경우
       const needsOnboarding =

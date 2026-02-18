@@ -2,6 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 import { createLogger } from '@/lib/logger'
+import { createServiceClient } from '@/lib/supabase/server'
 
 const logger = createLogger('auth-callback')
 
@@ -141,7 +142,7 @@ export async function GET(request: Request) {
 
     if (sessionData?.user?.app_metadata?.provider === 'kakao') {
       try {
-        const redirectUrl = await handleKakaoUser(supabase, sessionData.user, origin, next)
+        const redirectUrl = await handleKakaoUser(sessionData.user, origin, next)
         return redirectWithCookies(redirectUrl, pendingCookies)
       } catch (e) {
         logger.error('Kakao user processing error', {
@@ -160,11 +161,12 @@ export async function GET(request: Request) {
 
 /** 카카오 로그인 후 사용자 프로필 처리, 리다이렉트 URL 반환 */
 async function handleKakaoUser(
-  supabase: ReturnType<typeof createServerClient>,
   user: { id: string; email?: string; user_metadata?: Record<string, string>; app_metadata?: Record<string, string> },
   origin: string,
   next: string,
 ): Promise<string> {
+  // Service Role 클라이언트 사용 (RLS 우회 - users 테이블 insert/update 필요)
+  const serviceClient = await createServiceClient()
   const meta = user.user_metadata || {}
 
   let kakaoPhone: string | null = null
@@ -173,9 +175,9 @@ async function handleKakaoUser(
   }
 
   const userName = meta.name || meta.full_name || meta.preferred_username || '사용자'
-  const tempNickname = await generateTempNickname(supabase, userName)
+  const tempNickname = await generateTempNickname(serviceClient, userName)
 
-  const { data: existingUser } = await supabase
+  const { data: existingUser } = await serviceClient
     .from('users')
     .select('id, phone, nickname, is_new_member')
     .eq('id', user.id)
@@ -191,7 +193,7 @@ async function handleKakaoUser(
       updateData.phone = kakaoPhone
       updateData.phone_verified = true
     }
-    await supabase.from('users').update(updateData).eq('id', user.id)
+    await serviceClient.from('users').update(updateData).eq('id', user.id)
 
     const needsPhone = !existingUser.phone && !kakaoPhone
     const needsNickname = !existingUser.nickname
@@ -202,7 +204,7 @@ async function handleKakaoUser(
   }
 
   // 신규 사용자
-  const { error: insertError } = await supabase.from('users').insert({
+  const { error: insertError } = await serviceClient.from('users').insert({
     id: user.id,
     email: user.email || meta.email,
     name: userName,
@@ -214,7 +216,7 @@ async function handleKakaoUser(
     is_new_member: true,
   })
   if (insertError) {
-    logger.error('User insert error', { error: insertError.message })
+    logger.error('User insert error', { error: insertError.message, userId: user.id })
   }
   return `${origin}/auth/complete-profile?next=${encodeURIComponent(next)}`
 }
