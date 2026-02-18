@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Ticket } from 'lucide-react'
 import Badge from '@/components/ui/Badge'
 import { formatMeetingDate, formatFee } from '@/lib/utils'
 import { getDday } from '@/lib/payment'
@@ -25,15 +25,24 @@ export default function RegistrationList({
 }: RegistrationListProps) {
   return (
     <div className="card p-6">
-      <h3 className="font-semibold text-text mb-4">내 신청 모임</h3>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="font-semibold text-text">내 신청 모임</h3>
+        <Link
+          href="/mypage/tickets"
+          className="flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 transition-colors"
+        >
+          <Ticket size={16} strokeWidth={1.5} />
+          티켓 보관함
+        </Link>
+      </div>
 
-      {/* 확정된 신청 */}
+      {/* 확정된 신청 - 티켓 보관함으로 이동 (취소 기능 접근) */}
       {confirmedRegistrations.length > 0 ? (
         <div className="space-y-3">
           {confirmedRegistrations.map((reg) => (
             <Link
               key={reg.id}
-              href={`/meetings/${reg.meeting_id}`}
+              href="/mypage/tickets"
               className="block p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
             >
               <div className="flex items-start justify-between gap-3">

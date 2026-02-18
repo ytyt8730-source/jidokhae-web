@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useTickets } from '@/hooks/useTickets'
 import { useFeedback } from '@/hooks/useFeedback'
+import { useToast } from '@/components/ui/Toast'
 import { createLogger } from '@/lib/logger'
 import TicketsPageHeader from '@/components/ticket/TicketsPageHeader'
 import TicketsTabs from '@/components/ticket/TicketsTabs'
@@ -29,6 +30,7 @@ type Tab = 'upcoming' | 'past'
 export default function TicketsPage() {
   const router = useRouter()
   const { feedback } = useFeedback()
+  const { showToast } = useToast()
 
   const [userId, setUserId] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<Tab>('upcoming')
@@ -87,24 +89,45 @@ export default function TicketsPage() {
   }
 
   /**
-   * 취소 확정 (서버 요청)
+   * 취소 확정 (API 호출)
+   * - 환불 계산, 대기자 알림, 결제 로그 모두 서버에서 처리
    */
   const handleConfirmCancel = async (ticket: TicketData) => {
     try {
-      logger.info('Cancelling registration', { registrationId: ticket.id })
+      logger.info('Cancelling registration via API', { registrationId: ticket.id })
 
-      const supabase = createClient()
-      const { error: cancelError } = await supabase
-        .from('registrations')
-        .update({ status: 'cancelled' })
-        .eq('id', ticket.id)
+      const response = await fetch('/api/registrations/cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          registrationId: ticket.id,
+          cancelReason: 'user_requested',
+        }),
+      })
 
-      if (cancelError) {
-        throw cancelError
+      const result = await response.json()
+
+      // API 에러 처리
+      if (!response.ok) {
+        throw new Error(result.error?.message || '취소 처리 중 오류가 발생했습니다')
       }
 
-      logger.info('Registration cancelled successfully')
+      // 비즈니스 로직 실패 (이미 취소됨 등)
+      if (!result.data?.success) {
+        showToast(result.data?.message || '취소할 수 없습니다', 'error')
+        setIsCancelSheetOpen(false)
+        return
+      }
+
+      logger.info('Registration cancelled successfully', {
+        refundAmount: result.data.refundAmount,
+        refundPercent: result.data.refundPercent,
+      })
+
       feedback('success')
+
+      // 환불 정보 포함 Toast 표시
+      showToast(result.data.message, 'success')
 
       // 취소 완료 화면으로 전환
       setIsCancelSheetOpen(false)
@@ -115,7 +138,8 @@ export default function TicketsPage() {
     } catch (err) {
       logger.error('Failed to cancel registration', { error: err })
       feedback('error')
-      alert('취소 처리 중 문제가 발생했습니다')
+      showToast(err instanceof Error ? err.message : '취소 처리 중 문제가 발생했습니다', 'error')
+      setIsCancelSheetOpen(false)
     }
   }
 
