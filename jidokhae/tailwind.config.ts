@@ -10,7 +10,7 @@ const config: Config = {
     extend: {
       colors: {
         // ========================================
-        // Design System v3.3 - Dual Theme System
+        // Design System v3.5 - Dual Theme System
         // ========================================
 
         // CSS Variable 기반 테마 색상

@@ -19,6 +19,8 @@ const serverOnlyEnvVars = {
   PORTONE_WEBHOOK_SECRET: process.env.PORTONE_WEBHOOK_SECRET,
   SOLAPI_API_KEY: process.env.SOLAPI_API_KEY,
   SOLAPI_API_SECRET: process.env.SOLAPI_API_SECRET,
+  SOLAPI_SENDER: process.env.SOLAPI_SENDER,
+  SOLAPI_KAKAO_PFID: process.env.SOLAPI_KAKAO_PFID,
 } as const
 
 const optionalEnvVars = {
@@ -104,6 +106,8 @@ export const env = {
       solapi: {
         apiKey: serverOnlyEnvVars.SOLAPI_API_KEY ?? '',
         apiSecret: serverOnlyEnvVars.SOLAPI_API_SECRET ?? '',
+        sender: serverOnlyEnvVars.SOLAPI_SENDER ?? '',
+        kakaoPfid: serverOnlyEnvVars.SOLAPI_KAKAO_PFID ?? '',
       },
       sentry: {
         dsn: optionalEnvVars.SENTRY_DSN ?? optionalEnvVars.NEXT_PUBLIC_SENTRY_DSN ?? '',

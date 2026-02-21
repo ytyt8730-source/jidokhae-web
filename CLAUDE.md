@@ -19,6 +19,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```bash
 npm run dev              # Start dev server (localhost:3000)
 npm run build            # Production build
+npm run start            # Run production build locally
 npm run lint             # ESLint check
 npm run typecheck        # TypeScript check (tsc --noEmit)
 npm run screenshot         # Take page screenshots (Playwright)
@@ -57,8 +58,8 @@ src/__tests__/
 **Use ONE of these before every commit:**
 
 ```bash
-# RECOMMENDED: Comprehensive check
-./scripts/check-all.sh    # (root) Type + Build + Lint + Env validation
+# RECOMMENDED: Comprehensive check (run from jidokhae/)
+./scripts/check-all.sh    # Type + Build + Lint + Env validation (NO cd, runs npm in cwd)
 
 # ALTERNATIVE: Minimal check
 npx tsc --noEmit && npm run build
@@ -68,7 +69,7 @@ npx tsc --noEmit && npm run build
 
 ```bash
 # Quality
-./scripts/quality-gate.sh     # File size, console.log, as any, z-index, bg-white checks
+./scripts/quality-gate.sh     # 9 checks: file size, console.log/error/warn, as any, TODO, a11y, z-index, bg-white, safe-area
 ./scripts/deploy-check.sh     # Full deployment readiness check
 ./scripts/find-pattern.sh     # Search for code anti-patterns
 ./scripts/count-lines.sh [N]  # Find files over N lines (default: 200)
@@ -113,7 +114,7 @@ npx tsc --noEmit && npm run build
 | Icons | **Lucide React** | strokeWidth: 1.5, NO emojis allowed |
 | Dates | **date-fns 4** | All date manipulation (NOT dayjs/moment) |
 | Backend | **Supabase** | PostgreSQL + Auth + Realtime, RLS enabled |
-| Payment | **PortOne V2** | KakaoPay, TossPay (SDK lazy-loaded in layout) |
+| Payment | **PortOne V2** | KakaoPay, TossPay (SDK lazy-loaded). **V1 코드 `TC0ONETIM` 사용 금지** — Store ID: `store-xxxxx` 형식 |
 | Notifications | **Solapi** | Kakao Alimtalk |
 | Monitoring | **Sentry v10** | Error tracking & performance (`next.config.mjs` wrapped with `withSentryConfig`) |
 | Class utils | **clsx + tailwind-merge** | Via `cn()` helper in `@/lib/utils` |
@@ -252,9 +253,14 @@ const timer = paymentLogger.startTimer()
 await processPayment()
 timer.done('Payment completed', { amount }) // auto-logs elapsed ms
 
-// Custom loggers for other services:
+// Custom loggers for other services (26 valid LogService types):
 import { createLogger } from '@/lib/logger'
-const myLogger = createLogger('admin-gallery') // LogService type required
+const myLogger = createLogger('admin-gallery')
+// Valid types: auth, auth-callback, payment, webhook, notification, meeting,
+// registration, waitlist, cron, system, templates, admin, admin-banners,
+// admin-gallery, admin-meetings, admin-permissions, admin-requests,
+// admin-templates, reviews, eligibility, ticket, ticket-export,
+// useTickets, tickets-page, quote-card, onboarding
 ```
 
 ### Environment Variables
@@ -275,8 +281,9 @@ env.server.portone.apiKey  // throws on client
 **Required (client):** `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 **Required (client, payment):** `NEXT_PUBLIC_PORTONE_STORE_ID`, `NEXT_PUBLIC_PORTONE_CHANNEL_KEY`
 **Required (client, transfer):** `NEXT_PUBLIC_TRANSFER_BANK_NAME`, `NEXT_PUBLIC_TRANSFER_ACCOUNT_NUMBER`, `NEXT_PUBLIC_TRANSFER_ACCOUNT_HOLDER`
-**Required (server):** `SUPABASE_SERVICE_ROLE_KEY`, `PORTONE_API_KEY`, `PORTONE_API_SECRET`, `PORTONE_WEBHOOK_SECRET`, `SOLAPI_API_KEY`, `SOLAPI_API_SECRET`, `CRON_SECRET`
-**Optional:** `NEXT_PUBLIC_APP_URL` (default: localhost:3000), `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_*`, `LOG_LEVEL`
+**Required (server):** `SUPABASE_SERVICE_ROLE_KEY`, `PORTONE_API_KEY`, `PORTONE_API_SECRET`, `PORTONE_WEBHOOK_SECRET`, `SOLAPI_API_KEY`, `SOLAPI_API_SECRET`, `CRON_SECRET` (env.ts 미등록, `cron-auth.ts`에서 `process.env` 직접 접근)
+**Required (server, notification):** `SOLAPI_SENDER` (발신번호), `SOLAPI_KAKAO_PFID` (카카오 플러스친구 ID) — `env.ts` 등록됨, 일부 코드(`solapi.ts`, OTP 라우트)는 `process.env` 직접 접근
+**Optional:** `NEXT_PUBLIC_APP_URL` (default: localhost:3000), `NEXT_PUBLIC_SITE_URL` (default: `https://jidokhae.com`, OG metadata base URL in `layout.tsx`), `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_*`, `LOG_LEVEL`
 
 ---
 
@@ -300,12 +307,12 @@ env.server.portone.apiKey  // throws on client
 |--------|---------|-------------|
 | `payment` | PortOne integration, refund calc, qualification check | Payment flows |
 | `transfer` | Bank transfer flow, deadline management, account validation | Transfer payment method |
-| `notification/` | Solapi adapter, template management, dedup, bulk send | All notification sending |
+| `notification/` | Solapi adapter, template management, dedup, bulk send. `NOTIFICATION_TEMPLATES` in `notification/types` maps 17 template IDs (some are TODO placeholders) | All notification sending |
 | `reminder` | Meeting reminders (3d, 1d, today) with KST handling | Cron jobs |
 | `segment-notification` | Priority-based segment alerts (eligibility, dormant, onboarding) | Monthly/segment crons |
 | `waitlist-notification` | Dynamic deadline waitlist notifications (24h/6h/2h) | Waitlist cron |
 | `onboarding/reminder` | Signup/first-meeting 3/7 day reminders, 14-day rule | Onboarding crons |
-| `auto-complete` | 10-day post-meeting auto-participation completion | Auto-complete cron |
+| `auto-complete` | 10-day (3d 알림 + 7d 대기) 자동 참여 완료. 방법: praise/review/confirm/auto/admin | Auto-complete cron |
 | `post-meeting` | 3-day post-meeting feedback notification | Post-meeting cron |
 | `praise` | Praise phrases, validators, helpers | Praise feature |
 | `ticket` | Ticket formatting, calendar URL, ICS/image export | Ticket feature |
@@ -313,11 +320,38 @@ env.server.portone.apiKey  // throws on client
 | `sound` | SoundManager singleton (beans, printer, typewriter, tear, stamp, whoosh) | Micro-interactions |
 | `animations` | Centralized Framer Motion variants (~25 exports) | All animations |
 
+### Custom Hooks (`@/hooks/`)
+
+| Hook | Purpose | When to use |
+|------|---------|-------------|
+| `useFeedback` | Sound + Haptic integration | Button clicks, confirmations |
+| `useTypewriter` | Typing animation effect | Ticket printing, loading text |
+| `useTearGesture` | Drag gesture for ticket tear | Ticket perforation component |
+| `useTickets` | Ticket list with caching | MyPage tickets |
+| `useMeetingParticipants` | Participants data fetching | Meeting detail pages |
+| `useNicknameCheck` | Debounced nickname validation | Profile forms |
+| `useOnboardingRedirect` | Auto-redirect new members | Provider wrapper |
+
 ### Architectural Split Patterns
 
 - **permissions vs permissions-constants**: `permissions` is server-only (uses Supabase), `permissions-constants` is shared (client + server)
 - **notification/**: Adapter pattern (`SolapiAdapter` in production, `MockNotificationAdapter` in dev). Use `sendAndLogNotification()` and `isAlreadySent()` from `notification/index`
 - **badges vs badges-client**: Server-side awarding logic vs client-side rendering (to avoid importing server code in `'use client'` components)
+
+### Permission System (`@/lib/permissions` + `@/lib/permissions-constants`)
+
+7 permissions: `meeting_manage`, `payment_manage`, `notification_send`, `banner_manage`, `request_respond`, `dashboard_view`, `template_manage`
+
+Role hierarchy: `super_admin` (all implicit) > `admin` (explicit grants only) > `member` (none)
+
+```typescript
+// Server-only (API routes, server components):
+import { requirePermission, hasPermission } from '@/lib/permissions'
+await requirePermission(userId, 'banner_manage') // Throws PermissionDeniedError
+
+// Client + Server (shared constants):
+import { PERMISSIONS, type Permission } from '@/lib/permissions-constants'
+```
 
 ---
 
@@ -422,13 +456,40 @@ import { MICROCOPY } from '@/lib/constants/microcopy'
 - Cards: `card`, `card-base`, `card-hoverable`
 - Badges: `badge-primary`, `badge-accent`, `badge-success`, `badge-warning`, `badge-danger`, `badge-muted`
 - Inputs: `input`
-- Layout: `nav-item`, `section-label`, `safe-area-inset-bottom`
+- Layout: `nav-item`, `section-label`, `safe-area-inset-top`, `safe-area-inset-bottom`
+- Hero: `hero-section`, `hero-title`, `hero-subtitle`, `hero-btn-primary`, `hero-btn-secondary`
+- D-Day: `dday-card`, `dday-label`, `dday-number`, `dday-meeting-name`, `dday-text-muted`, `dday-link`
+- User: `user-level`
 
 **Portal for modals inside `backdrop-filter`/`transform` parents:**
 
 ```tsx
 import { Portal } from '@/components/ui/Portal'
 <Portal><MyModal /></Portal>  // Renders at document.body to escape stacking context
+```
+
+**BottomSheet pattern** (mobile-first modal):
+
+```tsx
+import BottomSheet from '@/components/BottomSheet'
+
+<BottomSheet
+  isOpen={isOpen}
+  onClose={() => setIsOpen(false)}
+  title="Select Option"
+  allowDragToClose={true}
+>
+  {/* Content */}
+</BottomSheet>
+```
+
+Features: Drag-to-close gesture, ESC key dismiss, backdrop blur. Use for contextual actions on mobile.
+
+**`force-dynamic` — 실시간 데이터 라우트 전용:**
+
+```typescript
+export const dynamic = 'force-dynamic'
+// 현재 2개만 사용: /api/reviews/public, /api/meetings/[id]/status
 ```
 
 ---
@@ -459,11 +520,31 @@ const supabase = await createClient()
 const supabaseAdmin = await createServiceClient()
 ```
 
+### Supabase RPC Functions
+
+| Function | Purpose | Returns |
+|----------|---------|---------|
+| `check_and_reserve_capacity(meeting_id, user_id)` | Atomic capacity check + registration | `{success, message}` |
+
+```typescript
+// Atomic registration (prevents race conditions)
+const { data } = await supabase.rpc('check_and_reserve_capacity', {
+  p_meeting_id: meetingId,
+  p_user_id: userId,
+})
+
+if (!data?.[0]?.success) {
+  // Handle: ALREADY_REGISTERED, MEETING_NOT_FOUND, MEETING_CLOSED, CAPACITY_EXCEEDED
+}
+```
+
+Note: Uses `SECURITY DEFINER` to bypass RLS. Handles re-registration after cancellation by updating existing cancelled records. Generated `database.ts` has empty `Functions` section — RPC types are inferred at call site.
+
 ---
 
 ## Design System
 
-> **Full reference:** `/docs/design-system.md`
+> **Full reference:** `/docs/design-system.md` (v3.5, canonical)
 
 ### Core Principles
 
@@ -483,6 +564,14 @@ const supabaseAdmin = await createServiceClient()
 | `--bg-base` | #F8FAFC | #F5F5F0 |
 
 **CRITICAL:** `#CCFF00` (lime) CANNOT be used as text color - poor readability.
+
+### Theme Constraints
+
+| Rule | Detail |
+|------|--------|
+| **NO `darkMode` in Tailwind** | Warm은 다크모드가 아님. CSS Variables + `data-theme` 사용 |
+| **Headings by theme** | Electric: sans-serif (Outfit/Noto Sans). Warm: serif (Noto Serif KR) |
+| **Toggle location** | Desktop: sidebar bottom. Mobile: mypage only. 플로팅 버튼 금지 |
 
 ### Icon Usage
 
@@ -521,7 +610,7 @@ export function Card() {
 |-------|:-----:|---------|
 | `z-base` | 0 | Default stacking |
 | `z-card` | 10 | Cards, list items |
-| `z-sticky` | 100 | Sticky headers |
+| `z-sticky` | 100 | Sticky elements |
 | `z-fab` | 200 | Floating action buttons |
 | `z-dropdown` | 300 | Dropdowns, selects |
 | `z-modal-overlay` | 1000 | Modal backdrop |
@@ -542,7 +631,11 @@ info / info-fg / info-bg
 
 ### Shadow & Animation Tokens
 
-See `tailwind.config.ts` for full definitions. Key tokens: `shadow-card`, `shadow-sheet`, `shadow-fab`, `shadow-button`, `shadow-modal`, `animate-fade-in`, `animate-fade-in-up`, `animate-slide-up`, `animate-slide-down`.
+**Shadows** (see `tailwind.config.ts`): `shadow-xs`, `shadow-sm`, `shadow-card` (actively used), `shadow-card-hover`, `shadow-sheet`, `shadow-fab`, `shadow-button`, `shadow-button-hover`, `shadow-modal`
+
+**Animations:** Tailwind animation tokens (`animate-fade-in`, `animate-slide-up`, etc.) are defined but **currently unused**. All animations use **Framer Motion** variants from `@/lib/animations` (~25 exports). Use Framer Motion for new animations.
+
+**BorderRadius:** `rounded-sm` (6px), `rounded-md` (12px), `rounded-lg` (16px), `rounded-xl` (20px), `rounded-2xl` (24px), `rounded-3xl` (32px)
 
 ---
 
@@ -585,10 +678,56 @@ const level = getMemberLevel(totalParticipations, isNewMember)
 // Returns: { level, label, displayText, segment }
 ```
 
+### Badge System (`@/lib/badges` + `@/lib/badges-client`)
+
+| Badge | Condition | Type |
+|-------|-----------|------|
+| `first_step` | 1 meeting | participation |
+| `first_praise_sent` | First praise sent | aha_moment |
+| `first_praise_received` | First praise received | aha_moment |
+| `participation_10` | 10 meetings | participation |
+| `consecutive_4` | 4 consecutive weeks | consecutive |
+| `praise_10` | 10 praises received | praise |
+| `praise_30` | 30 praises received | praise |
+| `praise_50` | 50 praises received | praise |
+
+Server-side awarding in `badges.ts`, client-side rendering in `badges-client.ts`.
+
 ### Eligibility
 
 - 6-month participation window for regular meetings
 - Check via `@/lib/eligibility`
+
+### Waitlist Response Deadlines
+
+| Time until meeting | Response window |
+|-------------------|:---------------:|
+| >3 days (4일+) | 24 hours |
+| 1-3 days | 6 hours |
+| <1 day | 2 hours |
+
+`@/lib/waitlist-notification.ts` `getResponseDeadline()`. 만료 처리: hourly cron.
+
+### Onboarding Flow
+
+5-step: Problem recognition (1) → Trust building (2, 3) → Action guide (4) → First success (5)
+
+- Types: `@/types/onboarding` (`OnboardingStep`, `OnboardingState`, `PROBLEM_OPTIONS`)
+- API: `/api/users/onboarding` (GET/PATCH)
+- `OnboardingRedirectProvider`: `is_new_member=true` + `onboarding_step < 4` → `/onboarding` 리다이렉트
+- Aha Moments: 1st (칭찬 보내기), 2nd (칭찬 받기) — `first_aha_at`, `second_aha_at` 필드
+
+### Notification Tone (Balfour Principles)
+
+| Principle | Forbidden | Required |
+|-----------|-----------|----------|
+| Value focus | "아직 신청 안 하셨네요" | "자리가 3개 남았어요" |
+| Concrete opportunity | "모임에 참여해보세요" | "1/22 포항, [책 제목]" |
+| Social proof | "많은 분이 참여" | "벌써 5명이 신청" |
+
+Core rule: "얻을 수 있는 것" 중심, "안 한 것" 지적 금지
+
+**Halt rules (PRD requirement, NOT yet implemented):** 2회 연속 무시 → 해당 유형 중단, 14일 무응답 → 전체 중단
 
 ---
 
@@ -654,12 +793,15 @@ fix/[설명]                  # Bug fixes
 | `/roadmap/milestones.md` | Development roadmap |
 | `/core/AI_AGENT_GUIDE.md` | Document navigation rules |
 | `/.cursorrules` | Cursor IDE rules (v3.0) - Git workflow, @agent- commands |
+| `/docs/external-services.md` | External service setup (PortOne, Solapi, Kakao) |
+| `/docs/troubleshooting-patterns.md` | Common errors and solutions |
+| `/docs/ai-agent-uiux-fix-directive.md` | Design token migration tasks (~60 files) |
 
 ---
 
 ## Cron Jobs
 
-Routes in `src/app/api/cron/`. All require `CRON_SECRET` auth via `verifyCronRequest()` from `@/lib/cron-auth`. Schedules in `vercel.json` (UTC; KST = UTC + 9):
+Routes in `src/app/api/cron/`. All require `CRON_SECRET` auth via `verifyCronRequest()` from `@/lib/cron-auth`. Most cron routes export both `GET` (Vercel scheduler) and `POST` (manual testing via `test-cron.sh`); POST delegates to GET. **Exceptions:** `transfer-timeout` exports GET only. `onboarding-signup` and `onboarding-first-meeting` use inline `verifyCronRequest` instead of importing from `@/lib/cron-auth` (technical debt). Schedules in `vercel.json` (UTC; KST = UTC + 9):
 
 | Cron Route | UTC Schedule | KST | Purpose |
 |------------|:------------|:----|---------|
@@ -724,4 +866,4 @@ When documents conflict, follow this order:
 
 ---
 
-Last updated: 2026-02-18 | v3.7
+Last updated: 2026-02-21 | v3.10
